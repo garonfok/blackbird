@@ -43,10 +43,11 @@
     "windows": [
       {
         "fullscreen": false,
+        "maximized": true,
         "resizable": true,
         "title": "blackbird",
-        "width": 800,
-        "height": 600,
+        "width": 1280,
+        "height": 720,
         "minHeight": 600,
         "minWidth": 800
       }
