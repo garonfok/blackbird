@@ -19,6 +19,7 @@ pub async fn get_all(db: &DatabaseConnection) -> Result<Vec<Value>, DbErr> {
         let tags = get_tags(db, piece_id).await?;
 
         let piece = serde_json::json!({
+            "id": piece.id,
             "title": piece.title,
             "year_published": piece.year_published,
             "path": piece.path,
@@ -55,6 +56,7 @@ pub async fn get_by_setlist(db: &DatabaseConnection, setlist_id: i32) -> Result<
                 let tags = get_tags(db, piece_id).await?;
 
                 let piece = serde_json::json!({
+                    "id": piece.id,
                     "title": piece.title,
                     "year_published": piece.year_published,
                     "path": piece.path,
@@ -93,6 +95,7 @@ pub async fn get_by_id(db: &DatabaseConnection, id: i32) -> Result<Value, DbErr>
             let parts = get_parts(db, id).await?;
 
             let piece = serde_json::json!({
+                "id": piece.id,
                 "title": piece.title,
                 "year_published": piece.year_published,
                 "path": piece.path,
