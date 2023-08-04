@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .scrollbar-default {
+    @apply scrollbar-thin scrollbar-thumb-fg.subtle;
+  }
+
+  .shadow-panel {
+    @apply shadow-[0px_13px_27px_-5px_#53515840,0px_4px_8px_0px_#0000004d];
+  }
+
+  .shadow-float {
+    @apply shadow-[0px_2px_5px_-1px_#53515840,0px_4px_4px_0px_#0000004d];
+  }
+}
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 14px;
