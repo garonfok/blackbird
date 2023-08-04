@@ -6,12 +6,16 @@ mod settings;
 
 pub fn handler() -> impl Fn(Invoke) {
     generate_handler![
+        db::ensemble_parts::ensemble_parts_get_by_id,
+        db::ensemble_parts::ensemble_parts_add,
+        db::ensemble_parts::ensemble_parts_update,
+        db::ensemble_parts::ensemble_parts_delete,
+        db::ensemble_parts::ensemble_parts_set_instruments,
         db::ensembles::ensembles_get_all,
         db::ensembles::ensembles_get_by_id,
         db::ensembles::ensembles_add,
         db::ensembles::ensembles_update,
         db::ensembles::ensembles_delete,
-        db::ensembles::ensembles_add_instrument,
         db::instruments::instruments_get_all,
         db::instruments::instruments_get_id,
         db::instruments::instruments_add,

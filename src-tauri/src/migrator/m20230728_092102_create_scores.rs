@@ -8,6 +8,7 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        let current_timestamp = chrono::offset::Local::now();
         manager
             .create_table(
                 Table::create()
@@ -26,13 +27,13 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Scores::CreatedAt)
                             .date_time()
                             .not_null()
-                            .default(chrono::Utc::now().naive_utc().to_string()),
+                            .default(current_timestamp.to_string()),
                     )
                     .col(
                         ColumnDef::new(Scores::UpdatedAt)
                             .date_time()
                             .not_null()
-                            .default(chrono::Utc::now().naive_utc().to_string()),
+                            .default(current_timestamp.to_string()),
                     )
                     .col(ColumnDef::new(Scores::PieceId).integer().not_null())
                     .foreign_key(

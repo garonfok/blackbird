@@ -3,25 +3,24 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "ensembles_instruments")]
+#[sea_orm(table_name = "ensemble_parts_instruments")]
 pub struct Model {
-    #[sea_orm(primary_key)]
-    pub id: i32,
-    pub ensemble_id: i32,
+    #[sea_orm(primary_key, auto_increment = false)]
+    pub part_id: i32,
+    #[sea_orm(primary_key, auto_increment = false)]
     pub instrument_id: i32,
-    pub name: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::ensembles::Entity",
-        from = "Column::EnsembleId",
-        to = "super::ensembles::Column::Id",
+        belongs_to = "super::ensembles_parts::Entity",
+        from = "Column::PartId",
+        to = "super::ensembles_parts::Column::Id",
         on_update = "NoAction",
         on_delete = "Cascade"
     )]
-    Ensembles,
+    EnsemblesParts,
     #[sea_orm(
         belongs_to = "super::instruments::Entity",
         from = "Column::InstrumentId",
@@ -32,9 +31,9 @@ pub enum Relation {
     Instruments,
 }
 
-impl Related<super::ensembles::Entity> for Entity {
+impl Related<super::ensembles_parts::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Ensembles.def()
+        Relation::EnsemblesParts.def()
     }
 }
 

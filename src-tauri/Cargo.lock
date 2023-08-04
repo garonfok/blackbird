@@ -380,6 +380,7 @@ dependencies = [
  "directories",
  "futures",
  "home",
+ "indexmap 2.0.0",
  "lazy_static",
  "sea-orm",
  "sea-orm-migration",

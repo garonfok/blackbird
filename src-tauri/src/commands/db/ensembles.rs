@@ -50,24 +50,3 @@ pub fn ensembles_delete(app_handle: AppHandle, id: i32) -> Result<(), String> {
         Err(e) => Err(e.to_string()),
     }
 }
-
-#[command]
-pub fn ensembles_add_instrument(
-    app_handle: AppHandle,
-    ensemble_id: i32,
-    instrument_id: i32,
-    name: String,
-) -> Result<(), String> {
-    let result = app_handle.db(|db| {
-        block_on(ensembles::add_instrument(
-            db,
-            ensemble_id,
-            instrument_id,
-            name,
-        ))
-    });
-    match result {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e.to_string()),
-    }
-}

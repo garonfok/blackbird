@@ -6,3 +6,4 @@ pub mod pieces;
 pub mod scores;
 pub mod tags;
 pub mod setlists;
+pub mod ensemble_parts;

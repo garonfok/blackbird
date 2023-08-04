@@ -28,9 +28,10 @@ pub fn instruments_get_id(app_handle: AppHandle, id: i32) -> Result<serde_json::
 pub fn instruments_add(
     app_handle: AppHandle,
     name: String,
+    category: Option<String>,
     is_default: bool,
 ) -> Result<i32, String> {
-    let result = app_handle.db(|db| block_on(instruments::add(db, name, is_default)));
+    let result = app_handle.db(|db| block_on(instruments::add(db, name, category, is_default)));
     match result {
         Ok(id) => Ok(id),
         Err(e) => Err(e.to_string()),
@@ -38,8 +39,13 @@ pub fn instruments_add(
 }
 
 #[command]
-pub fn instruments_update(app_handle: AppHandle, id: i32, name: String) -> Result<(), String> {
-    let result = app_handle.db(|db| block_on(instruments::update(db, id, name)));
+pub fn instruments_update(
+    app_handle: AppHandle,
+    id: i32,
+    name: String,
+    category: Option<String>,
+) -> Result<(), String> {
+    let result = app_handle.db(|db| block_on(instruments::update(db, id, name, category)));
     match result {
         Ok(_) => Ok(()),
         Err(e) => Err(e.to_string()),

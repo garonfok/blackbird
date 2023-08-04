@@ -2,8 +2,9 @@
 
 pub mod prelude;
 
+pub mod ensemble_parts_instruments;
 pub mod ensembles;
-pub mod ensembles_instruments;
+pub mod ensembles_parts;
 pub mod instruments;
 pub mod musicians;
 pub mod parts;

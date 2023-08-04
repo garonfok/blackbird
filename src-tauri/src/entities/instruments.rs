@@ -8,22 +8,14 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
     pub name: String,
+    pub category: Option<String>,
     pub is_default: bool,
     pub created_at: String,
     pub updated_at: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {
-    #[sea_orm(has_many = "super::ensembles_instruments::Entity")]
-    EnsemblesInstruments,
-}
-
-impl Related<super::ensembles_instruments::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::EnsemblesInstruments.def()
-    }
-}
+pub enum Relation {}
 
 impl Related<super::parts::Entity> for Entity {
     fn to() -> RelationDef {
@@ -31,6 +23,19 @@ impl Related<super::parts::Entity> for Entity {
     }
     fn via() -> Option<RelationDef> {
         Some(super::parts_instruments::Relation::Instruments.def().rev())
+    }
+}
+
+impl Related<super::ensembles_parts::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::ensemble_parts_instruments::Relation::EnsemblesParts.def()
+    }
+    fn via() -> Option<RelationDef> {
+        Some(
+            super::ensemble_parts_instruments::Relation::Instruments
+                .def()
+                .rev(),
+        )
     }
 }
 

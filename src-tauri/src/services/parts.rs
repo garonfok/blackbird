@@ -76,7 +76,7 @@ pub async fn update(
 
             part.name = ActiveValue::Set(name);
             part.path = ActiveValue::Set(path);
-            part.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            part.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
 
             parts::Entity::update(part).exec(db).await?;
             Ok(())
@@ -119,7 +119,7 @@ pub async fn set_instruments(
             }
 
             let mut part: parts::ActiveModel = part.into();
-            part.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            part.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
             parts::Entity::update(part).exec(db).await?;
 
             Ok(())
@@ -187,7 +187,7 @@ mod tests {
         assert!(add_part_result.is_ok());
 
         let add_instrument_result =
-            crate::services::instruments::add(&db, "Test Instrument".to_string(), false).await;
+            crate::services::instruments::add(&db, "Test Instrument".to_string(), None, false).await;
         assert!(add_instrument_result.is_ok());
 
         // add instrument to part

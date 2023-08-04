@@ -9,6 +9,8 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
+mod seed;
+
 pub async fn init() -> Result<DatabaseConnection, DbErr> {
     let mut creating = false;
 
@@ -36,6 +38,7 @@ async fn run_migrations(db: &sea_orm::DatabaseConnection, creating: bool) -> Res
 
     if creating {
         Migrator::up(db, None).await?;
+        seed::seed(db).await?;
     }
 
     assert!(schema_manager.has_table("pieces").await?);
@@ -47,8 +50,12 @@ async fn run_migrations(db: &sea_orm::DatabaseConnection, creating: bool) -> Res
     assert!(schema_manager.has_table("pieces_tags").await?);
     assert!(schema_manager.has_table("pieces_musicians").await?);
     assert!(schema_manager.has_table("parts_instruments").await?);
-    assert!(schema_manager.has_table("ensembles_instruments").await?);
-
+    assert!(schema_manager.has_table("ensembles_parts").await?);
+    assert!(
+        schema_manager
+            .has_table("ensemble_parts_instruments")
+            .await?
+    );
     Ok(())
 }
 
@@ -65,4 +72,16 @@ fn db_file_exists() -> bool {
 fn get_db_file_path() -> PathBuf {
     let working_directory = SETTINGS.read().unwrap().working_directory().to_string();
     Path::new(&working_directory).join("database.db")
+}
+
+#[cfg(test)]
+mod tests {
+
+    #[tokio::test]
+    async fn test_init_db() {
+        use super::*;
+        let db = init().await.unwrap();
+
+        let _ = db.close().await;
+    }
 }

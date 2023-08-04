@@ -9,10 +9,11 @@ mod m20230724_024826_create_ensembles;
 mod m20230724_035659_create_pieces_tags;
 mod m20230724_041259_create_pieces_musicians;
 mod m20230724_042016_create_parts_instruments;
-mod m20230724_042543_create_ensembles_instruments;
+mod m20230724_042543_create_ensembles_parts;
 mod m20230728_092102_create_scores;
 mod m20230731_044608_create_setlists;
 mod m20230731_044622_create_pieces_setlists;
+mod m20230803_094322_create_ensemble_parts_instruments;
 
 pub struct Migrator;
 
@@ -29,10 +30,11 @@ impl MigratorTrait for Migrator {
             Box::new(m20230724_035659_create_pieces_tags::Migration),
             Box::new(m20230724_041259_create_pieces_musicians::Migration),
             Box::new(m20230724_042016_create_parts_instruments::Migration),
-            Box::new(m20230724_042543_create_ensembles_instruments::Migration),
+            Box::new(m20230724_042543_create_ensembles_parts::Migration),
             Box::new(m20230728_092102_create_scores::Migration),
             Box::new(m20230731_044608_create_setlists::Migration),
             Box::new(m20230731_044622_create_pieces_setlists::Migration),
+            Box::new(m20230803_094322_create_ensemble_parts_instruments::Migration),
         ]
     }
 }

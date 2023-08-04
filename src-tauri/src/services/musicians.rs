@@ -51,7 +51,7 @@ pub async fn update(
 
             musician.first_name = ActiveValue::Set(first_name);
             musician.last_name = ActiveValue::Set(last_name);
-            musician.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            musician.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
 
             musicians::Entity::update(musician).exec(db).await?;
             Ok(())

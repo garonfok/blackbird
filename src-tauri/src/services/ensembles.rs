@@ -3,7 +3,7 @@ use sea_orm::{
     QuerySelect, RelationTrait,
 };
 
-use crate::entities::{ensembles, ensembles_instruments, instruments};
+use crate::entities::{ensemble_parts_instruments, ensembles, ensembles_parts, instruments};
 
 use serde_json::Value;
 
@@ -17,25 +17,18 @@ pub async fn get_by_id(db: &DatabaseConnection, id: i32) -> Result<Value, DbErr>
 
     match ensemble {
         Some(ensemble) => {
-            let instruments = instruments::Entity::find()
-                .join_rev(
-                    JoinType::InnerJoin,
-                    ensembles_instruments::Relation::Instruments.def(),
-                )
-                .filter(ensembles_instruments::Column::EnsembleId.eq(id))
-                .into_json()
-                .all(db)
-                .await?;
+            let parts = get_parts(db, id).await?;
 
-            let ensemble_with_instruments = serde_json::json!({
+            let ensemble = serde_json::json!({
                 "id": ensemble.id,
                 "name": ensemble.name,
+                "category": ensemble.category,
                 "created_at": ensemble.created_at,
                 "updated_at": ensemble.updated_at,
-                "instruments": instruments,
+                "parts": parts,
             });
 
-            Ok(ensemble_with_instruments)
+            Ok(ensemble)
         }
         None => {
             return Err(DbErr::RecordNotFound(format!(
@@ -74,7 +67,7 @@ pub async fn update(
 
             ensemble.name = ActiveValue::Set(name);
             ensemble.category = ActiveValue::Set(category);
-            ensemble.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            ensemble.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
 
             let _result = ensembles::Entity::update(ensemble).exec(db).await?;
             Ok(())
@@ -91,90 +84,36 @@ pub async fn delete(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
     Ok(())
 }
 
-pub async fn add_instrument(
-    db: &DatabaseConnection,
-    ensemble_id: i32,
-    instrument_id: i32,
-    name: String,
-) -> Result<(), DbErr> {
-    let ensemble = ensembles::Entity::find_by_id(ensemble_id).one(db).await?;
-    match ensemble {
-        Some(ensemble) => {
-            let active_ensemble_instrument = ensembles_instruments::ActiveModel {
-                ensemble_id: ActiveValue::Set(ensemble_id),
-                instrument_id: ActiveValue::Set(instrument_id),
-                name: ActiveValue::Set(name),
-                ..Default::default()
-            };
+async fn get_parts(db: &DatabaseConnection, id: i32) -> Result<Vec<Value>, DbErr> {
+    let parts = ensembles_parts::Entity::find()
+        .filter(ensembles_parts::Column::EnsembleId.eq(id))
+        .all(db)
+        .await?;
 
-            let result = ensembles_instruments::Entity::insert(active_ensemble_instrument)
-                .exec(db)
-                .await;
+    let mut parts_with_instruments: Vec<Value> = vec![];
 
-            if result.is_err() {
-                return Err(result.unwrap_err());
-            }
+    for part in &parts {
+        let part_id = part.id;
+        let instruments = instruments::Entity::find()
+            .join_rev(
+                JoinType::InnerJoin,
+                ensemble_parts_instruments::Relation::Instruments.def(),
+            )
+            .filter(ensemble_parts_instruments::Column::PartId.eq(part_id))
+            .into_json()
+            .all(db)
+            .await?;
 
-            let mut ensemble: ensembles::ActiveModel = ensemble.into();
+        let part = serde_json::json!({
+            "id": part.id,
+            "name": part.name,
+            "instruments": instruments,
+            "created_at": part.created_at,
+            "updated_at": part.updated_at
+        });
 
-            ensemble.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
-            ensembles::Entity::update(ensemble).exec(db).await?;
-
-            Ok(())
-        }
-        None => Err(DbErr::RecordNotFound(format!(
-            "Ensemble with id {} not found",
-            ensemble_id
-        ))),
+        parts_with_instruments.push(part);
     }
-}
 
-// generate test for add_instruments
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::db::init;
-
-    #[tokio::test]
-    async fn test_add_instruments() {
-        let db = init().await.unwrap();
-        let add_ensemble_result = add(&db, String::from("test ensemble"), None).await;
-
-        assert!(add_ensemble_result.is_ok());
-
-        let ensemble_id = add_ensemble_result.unwrap();
-
-        let add_instrument_result =
-            crate::services::instruments::add(&db, String::from("test instrument 1"), false).await;
-        assert!(add_instrument_result.is_ok());
-        let add_instrument_result =
-            crate::services::instruments::add(&db, String::from("test instrument 2"), false).await;
-        assert!(add_instrument_result.is_ok());
-
-        let instrument_ids = vec![1, 2];
-        let result = add_instrument(
-            &db,
-            ensemble_id,
-            instrument_ids[0],
-            String::from("test part 1"),
-        )
-        .await;
-        assert!(result.is_ok());
-        let result = add_instrument(
-            &db,
-            ensemble_id,
-            instrument_ids[1],
-            String::from("test part 2"),
-        )
-        .await;
-        assert!(result.is_ok());
-
-        let get_ensemble_result = get_by_id(&db, ensemble_id).await;
-        assert!(get_ensemble_result.is_ok());
-        let ensemble = get_ensemble_result.unwrap();
-        assert!(ensemble["instruments"].as_array().unwrap().len() == 2);
-
-        let close_result = db.close().await;
-        assert!(close_result.is_ok());
-    }
+    Ok(parts_with_instruments)
 }

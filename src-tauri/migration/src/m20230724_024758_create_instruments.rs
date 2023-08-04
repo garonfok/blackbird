@@ -19,6 +19,7 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Instruments::Name).string().not_null())
+                    .col(ColumnDef::new(Instruments::Category).string())
                     .col(
                         ColumnDef::new(Instruments::IsDefault)
                             .boolean()
@@ -55,6 +56,7 @@ pub enum Instruments {
     Table,
     Id,
     Name,
+    Category,
     IsDefault,
     CreatedAt,
     UpdatedAt,

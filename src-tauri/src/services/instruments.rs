@@ -1,4 +1,6 @@
-use sea_orm::{ActiveValue, DatabaseConnection, DbErr, EntityTrait};
+use sea_orm::{
+    ActiveValue, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, QueryFilter,
+};
 
 use crate::entities::instruments;
 
@@ -24,9 +26,44 @@ pub async fn get_by_id(db: &DatabaseConnection, id: i32) -> Result<Value, DbErr>
     }
 }
 
-pub async fn add(db: &DatabaseConnection, name: String, is_default: bool) -> Result<i32, DbErr> {
+pub async fn get_by_name(
+    db: &DatabaseConnection,
+    name: String,
+) -> Result<instruments::Model, DbErr> {
+    let instrument = instruments::Entity::find()
+        .filter(instruments::Column::Name.eq(&name))
+        .one(db)
+        .await?;
+    match instrument {
+        Some(instrument) => Ok(instrument),
+        None => Err(DbErr::RecordNotFound(format!(
+            "Instrument with name {} not found",
+            name
+        ))),
+    }
+}
+
+pub async fn add(
+    db: &DatabaseConnection,
+    name: String,
+    category: Option<String>,
+    is_default: bool,
+) -> Result<i32, DbErr> {
+    let instrument = instruments::Entity::find()
+        .filter(instruments::Column::Name.eq(&name))
+        .into_json()
+        .one(db)
+        .await?;
+
+    if instrument.is_some() {
+        return Err(DbErr::Query(sea_orm::RuntimeErr::Internal(String::from(
+            format!("Instrument with name {} already exists", name),
+        ))));
+    }
+
     let active_instrument = instruments::ActiveModel {
         name: ActiveValue::Set(name),
+        category: ActiveValue::Set(category),
         is_default: ActiveValue::Set(is_default),
         ..Default::default()
     };
@@ -38,7 +75,12 @@ pub async fn add(db: &DatabaseConnection, name: String, is_default: bool) -> Res
     Ok(instrument.last_insert_id)
 }
 
-pub async fn update(db: &DatabaseConnection, id: i32, name: String) -> Result<(), DbErr> {
+pub async fn update(
+    db: &DatabaseConnection,
+    id: i32,
+    name: String,
+    category: Option<String>,
+) -> Result<(), DbErr> {
     let instrument = instruments::Entity::find_by_id(id).one(db).await?;
     match instrument {
         Some(instrument) => {
@@ -53,7 +95,8 @@ pub async fn update(db: &DatabaseConnection, id: i32, name: String) -> Result<()
             let mut instrument: instruments::ActiveModel = instrument.into();
 
             instrument.name = ActiveValue::Set(name);
-            instrument.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            instrument.category = ActiveValue::Set(category);
+            instrument.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
 
             let result = instruments::Entity::update(instrument).exec(db).await;
 
@@ -93,9 +136,11 @@ mod tests {
     #[tokio::test]
     async fn test_add() {
         let db = init().await.unwrap();
-        let add_result = add(&db, String::from("Bassoon"), false).await;
-        assert!(add_result.is_ok());
-        let instrument_id = add_result.unwrap();
+        let add_result1 = add(&db, String::from("Bassoon"), None, false).await;
+        assert!(add_result1.is_ok());
+        let add_result2 = add(&db, String::from("Bassoon"), None, false).await;
+        assert!(add_result2.is_err());
+        let instrument_id = add_result1.unwrap();
         let get_result = get_by_id(&db, instrument_id).await;
         assert!(get_result.is_ok());
         let instrument = get_result.unwrap();
@@ -111,12 +156,12 @@ mod tests {
     #[tokio::test]
     async fn test_update_default_instrument() {
         let db = init().await.unwrap();
-        let result = add(&db, String::from("Bassoon"), true).await;
+        let result = add(&db, String::from("Bassoon"), None, true).await;
         assert!(result.is_ok());
 
         let id = result.unwrap();
 
-        let result = update(&db, id, String::from("Contrabassoon")).await;
+        let result = update(&db, id, String::from("Contrabassoon"), None).await;
         assert!(result.is_err());
 
         let close_result = db.close().await;
@@ -126,12 +171,12 @@ mod tests {
     #[tokio::test]
     async fn test_update_nondefault_instrument() {
         let db = init().await.unwrap();
-        let result = add(&db, String::from("Bassoon"), false).await;
+        let result = add(&db, String::from("Bassoon"), None, false).await;
         assert!(result.is_ok());
 
         let id = result.unwrap();
 
-        let result = update(&db, id, String::from("Contrabassoon")).await;
+        let result = update(&db, id, String::from("Contrabassoon"), None).await;
         assert!(result.is_ok());
 
         let close_result = db.close().await;
@@ -141,7 +186,7 @@ mod tests {
     #[tokio::test]
     async fn test_update_nonexistent_record() {
         let db = init().await.unwrap();
-        let result = update(&db, 1, String::from("Contrabassoon")).await;
+        let result = update(&db, 1, String::from("Contrabassoon"), None).await;
         assert!(result.is_err());
 
         let close_result = db.close().await;

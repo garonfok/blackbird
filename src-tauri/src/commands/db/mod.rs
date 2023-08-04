@@ -1,3 +1,4 @@
+pub mod ensemble_parts;
 pub mod ensembles;
 pub mod instruments;
 pub mod musicians;

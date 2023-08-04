@@ -6,6 +6,7 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        let current_timestamp = chrono::offset::Local::now();
         manager
             .create_table(
                 Table::create()
@@ -19,6 +20,7 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Instruments::Name).string().not_null())
+                    .col(ColumnDef::new(Instruments::Category).string())
                     .col(
                         ColumnDef::new(Instruments::IsDefault)
                             .boolean()
@@ -29,13 +31,13 @@ impl MigrationTrait for Migration {
                         ColumnDef::new(Instruments::CreatedAt)
                             .date_time()
                             .not_null()
-                            .default(chrono::Utc::now().naive_utc().to_string()),
+                            .default(current_timestamp.to_string()),
                     )
                     .col(
                         ColumnDef::new(Instruments::UpdatedAt)
                             .date_time()
                             .not_null()
-                            .default(chrono::Utc::now().naive_utc().to_string()),
+                            .default(current_timestamp.to_string()),
                     )
                     .to_owned(),
             )
@@ -55,6 +57,7 @@ pub enum Instruments {
     Table,
     Id,
     Name,
+    Category,
     IsDefault,
     CreatedAt,
     UpdatedAt,
