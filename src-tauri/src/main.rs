@@ -2,9 +2,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use futures::executor::block_on;
-
+use tauri_plugin_autostart::MacosLauncher;
 use state::AppState;
-
 use tauri::{Manager, State};
 
 mod commands;
@@ -49,8 +48,10 @@ async fn main() {
             app.emit_all("single-instance", Payload { args: argv, cwd })
                 .unwrap();
         }))
-        // .plugin(tauri_plugin_os::init())
-        // .plugin(tauri_plugin_window::init())
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            Some(vec!["--flag1", "--flag2"]),
+        ))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

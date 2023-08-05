@@ -1,7 +1,7 @@
 use tauri::{generate_handler, Invoke};
 
 mod db;
-mod files;
+mod fs;
 mod settings;
 
 pub fn handler() -> impl Fn(Invoke) {
@@ -55,11 +55,9 @@ pub fn handler() -> impl Fn(Invoke) {
         db::tags::tags_add,
         db::tags::tags_update,
         db::tags::tags_delete,
-        files::open_dir,
-        files::delete_dir,
+        fs::get_database_exists,
+        fs::get_dir_empty,
         settings::get_working_directory,
-        settings::get_open_on_startup,
         settings::set_working_directory,
-        settings::set_open_on_startup,
     ]
 }

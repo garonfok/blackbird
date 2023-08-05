@@ -12,17 +12,21 @@
   },
   "tauri": {
     "allowlist": {
+      "dialog": {
+        "all": true
+      },
       "all": false,
       "shell": {
         "all": false,
         "open": true
       },
       "fs": {
-        "all": true,
-        "scope": [
-          "$APPDATA/*",
-          "$HOME/*"
-        ]
+        "all": true
+      },
+      "process": {
+        "all": false,
+        "exit": false,
+        "relaunch": true
       }
     },
     "bundle": {
