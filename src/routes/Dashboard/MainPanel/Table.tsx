@@ -223,7 +223,7 @@ export function Table() {
     setIsSortDropdownOpen(false);
   }
 
-  function handleClickClearFilters() {
+  function handleClickResetFilters() {
     setSorting([{ id: "updatedAt", desc: true }]);
   }
 
@@ -273,10 +273,10 @@ export function Table() {
         </div>
         <button
           className="flex gap-[8px] hover:text-fg.default"
-          onClick={handleClickClearFilters}
+          onClick={handleClickResetFilters}
         >
           <Icon path={mdiEraser} size={1} className="shrink-0" />
-          <span>Clear filters</span>
+          <span>Reset filters</span>
         </button>
       </div>
       <table ref={tableRef} className="flex flex-col gap-[14px]">
