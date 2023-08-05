@@ -12,7 +12,6 @@ import {
   Column,
 } from "@tanstack/react-table";
 import { PieceDetailed } from "#/global/types";
-import classNames from "classnames";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -31,19 +30,24 @@ export function Table() {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
   const sortDropdownRef = useRef<HTMLOListElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
     table.getColumn("composers")?.toggleVisibility(false);
 
-    window.addEventListener("resize", () => {
-      if (window.innerWidth < 900) {
-        table.getColumn("yearPublished")?.toggleVisibility(false);
-        table.getColumn("updatedAt")?.toggleVisibility(false);
-      } else {
-        table.getColumn("yearPublished")?.toggleVisibility(true);
-        table.getColumn("updatedAt")?.toggleVisibility(true);
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width < 512) {
+          table.getColumn("yearPublished")?.toggleVisibility(false);
+          table.getColumn("updatedAt")?.toggleVisibility(false);
+        } else {
+          table.getColumn("yearPublished")?.toggleVisibility(true);
+          table.getColumn("updatedAt")?.toggleVisibility(true);
+        }
       }
     });
+
+    resizeObserver.observe(tableRef.current!);
 
     window.addEventListener("mousedown", (e) => {
       if (
@@ -55,8 +59,8 @@ export function Table() {
     });
 
     return () => {
-      window.removeEventListener("resize", () => {});
       window.removeEventListener("mousedown", () => {});
+      resizeObserver.disconnect();
     };
   }, []);
 
@@ -225,13 +229,12 @@ export function Table() {
 
   return (
     <div className="p-[14px] flex flex-col gap-[14px]">
-      <div className="flex gap-[14px] items-center text-fg.muted">
+      <div className="flex gap-[14px] items-center text-fg.muted flex-wrap">
         <div className="relative">
           <button
             className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[4px]"
             onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
           >
-            <span>Sort by: </span>
             <span className="text-fg.default flex items-center">
               {sortOptions.find((option) => option.id === sorting[0].id)?.label}
               {sorting[0].desc ? (
@@ -272,22 +275,23 @@ export function Table() {
           className="flex gap-[8px] hover:text-fg.default"
           onClick={handleClickClearFilters}
         >
-          <Icon path={mdiEraser} size={1} className="" />
+          <Icon path={mdiEraser} size={1} className="shrink-0" />
           <span>Clear filters</span>
         </button>
       </div>
-      <table className="flex flex-col gap-[14px]">
+      <table ref={tableRef} className="flex flex-col gap-[14px]">
         <thead className="pb-[14px] border-b-fg.subtle border-b">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="flex">
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={classNames(
-                    "text-fg.muted font-medium hover:text-fg.default",
-                    header.id === "main" && "flex-grow"
-                  )}
-                  style={{ width: header.getSize() }}
+                  className="text-fg.muted font-medium hover:text-fg.default"
+                  style={
+                    header.id === "main"
+                      ? { flexGrow: 1 }
+                      : { width: header.getSize() }
+                  }
                 >
                   <button
                     onClick={() => handleClickSortColumn(header.column)}
