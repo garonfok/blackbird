@@ -1,4 +1,3 @@
-
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
@@ -6,6 +5,7 @@ export default {
     colors: {
       transparent: "transparent",
       current: "currentColor",
+      black: "#000000",
       "fg.default": "#FFFFFF",
       "fg.muted": "#BFBFC3",
       "fg.subtle": "#535158",

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Dashboard } from "./routes/Dashboard";
 import "./styles.css";
+import { Settings } from "./routes/Settings";
 
 const router = createBrowserRouter([
   {
@@ -11,7 +12,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/settings",
-    element: <div>Settings</div>,
+    element: <Settings />,
   },
   {
     path: "/edit-wizard",

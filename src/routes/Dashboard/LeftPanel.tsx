@@ -11,6 +11,7 @@ import {
 } from "@mdi/js";
 import classNames from "classnames";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export function LeftPanel() {
   const [isTagsOpen, setTagsOpen] = useState(false);
@@ -100,10 +101,10 @@ export function LeftPanel() {
           )}
         </div>
         <hr className="text-fg.subtle" />
-        <button className="flex gap-[14px] items-center text-fg.muted hover:text-fg.default">
+        <Link to="/settings" className="flex gap-[14px] items-center text-fg.muted hover:text-fg.default">
           <Icon path={mdiCog} size={1} />
           <span>Settings</span>
-        </button>
+        </Link>
       </div>
     </ResizableLeft>
   );
