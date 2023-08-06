@@ -1,14 +1,14 @@
 import { ResizableLeft } from "../../components/ResizeableLeft";
 
-import Icon from "@mdi/react";
 import {
+  mdiBookOpenOutline,
   mdiBookshelf,
-  mdiTag,
   mdiChevronDown,
   mdiCog,
   mdiPlus,
-  mdiBookOpenOutline,
+  mdiTag,
 } from "@mdi/js";
+import Icon from "@mdi/react";
 import classNames from "classnames";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -22,9 +22,12 @@ export function LeftPanel() {
   return (
     <ResizableLeft width={256} minWidth={160} maxWidth={256}>
       <div className="flex flex-col h-full gap-[14px]">
-        <button className="w-full bg-brand.default py-[8px] rounded-[4px]">
+        <Link
+          to="/edit-wizard"
+          className="w-full bg-brand.default py-[8px] rounded-[4px] flex justify-center"
+        >
           New piece
-        </button>
+        </Link>
         <hr className="text-fg.subtle" />
         <ol className="flex flex-col gap-[14px] overflow-y-auto max-h-[50%] scrollbar-default">
           <li>
@@ -39,7 +42,7 @@ export function LeftPanel() {
                 <Icon
                   path={mdiBookOpenOutline}
                   size={1}
-                  className="flex-shrink-0"
+                  className="shrink-0"
                 />
                 <span className="truncate">
                   {Math.random().toString(36).substring(2, 15) +
@@ -81,7 +84,7 @@ export function LeftPanel() {
                   <button className="flex items-center gap-[14px] w-full text-fg.muted hover:text-fg.default">
                     <Icon
                       path={mdiTag}
-                      className="flex-shrink-0"
+                      className="shrink-0"
                       size={1}
                       style={{
                         color: `#${Math.floor(
@@ -101,7 +104,10 @@ export function LeftPanel() {
           )}
         </div>
         <hr className="text-fg.subtle" />
-        <Link to="/settings" className="flex gap-[14px] items-center text-fg.muted hover:text-fg.default">
+        <Link
+          to="/settings"
+          className="flex gap-[14px] items-center text-fg.muted hover:text-fg.default"
+        >
           <Icon path={mdiCog} size={1} />
           <span>Settings</span>
         </Link>

@@ -13,7 +13,7 @@ export function Navbar() {
             path={mdiMagnify}
             size={1}
             className={classNames(
-              "flex-shrink-0",
+              "shrink-0",
               isSearchFocused && "text-fg.default"
             )}
           />

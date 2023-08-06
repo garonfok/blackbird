@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { SettingsEntry } from "./components/SettingsEntry";
+import { disable, enable, isEnabled } from "tauri-plugin-autostart-api";
 import { Toggle } from "../../components/Toggle";
-import { enable, isEnabled, disable } from "tauri-plugin-autostart-api";
+import { SettingsEntry } from "./components/SettingsEntry";
 
 export function OpenOnStartup() {
   const [doesAppOpenOnStartup, setDoesAppOpenOnStartup] =

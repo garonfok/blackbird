@@ -1,7 +1,7 @@
+import { mdiClose } from "@mdi/js";
+import Icon from "@mdi/react";
 import { useEffect, useState } from "react";
 import { ResizableRight } from "../../components/ResizeableRight";
-import Icon from "@mdi/react";
-import { mdiClose } from "@mdi/js";
 
 export function RightPanel() {
   const [maxWidth, setMaxWidth] = useState<number>(384);

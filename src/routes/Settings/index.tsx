@@ -1,8 +1,8 @@
 import { mdiHomeOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link } from "react-router-dom";
-import { WorkingDirectory } from "./WorkingDirectory";
 import { OpenOnStartup } from "./OpenOnStartup";
+import { WorkingDirectory } from "./WorkingDirectory";
 export function Settings() {
   return (
     <>

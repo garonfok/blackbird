@@ -1,17 +1,17 @@
-import { Icon } from "@mdi/react";
+import { PieceDetailed } from "#/app/types";
 import { mdiChevronDown, mdiChevronUp, mdiEraser } from "@mdi/js";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Icon } from "@mdi/react";
 import {
+  Column,
   ColumnDef,
+  SortingState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
-  VisibilityState,
-  useReactTable,
-  SortingState,
   getSortedRowModel,
-  Column,
+  useReactTable,
 } from "@tanstack/react-table";
-import { PieceDetailed } from "#/global/types";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const sortOptions = [
   { id: "id", label: "#" },

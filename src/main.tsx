@@ -1,9 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import store from "./app/store";
 import { Dashboard } from "./routes/Dashboard";
-import "./styles.css";
+import { EditWizard } from "./routes/EditWizard";
 import { Settings } from "./routes/Settings";
+import "./styles.css";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +19,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/edit-wizard",
-    element: <div>Edit Wizard</div>,
+    element: <EditWizard />,
   },
   {
     path: "/edit-wizard/:pieceId",
@@ -26,8 +29,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <div className="bg-bg.inset text-fg.default w-screen h-screen select-none cursor-default">
-      <RouterProvider router={router} />
-    </div>
+    <Provider store={store}>
+      <div className="bg-bg.inset text-fg.default w-screen h-screen select-none cursor-default">
+        <RouterProvider router={router} />
+      </div>
+    </Provider>
   </React.StrictMode>
 );
