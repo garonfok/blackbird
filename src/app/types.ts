@@ -32,8 +32,8 @@ export interface Musician {
   id: number;
   first_name: string;
   last_name?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 export interface Part {
   id: number;
@@ -47,6 +47,11 @@ export interface Tag {
   id: number;
   name: string;
   color: string;
-  createdAt: Date;
-  updatedAt: Date;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ByteFile {
+  name: string;
+  bytearray: Uint8Array;
 }

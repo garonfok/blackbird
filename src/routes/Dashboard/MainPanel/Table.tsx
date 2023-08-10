@@ -1,4 +1,4 @@
-import { PieceDetailed } from "#/app/types";
+import { PieceDetailed } from "../../../app/types";
 import { mdiChevronDown, mdiChevronUp, mdiEraser } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import {

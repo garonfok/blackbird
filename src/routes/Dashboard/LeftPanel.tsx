@@ -10,13 +10,24 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import classNames from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Tag } from "../../app/types";
+import { invoke } from "@tauri-apps/api";
 
 export function LeftPanel() {
   const [isTagsOpen, setTagsOpen] = useState(false);
+  const [tags, setTags] = useState<Tag[]>([]);
 
-  const tagCount = 25;
+  useEffect(() => {
+    fetchTags();
+  }, []);
+
+  async function fetchTags() {
+    const tags = (await invoke("tags_get_all")) as Tag[];
+    setTags(tags);
+  }
+
   const setlistCount = 15;
 
   return (
@@ -39,11 +50,7 @@ export function LeftPanel() {
           {Array.from({ length: setlistCount }).map((_, i) => (
             <li key={i}>
               <button className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default">
-                <Icon
-                  path={mdiBookOpenOutline}
-                  size={1}
-                  className="shrink-0"
-                />
+                <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
                 <span className="truncate">
                   {Math.random().toString(36).substring(2, 15) +
                     Math.random().toString(36).substring(2, 15)}
@@ -79,24 +86,16 @@ export function LeftPanel() {
           </span>
           {isTagsOpen && (
             <ul className="ml-[14px] overflow-y-auto flex flex-col gap-[8px] scrollbar-default">
-              {Array.from({ length: tagCount }).map((_, i) => (
-                <li key={i}>
+              {tags.map((tag) => (
+                <li key={tag.id}>
                   <button className="flex items-center gap-[14px] w-full text-fg.muted hover:text-fg.default">
                     <Icon
                       path={mdiTag}
                       className="shrink-0"
                       size={1}
-                      style={{
-                        color: `#${Math.floor(
-                          Math.random() * 16777215
-                        ).toString(16)}`,
-                      }}
+                      color={tag.color}
                     />
-                    <span className="truncate">
-                      {/* Generate a random string */}
-                      {Math.random().toString(36).substring(2, 15) +
-                        Math.random().toString(36).substring(2, 15)}
-                    </span>
+                    <span className="truncate">{tag.name}</span>
                   </button>
                 </li>
               ))}

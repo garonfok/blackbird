@@ -1,29 +1,26 @@
+import { ByteFile } from "../../app/types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-const initialState: File[] = [];
+const initialState: ByteFile[] = [];
 
 export const filesSlice = createSlice({
   name: "files",
   initialState: initialState,
   reducers: {
-    pushFiles: (state, action: PayloadAction<{ files: File[] }>) => {
+    pushFiles: (state, action: PayloadAction<{ files: ByteFile[] }>) => {
       const { files } = action.payload;
 
-      for (const file of files) {
-        if (
-          !state.find((f) => f.name === file.name) &&
-          file.type === "application/pdf"
-        ) {
-          state.push(file);
-        }
-      }
+      const names = state.map((file) => file.name);
+      const dedupedFiles = files.filter((file) => !names.includes(file.name));
+      state.push(...dedupedFiles);
     },
     deleteFile: (state, action: PayloadAction<{ index: number }>) => {
       const { index } = action.payload;
       state.splice(index, 1);
     },
-    setFiles: (_, action: PayloadAction<{ files: File[] }>) => {
+    setFiles: (_, action: PayloadAction<{ files: ByteFile[] }>) => {
       const { files } = action.payload;
+
       return files;
     },
     clearFiles: () => {

@@ -1,69 +1,88 @@
-import { mdiUpload } from "@mdi/js";
+import { mdiLoading, mdiUpload } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useEffect, useRef } from "react";
-import { useAppDispatch } from "../../../app/hooks";
+import { open } from "@tauri-apps/api/dialog";
+import { listen, Event } from "@tauri-apps/api/event";
+import { useCallback, useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { pushFiles } from "../filesSlice";
+import { readBinaryFile } from "@tauri-apps/api/fs";
+import { ByteFile } from "../../../app/types";
+import { useLocation } from "react-router-dom";
 
 export function DragUpload(props: { isPanelSmall: boolean }) {
   const { isPanelSmall } = props;
+  const [isUploading, setIsUploading] = useState(false);
+
+  const { state } = useLocation();
 
   const dispatch = useAppDispatch();
+  const files = useAppSelector((state) => state.files);
+
+  const handleDrop = useCallback(async (event: Event<string[]>) => {
+    const { payload: files } = event;
+    await uploadFiles(files);
+  }, []);
 
   useEffect(() => {
-    window.addEventListener("dragover", (event) => {
-      event.preventDefault();
-    });
+    const unlisten = listen("tauri://file-drop", handleDrop);
 
-    window.addEventListener("drop", (event) => {
-      event.preventDefault();
-      if (!event.dataTransfer) return;
+    if (!state) return;
+    const { files: dashboardDraggedFiles } = state;
+    uploadFiles(dashboardDraggedFiles);
 
-      const { files: newFiles } = event.dataTransfer;
-      uploadFiles(newFiles);
-    });
     return () => {
-      window.removeEventListener("dragover", () => {});
-      window.removeEventListener("drop", () => {});
+      unlisten;
     };
   }, []);
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  async function uploadFiles(selectedFiles: string[]) {
+    setIsUploading(true);
 
-  function uploadFiles(uploadedFiles: FileList) {
-    if (!uploadedFiles) return;
+    const uploadPromises = selectedFiles.map(async (selectedFile) => {
+      if (files.some((file) => file.name === selectedFile)) return;
+      if (!selectedFile.endsWith(".pdf")) return;
 
-    dispatch(pushFiles({ files: Array.from(uploadedFiles) }));
+      const buffer = await readBinaryFile(selectedFile);
+      const data: ByteFile = {
+        name: selectedFile,
+        bytearray: buffer,
+      };
+
+      dispatch(pushFiles({ files: [data] }));
+    });
+    await Promise.all(uploadPromises);
+    setIsUploading(false);
   }
 
-  function handleClickUploadFiles() {
-    inputRef.current?.click();
-  }
+  const handleClickUploadFiles = useCallback(async () => {
+    const selectedFiles = await open({
+      multiple: true,
+      filters: [
+        {
+          name: "PDF",
+          extensions: ["pdf"],
+        },
+      ],
+    });
 
-  function handleChangeUploadFiles(event: React.ChangeEvent<HTMLInputElement>) {
-    const { files: uploadedFiles } = event.target;
-    if (!uploadedFiles) return;
-    uploadFiles(uploadedFiles);
-  }
+    if (!selectedFiles) return;
+    await uploadFiles(selectedFiles as string[]);
+  }, []);
 
-  return (
-    <>
-      <input
-        type="file"
-        multiple
-        accept=".pdf"
-        onChange={handleChangeUploadFiles}
-        className="hidden"
-        ref={inputRef}
-      />
-      <button
-        onClick={handleClickUploadFiles}
-        className="w-full items-center border-dashed inline-flex border border-brand.default py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted hover:text-fg.default transition-all"
-      >
-        <Icon path={mdiUpload} size={1.5} className="shrink-0" />
-        <span>
-          {!isPanelSmall ? "Drag and drop PDFs, or browse" : "Upload PDFs"}
-        </span>
-      </button>
-    </>
+  return isUploading ? (
+    <div className="w-full items-center inline-flex py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted">
+      <Icon path={mdiLoading} size={1.5} className="shrink-0 animate-spin" />
+      <span>{!isPanelSmall ? "Uploading files" : "Uploading..."}</span>
+    </div>
+  ) : (
+    <button
+      onClick={handleClickUploadFiles}
+      className="w-full items-center border-dashed inline-flex border border-brand.default py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted hover:text-fg.default transition-all"
+    >
+      <Icon path={mdiUpload} size={1.5} className="shrink-0" />
+      <span>
+        {!isPanelSmall ? "Drag and drop PDFs, or browse" : "Upload PDFs"}
+      </span>
+    </button>
   );
 }

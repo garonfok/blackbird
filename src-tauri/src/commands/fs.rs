@@ -2,28 +2,6 @@ use std::fs;
 use std::path::PathBuf;
 use tauri::command;
 
-// #[command]
-// pub fn open_dir(string_path: String) -> Result<(), String> {
-//     let path = PathBuf::from(string_path);
-
-//     Command::new(if utils::is_macos() {
-//         "open"
-//     } else {
-//         "explorer"
-//     })
-//     .arg(&path)
-//     .spawn()
-//     .map_err(|e| e.to_string())?;
-
-//     Ok(())
-// }
-
-// #[command]
-// pub fn delete_dir(string_path: String) -> Result<(), String> {
-//     let path = PathBuf::from(string_path);
-//     fs::remove_dir_all(&path).map_err(|e| e.to_string())
-// }
-
 #[command]
 pub fn get_database_exists(path: String) -> Result<bool, String> {
     // check if database.db exists in dirPath

@@ -26,23 +26,6 @@ pub async fn get_by_id(db: &DatabaseConnection, id: i32) -> Result<Value, DbErr>
     }
 }
 
-pub async fn get_by_name(
-    db: &DatabaseConnection,
-    name: String,
-) -> Result<instruments::Model, DbErr> {
-    let instrument = instruments::Entity::find()
-        .filter(instruments::Column::Name.eq(&name))
-        .one(db)
-        .await?;
-    match instrument {
-        Some(instrument) => Ok(instrument),
-        None => Err(DbErr::RecordNotFound(format!(
-            "Instrument with name {} not found",
-            name
-        ))),
-    }
-}
-
 pub async fn add(
     db: &DatabaseConnection,
     name: String,

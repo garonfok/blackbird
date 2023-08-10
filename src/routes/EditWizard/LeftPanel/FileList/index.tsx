@@ -1,39 +1,64 @@
-import { useState } from "react";
 import { Card } from "./Card";
-import { useAppSelector } from "../../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import {
+  DragDropContext,
+  Draggable,
+  DropResult,
+  Droppable,
+} from "@hello-pangea/dnd";
+import { setFiles } from "../../filesSlice";
 
 export function FileList() {
   const files = useAppSelector((state) => state.files);
-  const [hovered, setHovered] = useState<Array<boolean>>(
-    Array(files.length).fill(false)
-  );
 
-  function handleMouseEnter(index: number) {
-    const newHovered = [...hovered];
-    newHovered[index] = true;
-    setHovered(newHovered);
-  }
+  const dispatch = useAppDispatch();
 
-  function handleMouseLeave(index: number) {
-    const newHovered = [...hovered];
-    newHovered[index] = false;
-    setHovered(newHovered);
+  function handleDragEnd(result: DropResult) {
+    const { destination, source } = result;
+
+    if (!destination) return;
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+
+    const cloned = [...files];
+    const file = cloned[source.index];
+    cloned.splice(source.index, 1);
+    cloned.splice(destination.index, 0, file);
+
+    dispatch(setFiles({ files: cloned }));
   }
 
   return (
-    <ol className="flex flex-col gap-[8px] flex-grow">
-      {files.map((file, index) => (
-        <li key={file.name}>
-          <Card
-            file={file}
-            onMove={() => {}}
-            index={index}
-            onMouseEnter={() => handleMouseEnter(index)}
-            onMouseLeave={() => handleMouseLeave(index)}
-            hovered={hovered[index]}
-          />
-        </li>
-      ))}
-    </ol>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Droppable droppableId={"dropppable"} direction="vertical">
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="flex flex-col flex-grow overflow-y-auto scrollbar-default"
+          >
+            {files.map((file, index) => (
+              <Draggable key={file.name} draggableId={file.name} index={index}>
+                {(provided) => (
+                  <div
+                    className="mb-[8px] last:mb-0"
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <Card file={file.name} index={index} />
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 }

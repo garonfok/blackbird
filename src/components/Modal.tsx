@@ -3,7 +3,7 @@ import { Fragment, ReactNode } from "react";
 
 export function Modal(props: {
   isOpen: boolean;
-  onConfirm: () => void;
+  onConfirm: (...args: any[]) => void;
   closeModal: () => void;
   title?: string;
   confirmText?: string;
@@ -57,7 +57,7 @@ export function Modal(props: {
                 <div className="flex gap-[14px]">
                   <button
                     type="button"
-                    className="text-fg.muted border px-[14px] py-[8px] rounded-[4px] hover:bg-fg.default hover:text-bg.inset transition-all"
+                    className="text-fg.muted border px-[14px] py-[8px] rounded-[4px] hover:bg-fg.default hover:text-bg.inset transition-all outline-none"
                     onClick={onConfirm}
                   >
                     {confirmText || "Okay"}

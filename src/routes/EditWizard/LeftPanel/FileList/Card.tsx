@@ -1,35 +1,27 @@
-import { mdiClose, mdiFileOutline, mdiFileSearchOutline } from "@mdi/js";
+import { mdiClose, mdiFileOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useAppDispatch } from "../../../../app/hooks";
 import { deleteFile } from "../../filesSlice";
 
-export function Card(props: {
-  file: File;
-  onMove: (dragIndex: number, hoverIndex: number) => void;
-  index: number;
-  onMouseEnter: (index: number) => void;
-  onMouseLeave: (index: number) => void;
-  hovered: boolean;
-}) {
-  const { file, index, onMouseEnter, onMouseLeave, hovered } = props;
+export function Card(props: { file: string; index: number }) {
+  const { file, index } = props;
 
   const dispatch = useAppDispatch();
-
-  function handleMouseEnter() {
-    onMouseEnter(index);
+  function handleClickDelete() {
+    dispatch(deleteFile({ index }));
   }
 
-  function handleMouseLeave() {
-    onMouseLeave(index);
+  function getFileName(file: string) {
+    return file.split("/").pop();
   }
 
   return (
-    <span className="border border-fg.subtle rounded-[4px] px-[14px] py-[8px] flex items-center gap-[14px] w-full">
-      <button onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <Icon path={hovered ? mdiFileSearchOutline : mdiFileOutline} size={1} />
-      </button>
-      <span className="truncate w-full">{file.name}</span>
-      <button onClick={() => dispatch(deleteFile({ index }))}>
+    <span className="border border-fg.subtle bg-bg.default rounded-[4px] px-[14px] py-[8px] flex items-center gap-[14px] w-full">
+      <span className="flex gap-[14px] truncate w-full">
+        <Icon path={mdiFileOutline} size={1} className="shrink-0" />
+        <span className="truncate text-left w-full">{getFileName(file)}</span>
+      </span>
+      <button onClick={handleClickDelete}>
         <Icon
           path={mdiClose}
           size={1}

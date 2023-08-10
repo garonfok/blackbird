@@ -15,6 +15,9 @@
       "dialog": {
         "all": true
       },
+      "os": {
+        "all": true
+      },
       "all": false,
       "shell": {
         "all": false,

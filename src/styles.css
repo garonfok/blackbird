@@ -6,13 +6,21 @@
   .scrollbar-default {
     @apply scrollbar-thin scrollbar-thumb-fg.subtle;
   }
-
   .shadow-panel {
     @apply shadow-[0px_13px_27px_-5px_#53515840,0px_4px_8px_0px_#0000004d];
   }
-
   .shadow-float {
     @apply shadow-[0px_2px_5px_-1px_#53515840,0px_4px_4px_0px_#0000004d];
+  }
+  .input-text {
+    @apply px-[14px] py-[8px] bg-bg.inset rounded-[4px] placeholder-fg.subtle outline-none focus:ring-inset focus:ring-1 ring-fg.default transition-all;
+  }
+  .edit-wizard-panel {
+    @apply flex flex-col gap-[14px] h-full overflow-y-auto scrollbar-default flex-grow;
+  }
+
+  .dropdown-item {
+    @apply px-[14px] py-[8px] bg-bg.inset hover:bg-bg.default transition-all;
   }
 }
 

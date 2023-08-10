@@ -21,13 +21,20 @@ export function LeftPanel() {
         setPanelSmall(entry.contentRect.width < 256);
       }
     });
-
+    document.addEventListener("keydown", handleKeyDown);
     resizeObserver.observe(panelRef.current!);
 
     return () => {
       resizeObserver.disconnect();
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === "Escape") {
+      setConfirmingCancel(true);
+    }
+  }
 
   function handleConfirmCancel() {
     setConfirmingCancel(false);
@@ -47,7 +54,7 @@ export function LeftPanel() {
           <FileList />
           <hr className="text-fg.subtle" />
           <button
-            className="text-left text-fg.muted hover:text-fg.default"
+            className="text-left text-fg.muted hover:text-fg.default outline-none transition-all"
             onClick={() => setConfirmingCancel(true)}
           >
             Cancel

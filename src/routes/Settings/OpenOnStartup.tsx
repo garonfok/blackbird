@@ -9,7 +9,6 @@ export function OpenOnStartup() {
   useEffect(() => {
     async function initSetting() {
       const isStartupEnabled = await isEnabled();
-      console.log(isStartupEnabled);
       setDoesAppOpenOnStartup(isStartupEnabled);
     }
     initSetting();
