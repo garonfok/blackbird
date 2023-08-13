@@ -1,4 +1,3 @@
-import { PieceDetailed } from "../../../app/types";
 import { mdiChevronDown, mdiChevronUp, mdiEraser } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import {
@@ -12,6 +11,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { PieceDetailed } from "../../../app/types";
 
 const sortOptions = [
   { id: "id", label: "#" },

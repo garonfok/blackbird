@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
+import { PropsWithChildren } from "react";
 
-export function SettingsEntry(props: {
-  name: string;
-  description: string;
-  children?: ReactNode;
-}) {
+export function SettingsEntry(
+  props: PropsWithChildren<{
+    name: string;
+    description: string;
+  }>
+) {
   const { name, description, children } = props;
   return (
     <div className="flex flex-col gap-[14px]">

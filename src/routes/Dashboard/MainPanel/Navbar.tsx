@@ -1,8 +1,8 @@
-import { isWindows } from "../../../app/utils";
 import { mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
+import { isWindows } from "../../../app/utils";
 
 export function Navbar() {
   const [isSearchFocused, setSearchFocused] = useState(false);

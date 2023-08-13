@@ -1,7 +1,7 @@
+import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
-import { useCallback, useState, Fragment } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { Tag } from "../app/types";
-import { Transition, Dialog } from "@headlessui/react";
 
 type Colors = {
   [key: string]: {

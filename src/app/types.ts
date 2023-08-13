@@ -42,6 +42,23 @@ export interface Part {
   createdAt: Date;
   updatedAt: Date;
   piece_id: number;
+  instruments: Instrument[];
+}
+
+export interface EditPart {
+  id: number;
+  show: boolean;
+  name: string;
+  instruments: Instrument[];
+}
+
+export interface Instrument {
+  id: number;
+  name: string;
+  category?: string;
+  is_default: boolean;
+  created_at: Date;
+  updated_at: Date;
 }
 export interface Tag {
   id: number;
@@ -49,6 +66,15 @@ export interface Tag {
   color: string;
   created_at: Date;
   updated_at: Date;
+}
+
+export interface Ensemble {
+  id: number;
+  name: string;
+  category: string;
+  created_at: String;
+  updated_at: String;
+  parts?: Part[];
 }
 
 export interface ByteFile {

@@ -16,7 +16,7 @@ pub fn instruments_get_all(app_handle: AppHandle) -> Result<Vec<serde_json::Valu
 }
 
 #[command]
-pub fn instruments_get_id(app_handle: AppHandle, id: i32) -> Result<serde_json::Value, String> {
+pub fn instruments_get_by_id(app_handle: AppHandle, id: i32) -> Result<serde_json::Value, String> {
     let result = app_handle.db(|db| block_on(instruments::get_by_id(db, id)));
     match result {
         Ok(instrument) => Ok(instrument),

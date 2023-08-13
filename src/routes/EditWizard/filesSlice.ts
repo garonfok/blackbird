@@ -1,5 +1,5 @@
-import { ByteFile } from "../../app/types";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { ByteFile } from "../../app/types";
 
 const initialState: ByteFile[] = [];
 

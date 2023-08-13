@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Modal } from "../../../components/Modal";
-import { ResizableLeft } from "../../../components/ResizeableLeft";
-import { DragUpload } from "./DragUpload";
-import { FileList } from "./FileList";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../../app/hooks";
+import { Modal } from "../../../components/Modal";
+import { ResizableLeft } from "../../../components/ResizeableLeft";
 import { clearFiles } from "../filesSlice";
+import { clearPiece } from "../pieceSlice";
+import { DragUpload } from "./DragUpload";
+import { FileList } from "./FileList";
 
 export function LeftPanel() {
   const [isPanelSmall, setPanelSmall] = useState(false);
@@ -39,6 +40,7 @@ export function LeftPanel() {
   function handleConfirmCancel() {
     setConfirmingCancel(false);
     resetEditor();
+    dispatch(clearPiece());
     navigate("/");
   }
 

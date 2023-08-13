@@ -30,6 +30,7 @@ pub async fn get_by_id(db: &DatabaseConnection, id: i32) -> Result<Value, DbErr>
             let part = serde_json::json!({
                 "id": part.id,
                 "name": part.name,
+                "path": part.path,
                 "created_at": part.created_at,
                 "updated_at": part.updated_at,
                 "instruments": instruments,
@@ -187,7 +188,8 @@ mod tests {
         assert!(add_part_result.is_ok());
 
         let add_instrument_result =
-            crate::services::instruments::add(&db, "Test Instrument".to_string(), None, false).await;
+            crate::services::instruments::add(&db, "Test Instrument".to_string(), None, false)
+                .await;
         assert!(add_instrument_result.is_ok());
 
         // add instrument to part

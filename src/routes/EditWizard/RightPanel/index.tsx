@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { ResizableRight } from "../../../components/ResizeableRight";
-import { useAppSelector } from "../../../app/hooks";
-import Icon from "@mdi/react";
 import { mdiTag } from "@mdi/js";
+import Icon from "@mdi/react";
+import { useEffect, useState } from "react";
+import { useAppSelector } from "../../../app/hooks";
+import { ResizableRight } from "../../../components/ResizeableRight";
 
 export function RightPanel() {
   const [maxWidth, setMaxWidth] = useState<number>(512);
@@ -48,7 +48,6 @@ export function RightPanel() {
           </div>
           <div>
             <div className="">
-              {/* Join all composers with commas */}
               <span className="flex flex-wrap">
                 {piece.composers
                   .map((composer) =>
@@ -56,6 +55,48 @@ export function RightPanel() {
                   )
                   .join(", ")}
               </span>
+              {piece.arrangers.length > 0 && (
+                <span className="flex flex-wrap text-fg.muted">
+                  Arr.{" "}
+                  {piece.arrangers
+                    .map((arranger) =>
+                      [arranger.first_name, arranger.last_name].join(" ")
+                    )
+                    .join(", ")}
+                </span>
+              )}
+              {piece.transcribers.length > 0 && (
+                <span className="flex flex-wrap text-fg.muted">
+                  Trans.{" "}
+                  {piece.transcribers
+                    .map((transcriber) =>
+                      [transcriber.first_name, transcriber.last_name].join(" ")
+                    )
+                    .join(", ")}
+                </span>
+              )}
+              {piece.orchestrators.length > 0 && (
+                <span className="flex flex-wrap text-fg.muted">
+                  Orch.{" "}
+                  {piece.orchestrators
+                    .map((orchestrator) =>
+                      [orchestrator.first_name, orchestrator.last_name].join(
+                        " "
+                      )
+                    )
+                    .join(", ")}
+                </span>
+              )}
+              {piece.lyricists.length > 0 && (
+                <span className="flex flex-wrap text-fg.muted">
+                  Lyr.{" "}
+                  {piece.lyricists
+                    .map((lyricist) =>
+                      [lyricist.first_name, lyricist.last_name].join(" ")
+                    )
+                    .join(", ")}
+                </span>
+              )}
             </div>
           </div>
         </div>

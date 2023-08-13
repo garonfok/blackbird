@@ -1,16 +1,15 @@
-import { Card } from "./Card";
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import {
   DragDropContext,
   Draggable,
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { setFiles } from "../../filesSlice";
+import { Card } from "./Card";
 
 export function FileList() {
   const files = useAppSelector((state) => state.files);
-
   const dispatch = useAppDispatch();
 
   function handleDragEnd(result: DropResult) {

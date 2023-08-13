@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
 import { StepState } from "../stepMachine";
 import { GeneralInformation } from "./GeneralInformation";
-import { useEffect, useState } from "react";
 import { Musicians } from "./Musicians";
+import { Parts } from "./Parts";
 
 export function Wizard(props: { stepState: StepState }) {
   const { stepState } = props;
@@ -9,7 +10,6 @@ export function Wizard(props: { stepState: StepState }) {
   const [content, setContent] = useState<JSX.Element>();
 
   useEffect(() => {
-    console.log("something happened");
     switch (stepState.value) {
       case "generalInfo":
         setTitle("General Information");
@@ -18,6 +18,10 @@ export function Wizard(props: { stepState: StepState }) {
       case "musicians":
         setTitle("Musicians");
         setContent(<Musicians />);
+        break;
+      case "parts":
+        setTitle("Parts");
+        setContent(<Parts />);
         break;
       default:
         setTitle("Error");

@@ -1,5 +1,3 @@
-import { ResizableLeft } from "../../components/ResizeableLeft";
-
 import {
   mdiBookOpenOutline,
   mdiBookshelf,
@@ -9,11 +7,12 @@ import {
   mdiTag,
 } from "@mdi/js";
 import Icon from "@mdi/react";
+import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Tag } from "../../app/types";
-import { invoke } from "@tauri-apps/api";
+import { ResizableLeft } from "../../components/ResizeableLeft";
 
 export function LeftPanel() {
   const [isTagsOpen, setTagsOpen] = useState(false);
@@ -29,6 +28,11 @@ export function LeftPanel() {
   }
 
   const setlistCount = 15;
+
+  function handleContextMenuTags(e: React.MouseEvent) {
+    e.preventDefault();
+    console.log("Hi");
+  }
 
   return (
     <ResizableLeft width={256} minWidth={160} maxWidth={256}>
@@ -60,7 +64,10 @@ export function LeftPanel() {
           ))}
         </ol>
         {/* <hr className="text-fg.subtle" /> */}
-        <div className="flex flex-col gap-[14px] h-0 flex-grow">
+        <div
+          onContextMenu={handleContextMenuTags}
+          className="flex flex-col gap-[14px] h-0 flex-grow"
+        >
           <span className="flex gap-[14px]">
             <button
               className="flex gap-[14px] items-center w-full"

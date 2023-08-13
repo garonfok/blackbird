@@ -1,7 +1,7 @@
+import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
-import { useCallback, useState, Fragment } from "react";
+import { Fragment, useCallback, useState } from "react";
 import { Musician } from "../app/types";
-import { Transition, Dialog } from "@headlessui/react";
 
 export function EditMusicianModal(props: {
   defaultMusician?: Musician;

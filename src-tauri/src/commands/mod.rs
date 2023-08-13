@@ -17,7 +17,7 @@ pub fn handler() -> impl Fn(Invoke) {
         db::ensembles::ensembles_update,
         db::ensembles::ensembles_delete,
         db::instruments::instruments_get_all,
-        db::instruments::instruments_get_id,
+        db::instruments::instruments_get_by_id,
         db::instruments::instruments_add,
         db::instruments::instruments_update,
         db::instruments::instruments_delete,

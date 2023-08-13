@@ -1,15 +1,16 @@
-import { Transition, Dialog } from "@headlessui/react";
-import { Fragment, ReactNode } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, PropsWithChildren } from "react";
 
-export function Modal(props: {
-  isOpen: boolean;
-  onConfirm: (...args: any[]) => void;
-  closeModal: () => void;
-  title?: string;
-  confirmText?: string;
-  cancelText?: string;
-  children: ReactNode;
-}) {
+export function Modal(
+  props: PropsWithChildren<{
+    isOpen: boolean;
+    onConfirm: (...args: any[]) => void;
+    closeModal: () => void;
+    title?: string;
+    confirmText?: string;
+    cancelText?: string;
+  }>
+) {
   const {
     isOpen,
     onConfirm,
@@ -21,7 +22,11 @@ export function Modal(props: {
   } = props;
   return (
     <Transition show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Dialog
+        as="div"
+        className="relative z-10 select-none"
+        onClose={closeModal}
+      >
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-150"
@@ -53,25 +58,29 @@ export function Modal(props: {
                   )}
                   <div className="text-fg.muted">{children}</div>
                 </div>
-                <hr className="text-fg.subtle" />
-                <div className="flex gap-[14px]">
-                  <button
-                    type="button"
-                    className="text-fg.muted border px-[14px] py-[8px] rounded-[4px] hover:bg-fg.default hover:text-bg.inset transition-all outline-none"
-                    onClick={onConfirm}
-                  >
-                    {confirmText || "Okay"}
-                  </button>
-                  {cancelText && (
-                    <button
-                      type="button"
-                      className="text-fg.muted hover:text-fg.default transition-all"
-                      onClick={closeModal}
-                    >
-                      {cancelText}
-                    </button>
-                  )}
-                </div>
+                {(confirmText || cancelText) && (
+                  <>
+                    <hr className="text-fg.subtle" />
+                    <div className="flex gap-[14px]">
+                      <button
+                        type="button"
+                        className="text-fg.muted border px-[14px] py-[8px] rounded-[4px] hover:bg-fg.default hover:text-bg.inset transition-all outline-none"
+                        onClick={onConfirm}
+                      >
+                        {confirmText}
+                      </button>
+                      {cancelText && (
+                        <button
+                          type="button"
+                          className="text-fg.muted hover:text-fg.default transition-all"
+                          onClick={closeModal}
+                        >
+                          {cancelText}
+                        </button>
+                      )}
+                    </div>
+                  </>
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>

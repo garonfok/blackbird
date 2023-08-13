@@ -1,5 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Musician, Tag } from "../../app/types";
+import { Musician, EditPart, Tag } from "../../app/types";
 import { invoke } from "@tauri-apps/api";
 
 interface EditPiece {
@@ -9,6 +9,11 @@ interface EditPiece {
   notes: string;
   tags: Tag[];
   composers: Musician[];
+  arrangers: Musician[];
+  transcribers: Musician[];
+  orchestrators: Musician[];
+  lyricists: Musician[];
+  parts: EditPart[];
 }
 
 const initialState: EditPiece = {
@@ -18,6 +23,11 @@ const initialState: EditPiece = {
   notes: "",
   tags: [],
   composers: [],
+  arrangers: [],
+  transcribers: [],
+  orchestrators: [],
+  lyricists: [],
+  parts: [],
 };
 
 const getPiece = createAsyncThunk("editPiece/getPiece", async (id: number) => {
@@ -50,6 +60,107 @@ export const pieceSlice = createSlice({
     setComposers: (state, action: PayloadAction<Musician[]>) => {
       state.composers = action.payload;
     },
+    setArrangers: (state, action: PayloadAction<Musician[]>) => {
+      state.arrangers = action.payload;
+    },
+    setTranscribers: (state, action: PayloadAction<Musician[]>) => {
+      state.transcribers = action.payload;
+    },
+    setOrchestrators: (state, action: PayloadAction<Musician[]>) => {
+      state.orchestrators = action.payload;
+    },
+    setLyricists: (state, action: PayloadAction<Musician[]>) => {
+      state.lyricists = action.payload;
+    },
+    setParts: (state, action: PayloadAction<EditPart[]>) => {
+      state.parts = action.payload;
+    },
+    pushPart: (state, action: PayloadAction<EditPart>) => {
+      state.parts.push(action.payload);
+    },
+    removePart: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        parts: state.parts.filter((_, index) => index !== action.payload),
+      };
+    },
+    updatePartName: (
+      state,
+      action: PayloadAction<{ index: number; name: string }>
+    ) => {
+      return {
+        ...state,
+        parts: state.parts.map((part, index) => {
+          if (index === action.payload.index) {
+            return { ...part, name: action.payload.name };
+          }
+          return part;
+        }),
+      };
+    },
+    setPartShow: (
+      state,
+      action: PayloadAction<{ index: number; show: boolean }>
+    ) => {
+      console.log("Showing ", state.parts[action.payload.index].name);
+      return {
+        ...state,
+        parts: state.parts.map((part, index) => {
+          if (index === action.payload.index) {
+            return { ...part, show: action.payload.show };
+          }
+          return part;
+        }),
+      };
+    },
+    formatPartNumbers: (state) => {
+      const partMap = new Map<string, number>();
+      state.parts.forEach((part) => {
+        const lastSpaceIndex = part.name.lastIndexOf(" ");
+        let partName = part.name.substring(0, lastSpaceIndex);
+        const partNumber = part.name.substring(lastSpaceIndex + 1);
+        if (lastSpaceIndex === -1 || isNaN(Number(partNumber))) {
+          partName = part.name;
+        }
+
+        if (partMap.has(partName)) {
+          partMap.set(partName, partMap.get(partName)! + 1);
+        } else {
+          partMap.set(partName, 1);
+        }
+      });
+
+      partMap.forEach((value, key) => {
+        if (value === 1) {
+          partMap.delete(key);
+        }
+      });
+
+      const newParts: EditPart[] = [];
+      for (let i = state.parts.length - 1; i >= 0; i--) {
+        const lastSpaceIndex = state.parts[i].name.lastIndexOf(" ");
+        let partName = state.parts[i].name.substring(0, lastSpaceIndex);
+        const partNumber = state.parts[i].name.substring(lastSpaceIndex + 1);
+        if (lastSpaceIndex === -1 || isNaN(Number(partNumber))) {
+          partName = state.parts[i].name;
+        }
+
+        if (partMap.has(partName)) {
+          const partNumber = partMap.get(partName)!;
+          newParts.unshift({
+            ...state.parts[i],
+            name: `${partName} ${partNumber}`,
+          });
+          partMap.set(partName, partNumber - 1);
+        } else {
+          newParts.unshift({ ...state.parts[i], name: partName });
+        }
+      }
+      return {
+        ...state,
+        parts: newParts,
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getPiece.fulfilled, (_, action: PayloadAction<any>) => {
@@ -62,6 +173,11 @@ export const pieceSlice = createSlice({
         notes: piece.notes,
         tags: piece.tags,
         composers: piece.composers,
+        arrangers: piece.arrangers,
+        transcribers: piece.transcribers,
+        orchestrators: piece.orchestrators,
+        lyricists: piece.lyricists,
+        parts: piece.parts,
       };
       return result;
     });
@@ -76,6 +192,16 @@ export const {
   setNotes,
   setTags,
   setComposers,
+  setArrangers,
+  setTranscribers,
+  setOrchestrators,
+  setLyricists,
+  setParts,
+  pushPart,
+  removePart,
+  updatePartName,
+  setPartShow,
+  formatPartNumbers,
 } = pieceSlice.actions;
 
 export { getPiece };

@@ -1,13 +1,13 @@
 import { mdiLoading, mdiUpload } from "@mdi/js";
 import Icon from "@mdi/react";
 import { open } from "@tauri-apps/api/dialog";
-import { listen, Event } from "@tauri-apps/api/event";
-import { useCallback, useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { pushFiles } from "../filesSlice";
+import { Event, listen } from "@tauri-apps/api/event";
 import { readBinaryFile } from "@tauri-apps/api/fs";
-import { ByteFile } from "../../../app/types";
+import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { ByteFile } from "../../../app/types";
+import { pushFiles } from "../filesSlice";
 
 export function DragUpload(props: { isPanelSmall: boolean }) {
   const { isPanelSmall } = props;
