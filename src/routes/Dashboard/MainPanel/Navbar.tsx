@@ -17,9 +17,12 @@ export function Navbar() {
     };
   }, []);
 
-  async function handleKeyDown(e: KeyboardEvent) {
-    if (e.key === "k" && ((await isWindows()) ? e.ctrlKey : e.metaKey)) {
-      e.preventDefault();
+  async function handleKeyDown(event: KeyboardEvent) {
+    if (
+      event.key === "k" &&
+      ((await isWindows()) ? event.ctrlKey : event.metaKey)
+    ) {
+      event.preventDefault();
       inputRef.current?.focus();
     }
   }

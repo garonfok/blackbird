@@ -51,7 +51,6 @@ export interface EditPart {
   name: string;
   instruments: Instrument[];
 }
-
 export interface Instrument {
   id: number;
   name: string;

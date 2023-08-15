@@ -1,5 +1,5 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Musician, EditPart, Tag } from "../../app/types";
+import { Musician, EditPart, Tag, Instrument } from "../../app/types";
 import { invoke } from "@tauri-apps/api";
 
 interface EditPiece {
@@ -161,6 +161,42 @@ export const pieceSlice = createSlice({
         parts: newParts,
       };
     },
+    setPartInstruments: (
+      state,
+      action: PayloadAction<{ partIndex: number; instruments: Instrument[] }>
+    ) => {
+      const { partIndex, instruments } = action.payload;
+      return {
+        ...state,
+        parts: state.parts.map((part, index) => {
+          if (index === partIndex) {
+            return {
+              ...part,
+              instruments: instruments,
+            };
+          }
+          return part;
+        }),
+      };
+    },
+    pushPartInstrument: (
+      state,
+      action: PayloadAction<{ partIndex: number; instrument: Instrument }>
+    ) => {
+      const { partIndex, instrument } = action.payload;
+      return {
+        ...state,
+        parts: state.parts.map((part, index) => {
+          if (index === partIndex) {
+            return {
+              ...part,
+              instruments: [...part.instruments, instrument],
+            };
+          }
+          return part;
+        }),
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getPiece.fulfilled, (_, action: PayloadAction<any>) => {
@@ -202,6 +238,8 @@ export const {
   updatePartName,
   setPartShow,
   formatPartNumbers,
+  setPartInstruments,
+  pushPartInstrument,
 } = pieceSlice.actions;
 
 export { getPiece };

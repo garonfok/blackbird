@@ -22,6 +22,13 @@
   .dropdown-item {
     @apply px-[14px] py-[8px] bg-bg.inset hover:bg-bg.default transition-all;
   }
+
+  .context-menu-item {
+    @apply flex items-center w-full px-[4px] py-[2px] rounded-[4px] text-fg.default hover:bg-bg.default transition-all;
+  }
+  .context-menu-divider {
+    @apply h-px bg-fg.subtle my-[4px];
+  }
 }
 
 :root {

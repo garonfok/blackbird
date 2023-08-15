@@ -9,6 +9,7 @@ export default {
       "fg.default": "#FFFFFF",
       "fg.muted": "#BFBFC3",
       "fg.subtle": "#535158",
+      "bg.emphasis": "#43424A",
       "bg.default": "#333238",
       "bg.inset": "#1F1E24",
       "brand.default": "#FFAD0A",
