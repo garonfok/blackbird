@@ -7,7 +7,7 @@ export function MainPanel() {
   const [stepState, sendStep] = useMachine(stepsMachine);
 
   return (
-    <div className="w-full flex flex-col gap-[14px] overflow-hidden">
+    <div className="w-full flex flex-col overflow-hidden">
       <Wizard stepState={stepState} />
       <Navbar stepState={stepState} sendStep={sendStep} />
     </div>

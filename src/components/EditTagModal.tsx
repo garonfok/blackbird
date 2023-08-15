@@ -146,15 +146,21 @@ export function EditTagModal(props: {
                   <Dialog.Title as="h3" className="text-[20px]">
                     {defaultTag ? "Edit Tag" : "Create Tag"}
                   </Dialog.Title>
-                  <div className="flex flex-col gap-[14px] text-fg.muted">
-                    <input
-                      type="text"
-                      className="input-text"
-                      onChange={(e) => setName(e.target.value)}
-                      value={name}
-                      placeholder="Name"
-                      size={1}
-                    />
+
+                  <div className="flex flex-col gap-[14px]">
+                    <div className="flex flex-col gap-[8px] text-fg.muted">
+                      <label htmlFor="name" className="text-fg.muted">
+                        Name
+                      </label>
+                      <input
+                        id="name"
+                        type="text"
+                        className="input-text"
+                        onChange={(e) => setName(e.target.value)}
+                        value={name}
+                        size={1}
+                      />
+                    </div>
                     <div className="flex flex-row justify-center gap-2">
                       {Object.keys(COLORS).map((color) => (
                         <div key={color} className="flex flex-col gap-2">

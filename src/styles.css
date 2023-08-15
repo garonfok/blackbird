@@ -13,7 +13,7 @@
     @apply shadow-[0px_2px_5px_-1px_#53515840,0px_4px_4px_0px_#0000004d];
   }
   .input-text {
-    @apply px-[14px] py-[8px] bg-bg.inset rounded-[4px] placeholder-fg.subtle outline-none focus:ring-inset focus:ring-1 ring-fg.default transition-all;
+    @apply px-[14px] w-full py-[8px] bg-bg.inset rounded-[4px] placeholder-fg.subtle outline-none focus:ring-inset focus:ring-1 ring-fg.default transition-all;
   }
   .edit-wizard-panel {
     @apply flex flex-col gap-[14px] h-full overflow-y-auto scrollbar-default flex-grow;

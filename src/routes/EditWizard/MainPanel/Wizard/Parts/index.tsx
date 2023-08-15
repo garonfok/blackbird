@@ -1,4 +1,4 @@
-import { mdiPlus, mdiTextBoxPlusOutline } from "@mdi/js";
+import { mdiFloppy, mdiPlus, mdiTextBoxPlusOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import { useMachine } from "@xstate/react";
@@ -11,6 +11,7 @@ import { formatPartNumbers, pushPart, setParts } from "../../../pieceSlice";
 import { LoadEnsembleModal } from "./LoadEnsembleModal";
 import { PartsList } from "./PartsList";
 import { SelectInstrumentModal } from "./SelectInstrumentModal";
+import { SaveEnsembleModal } from "../../../../../components/SaveEnsembleModal";
 
 const loadEnsembleMachine = createMachine({
   id: "loadEnsemble",
@@ -39,6 +40,7 @@ const loadEnsembleMachine = createMachine({
 export function Parts() {
   const [isSelectInstrumentModalOpen, setIsSelectInstrumentModalOpen] =
     useState(false);
+  const [isSaveEnsembleModalOpen, setIsSaveEnsembleModalOpen] = useState(false);
   const [ensembleIdToLoad, setEnsembleIdToLoad] = useState<number | null>(null);
 
   const [loadEnsembleState, sendLoadEnsemble] = useMachine(loadEnsembleMachine);
@@ -65,6 +67,8 @@ export function Parts() {
     },
     []
   );
+
+  const handleConfirmSaveEnsemble = useCallback(async () => {}, [piece.parts]);
 
   const handleConfirmConfirmEnsemble = useCallback(async () => {
     const ensemble = (await invoke("ensembles_get_by_id", {
@@ -112,6 +116,13 @@ export function Parts() {
           Add part
         </button>
         <button
+          onClick={() => setIsSaveEnsembleModalOpen(true)}
+          className="text-left text-fg.muted hover:text-fg.default transition-all flex gap-[4px] items-center w-fit"
+        >
+          <Icon path={mdiFloppy} size={1} />
+          Save as template ensemble
+        </button>
+        <button
           onClick={() => sendLoadEnsemble("SELECT")}
           className="text-left text-fg.muted hover:text-fg.default transition-all flex gap-[4px] items-center w-fit"
         >
@@ -123,6 +134,11 @@ export function Parts() {
         closeModal={() => setIsSelectInstrumentModalOpen(false)}
         isOpen={isSelectInstrumentModalOpen}
         onConfirm={handleConfirmSelectInstrument}
+      />
+      <SaveEnsembleModal
+        closeModal={() => setIsSaveEnsembleModalOpen(false)}
+        isOpen={isSaveEnsembleModalOpen}
+        onConfirm={handleConfirmSaveEnsemble}
       />
       <LoadEnsembleModal
         closeModal={() => sendLoadEnsemble("CANCEL")}
