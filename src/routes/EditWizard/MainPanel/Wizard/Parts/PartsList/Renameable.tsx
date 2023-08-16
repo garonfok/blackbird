@@ -1,14 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useAppDispatch } from "../../../../../../app/hooks";
 import { debounce } from "../../../../../../app/utils";
+import { setPartRenaming } from "../../../../pieceSlice";
 
 export function Renameable(props: {
   name: string;
+  isRenaming: boolean;
   index: number;
   setName: (name: string, index: number) => void;
 }) {
-  const { name, index, setName } = props;
+  const { name, isRenaming, index, setName } = props;
 
-  const [isEditing, setIsEditing] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.value) return;
@@ -22,7 +25,7 @@ export function Renameable(props: {
   useEffect(() => {
     window.addEventListener("mousedown", (e) => {
       if (inputRef.current && e.target !== inputRef.current) {
-        setIsEditing(false);
+        dispatch(setPartRenaming({ partIndex: index, renaming: false }));
       }
     });
 
@@ -33,7 +36,7 @@ export function Renameable(props: {
 
   return (
     <>
-      {isEditing ? (
+      {isRenaming ? (
         <input
           ref={inputRef}
           className="text-fg.default bg-bg.inset outline-none px-[2px] rounded-[4px] w-fit"
@@ -43,7 +46,9 @@ export function Renameable(props: {
       ) : (
         <span
           className="cursor-default"
-          onDoubleClick={() => setIsEditing(true)}
+          onDoubleClick={() =>
+            dispatch(setPartRenaming({ partIndex: index, renaming: true }))
+          }
         >
           {name}
         </span>

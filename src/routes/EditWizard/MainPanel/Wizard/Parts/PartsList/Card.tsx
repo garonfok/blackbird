@@ -92,6 +92,7 @@ export function Card(props: {
           <div className="flex flex-col gap-[8px] w-full">
             <Renameable
               index={index}
+              isRenaming={part.renaming}
               name={part.name}
               setName={handleSetName}
             />

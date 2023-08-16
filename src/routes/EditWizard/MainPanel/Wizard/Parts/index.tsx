@@ -58,6 +58,7 @@ export function Parts() {
       dispatch(
         pushPart({
           id: maxPartId + 1,
+          renaming: false,
           show: false,
           name: instrument.name,
           instruments: [instrument],
@@ -89,7 +90,7 @@ export function Parts() {
         await invoke("ensemble_parts_set_instruments", {
           ensemblePartId,
           instrumentIds: part.instruments.map((instrument) => instrument.id),
-        })
+        });
 
         console.log(ensemblePartId);
       }
@@ -108,6 +109,7 @@ export function Parts() {
     for (const part of parts!) {
       partsToAdd.push({
         id: counter++,
+        renaming: false,
         show: false,
         name: part.name,
         instruments: part.instruments,

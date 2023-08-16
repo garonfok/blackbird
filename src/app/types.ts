@@ -47,6 +47,7 @@ export interface Part {
 
 export interface EditPart {
   id: number;
+  renaming: boolean;
   show: boolean;
   name: string;
   instruments: Instrument[];

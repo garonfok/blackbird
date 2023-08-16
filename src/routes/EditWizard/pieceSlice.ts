@@ -98,11 +98,25 @@ export const pieceSlice = createSlice({
         }),
       };
     },
+    setPartRenaming: (
+      state,
+      action: PayloadAction<{ partIndex: number; renaming: boolean }>
+    ) => {
+      const { partIndex, renaming } = action.payload;
+      return {
+        ...state,
+        parts: state.parts.map((part, index) => {
+          if (index === partIndex) {
+            return { ...part, renaming: renaming };
+          }
+          return part;
+        }),
+      };
+    },
     setPartShow: (
       state,
       action: PayloadAction<{ index: number; show: boolean }>
     ) => {
-      console.log("Showing ", state.parts[action.payload.index].name);
       return {
         ...state,
         parts: state.parts.map((part, index) => {
@@ -236,6 +250,7 @@ export const {
   pushPart,
   removePart,
   updatePartName,
+  setPartRenaming,
   setPartShow,
   formatPartNumbers,
   setPartInstruments,

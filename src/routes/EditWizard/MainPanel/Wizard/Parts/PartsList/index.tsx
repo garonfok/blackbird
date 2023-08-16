@@ -9,6 +9,7 @@ import { MouseEvent, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../../app/hooks";
 import {
   formatPartNumbers,
+  setPartRenaming,
   setPartShow,
   setParts,
 } from "../../../../pieceSlice";
@@ -124,7 +125,9 @@ export function PartsList() {
     }
   }
 
-  function handleClickRename() {}
+  function handleClickRename() {
+    dispatch(setPartRenaming({ partIndex: selected[0], renaming: true }));
+  }
 
   function handleClickDelete() {
     dispatch(setParts(parts.filter((_, index) => !selected.includes(index))));
@@ -242,9 +245,16 @@ export function PartsList() {
           className="flex flex-col w-[192px] p-[4px] rounded-[4px] absolute bg-bg.inset shadow-float"
         >
           {selected.length === 1 && (
-            <MenuItem className="context-menu-item">Rename</MenuItem>
+            <>
+              <MenuItem
+                className="context-menu-item"
+                onClick={handleClickRename}
+              >
+                Rename
+              </MenuItem>
+              <MenuDivider className="context-menu-divider" />
+            </>
           )}
-          <MenuDivider className="context-menu-divider" />
           {parts
             .filter((_, index) => selected.includes(index))
             .some((part) => part.show) ? (
