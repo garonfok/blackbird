@@ -41,7 +41,8 @@ export function LoadEnsembleModal(props: {
   async function fetchEnsembles() {
     const ensembles = (await invoke("ensembles_get_all")) as Ensemble[];
     const groupedEnsembles = ensembles.reduce((acc, ensemble) => {
-      acc[ensemble.category] = [...(acc[ensemble.category] || []), ensemble];
+      const category = ensemble.category || "Uncategorized";
+      acc[category] = [...(acc[category] || []), ensemble];
       return acc;
     }, {} as GroupedEnsembles);
     setGroupedEnsembles(groupedEnsembles);

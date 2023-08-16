@@ -68,7 +68,34 @@ export function Parts() {
     []
   );
 
-  const handleConfirmSaveEnsemble = useCallback(async () => {}, [piece.parts]);
+  const handleConfirmSaveEnsemble = useCallback(
+    async (name: string, category: string) => {
+      console.log("saving ensemble");
+      console.log(name, category);
+
+      const ensembleId = (await invoke("ensembles_add", {
+        name,
+        category: category === "" ? null : category,
+      })) as number;
+
+      for (let i = 0; i < piece.parts.length; i++) {
+        const part = piece.parts[i];
+
+        const ensemblePartId = (await invoke("ensemble_parts_add", {
+          ensembleId,
+          name: part.name,
+        })) as number;
+
+        await invoke("ensemble_parts_set_instruments", {
+          ensemblePartId,
+          instrumentIds: part.instruments.map((instrument) => instrument.id),
+        })
+
+        console.log(ensemblePartId);
+      }
+    },
+    [piece.parts]
+  );
 
   const handleConfirmConfirmEnsemble = useCallback(async () => {
     const ensemble = (await invoke("ensembles_get_by_id", {
