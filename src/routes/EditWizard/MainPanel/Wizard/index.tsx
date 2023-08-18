@@ -3,6 +3,8 @@ import { StepState } from "../stepMachine";
 import { GeneralInformation } from "./GeneralInformation";
 import { Musicians } from "./Musicians";
 import { Parts } from "./Parts";
+import { Files } from "./Files";
+import { Scores } from "./Scores";
 
 export function Wizard(props: { stepState: StepState }) {
   const { stepState } = props;
@@ -22,6 +24,14 @@ export function Wizard(props: { stepState: StepState }) {
       case "parts":
         setTitle("Parts");
         setContent(<Parts />);
+        break;
+      case "scores":
+        setTitle("Scores");
+        setContent(<Scores />);
+        break;
+      case "files":
+        setTitle("Files");
+        setContent(<Files />);
         break;
       default:
         setTitle("Error");

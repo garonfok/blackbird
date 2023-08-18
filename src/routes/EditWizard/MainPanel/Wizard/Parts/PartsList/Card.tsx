@@ -7,10 +7,11 @@ import {
   formatPartNumbers,
   pushPartInstrument,
   removePart,
+  removePartInstrument,
   setPartInstruments,
   updatePartName,
 } from "../../../../pieceSlice";
-import { Renameable } from "./Renameable";
+import { Renameable } from "../../../../../../components/Renameable";
 import {
   DragDropContext,
   Draggable,
@@ -70,9 +71,7 @@ export function Card(props: {
   }
 
   function handleClickRemoveInstrument(instrumentIndex: number) {
-    const cloned = [...part.instruments];
-    cloned.splice(instrumentIndex, 1);
-    dispatch(setPartInstruments({ partIndex: index, instruments: cloned }));
+    dispatch(removePartInstrument({ partIndex: index, instrumentIndex }));
   }
 
   return (
@@ -92,6 +91,7 @@ export function Card(props: {
           <div className="flex flex-col gap-[8px] w-full">
             <Renameable
               index={index}
+              isPart={true}
               isRenaming={part.renaming}
               name={part.name}
               setName={handleSetName}

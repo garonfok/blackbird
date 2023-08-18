@@ -62,6 +62,7 @@ export function Parts() {
           show: false,
           name: instrument.name,
           instruments: [instrument],
+          file: null,
         })
       );
       dispatch(formatPartNumbers());
@@ -113,6 +114,7 @@ export function Parts() {
         show: false,
         name: part.name,
         instruments: part.instruments,
+        file: null,
       });
     }
     dispatch(setParts(partsToAdd));

@@ -30,8 +30,14 @@ export const stepsMachine = createMachine({
     },
     parts: {
       on: {
-        NEXT: "files",
+        NEXT: "scores",
         PREVIOUS: "musicians",
+      },
+    },
+    scores: {
+      on: {
+        NEXT: "files",
+        PREVIOUS: "parts",
       },
     },
     files: {

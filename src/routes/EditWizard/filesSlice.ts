@@ -14,9 +14,8 @@ export const filesSlice = createSlice({
       const dedupedFiles = files.filter((file) => !names.includes(file.name));
       state.push(...dedupedFiles);
     },
-    deleteFile: (state, action: PayloadAction<{ index: number }>) => {
-      const { index } = action.payload;
-      state.splice(index, 1);
+    deleteFile: (state, action: PayloadAction<number>) => {
+      state.splice(action.payload, 1);
     },
     setFiles: (_, action: PayloadAction<{ files: ByteFile[] }>) => {
       const { files } = action.payload;

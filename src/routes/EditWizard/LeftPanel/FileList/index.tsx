@@ -41,7 +41,11 @@ export function FileList() {
             className="flex flex-col flex-grow overflow-y-auto scrollbar-default"
           >
             {files.map((file, index) => (
-              <Draggable key={file.name} draggableId={file.name} index={index}>
+              <Draggable
+                key={file.id}
+                draggableId={file.id.toString()}
+                index={index}
+              >
                 {(provided) => (
                   <div
                     className="mb-[8px] last:mb-0"
@@ -49,7 +53,7 @@ export function FileList() {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <Card file={file.name} index={index} />
+                    <Card file={file} index={index} />
                   </div>
                 )}
               </Draggable>

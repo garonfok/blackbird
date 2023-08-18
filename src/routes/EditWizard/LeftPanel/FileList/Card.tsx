@@ -2,13 +2,16 @@ import { mdiClose, mdiFileOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useAppDispatch } from "../../../../app/hooks";
 import { deleteFile } from "../../filesSlice";
+import { ByteFile } from "../../../../app/types";
+import { cleanPiece } from "../../pieceSlice";
 
-export function Card(props: { file: string; index: number }) {
+export function Card(props: { file: ByteFile; index: number }) {
   const { file, index } = props;
 
   const dispatch = useAppDispatch();
   function handleClickDelete() {
-    dispatch(deleteFile({ index }));
+    dispatch(deleteFile(index));
+    dispatch(cleanPiece(file.id));
   }
 
   function getFileName(file: string) {
@@ -19,7 +22,9 @@ export function Card(props: { file: string; index: number }) {
     <span className="border border-fg.subtle bg-bg.default rounded-[4px] px-[14px] py-[8px] flex items-center gap-[14px] w-full">
       <span className="flex gap-[14px] truncate w-full">
         <Icon path={mdiFileOutline} size={1} className="shrink-0" />
-        <span className="truncate text-left w-full">{getFileName(file)}</span>
+        <span className="truncate text-left w-full">
+          {getFileName(file.name)}
+        </span>
       </span>
       <button onClick={handleClickDelete}>
         <Icon

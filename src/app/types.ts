@@ -1,4 +1,4 @@
-export interface PieceDetailed {
+export interface PieceVague {
   id: number;
   title: string;
   yearPublished?: number;
@@ -10,7 +10,7 @@ export interface PieceDetailed {
   composers: Musician[];
   tags: Tag[];
 }
-export interface PieceVague {
+export interface PieceDetailed {
   id: number;
   title: string;
   yearPublished?: number;
@@ -51,6 +51,14 @@ export interface EditPart {
   show: boolean;
   name: string;
   instruments: Instrument[];
+  file: ByteFile | null;
+}
+
+export interface EditScore {
+  id: number;
+  renaming: boolean;
+  name: string;
+  file: ByteFile | null;
 }
 export interface Instrument {
   id: number;
@@ -78,6 +86,7 @@ export interface Ensemble {
 }
 
 export interface ByteFile {
+  id: number;
   name: string;
   bytearray: Uint8Array;
 }

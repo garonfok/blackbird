@@ -72,7 +72,7 @@ export function GeneralInformation() {
     <>
       <div className="edit-wizard-panel">
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="title" className="text-fg.muted">
+          <label htmlFor="title" className="text-fg.muted w-fit">
             Title
           </label>
           <input
@@ -86,7 +86,7 @@ export function GeneralInformation() {
           />
         </div>
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="yearPublished" className="text-fg.muted">
+          <label htmlFor="yearPublished" className="text-fg.muted w-fit">
             Year Published
           </label>
           <input
@@ -106,7 +106,7 @@ export function GeneralInformation() {
         </div>
         <SelectMusicians role="composer" />
         <div className="flex flex-col gap-[8px]">
-          <span className="text-fg.muted">Difficulty</span>
+          <span className="text-fg.muted w-fit">Difficulty</span>
           <Listbox
             value={piece.difficulty}
             onChange={(value) => dispatch(setDifficulty(value))}
@@ -129,7 +129,7 @@ export function GeneralInformation() {
                     value={null}
                     className={({ active }) =>
                       classNames(
-                        "dropdown-item italic text-fg.muted",
+                        "dropdown-item italic",
                         active && "bg-bg.default text-fg.default"
                       )
                     }
@@ -156,7 +156,7 @@ export function GeneralInformation() {
           </Listbox>
         </div>
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="notes" className="text-fg.muted">
+          <label htmlFor="notes" className="text-fg.muted w-fit">
             Notes
           </label>
           <textarea
@@ -168,7 +168,7 @@ export function GeneralInformation() {
           />
         </div>
         <div className="flex flex-col gap-[8px]">
-          <span className="text-fg.muted">Tags</span>
+          <span className="text-fg.muted w-fit">Tags</span>
           <Listbox
             multiple
             value={piece.tags}

@@ -3,6 +3,7 @@ import { StepEvent, StepState } from "./stepMachine";
 
 export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   const { stepState, sendStep } = props;
+
   const handleClickPrevious = useCallback(() => {
     sendStep("PREVIOUS");
   }, []);

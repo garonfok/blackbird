@@ -4,26 +4,21 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import { ControlledMenu, MenuDivider, MenuItem } from "@szhsin/react-menu";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../../app/hooks";
-import {
-  formatPartNumbers,
-  setPartRenaming,
-  setPartShow,
-  setParts,
-} from "../../../../pieceSlice";
-import { Card } from "./Card";
 import { isWindows } from "../../../../../../app/utils";
-import { EditPart } from "../../../../../../app/types";
+import { setScoreRenaming, setScores } from "../../../../pieceSlice";
+import { Card } from "./Card";
+import { ControlledMenu, MenuDivider, MenuItem } from "@szhsin/react-menu";
+import { EditScore } from "../../../../../../app/types";
 
-export function PartsList() {
+export function ScoresList() {
   const [anchor, setAnchor] = useState<number>(0);
   const [selected, setSelected] = useState<number[]>([]);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 
-  const parts = useAppSelector((state) => state.piece.parts);
+  const piece = useAppSelector((state) => state.piece);
   const dispatch = useAppDispatch();
 
   const cardRef = useRef<HTMLDivElement>(null);
@@ -37,9 +32,10 @@ export function PartsList() {
       document.removeEventListener("click", handleClick);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [parts]);
+  }, [piece.scores]);
 
   function handleClick(event: globalThis.MouseEvent) {
+    event.preventDefault();
     if (
       cardRef.current &&
       !cardRef.current.contains(event.target as Node) &&
@@ -50,40 +46,111 @@ export function PartsList() {
     }
   }
 
-  function handleContextMenu(event: MouseEvent<HTMLDivElement>) {
-    if (typeof document.hasFocus === "function" && !document.hasFocus()) return;
-    event.preventDefault();
-    setAnchorPoint({ x: event.clientX, y: event.clientY });
-    setIsContextMenuOpen(true);
-  }
-
   async function handleKeyDown(event: globalThis.KeyboardEvent) {
     if (
       (await isWindows()) ? event.ctrlKey && event.key === "a" : event.metaKey
     ) {
       event.preventDefault();
-      setSelected([...Array(parts.length).keys()]);
+      setSelected([...Array(piece.scores.length).keys()]);
     }
   }
 
+  function handleContextMenu(event: MouseEvent<HTMLDivElement>) {
+    if (typeof document.hasFocus === "function" && !document.hasFocus()) return;
+
+    event.preventDefault();
+    setAnchorPoint({ x: event.clientX, y: event.clientY });
+    setIsContextMenuOpen(true);
+  }
+
   function handleDragEnd(result: DropResult) {
-    const { destination, source } = result;
+    const { source, destination } = result;
 
     if (!destination) return;
 
     if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
+      source.index === destination.index &&
+      source.droppableId === destination.droppableId
     )
       return;
 
-    const cloned = [...parts];
-    const file = cloned[source.index];
-    cloned.splice(source.index, 1);
-    cloned.splice(destination.index, 0, file);
+    const cloned = [...piece.scores];
+    const score = cloned[source.index];
 
-    dispatch(setParts(cloned));
-    dispatch(formatPartNumbers());
+    cloned.splice(source.index, 1);
+    cloned.splice(destination.index, 0, score);
+    dispatch(setScores(cloned));
+  }
+
+  function handleClickRename() {
+    dispatch(
+      setScoreRenaming({
+        scoreIndex: selected[0],
+        renaming: true,
+      })
+    );
+  }
+
+  function handleClickDelete() {
+    dispatch(
+      setScores(piece.scores.filter((_, index) => !selected.includes(index)))
+    );
+  }
+
+  function handleClickMoveUp() {
+    const cloned = [...piece.scores];
+    for (const index of selected) {
+      const part = cloned[index];
+      cloned.splice(index, 1);
+      cloned.splice(index - 1, 0, part);
+    }
+    dispatch(setScores(cloned));
+    setSelected(selected.map((i) => i - 1));
+  }
+
+  function handleClickMoveDown() {
+    const cloned = [...piece.scores];
+    for (const index of selected) {
+      const part = cloned[index];
+      cloned.splice(index, 1);
+      cloned.splice(index + 1, 0, part);
+    }
+    dispatch(setScores(cloned));
+    setSelected(selected.map((i) => i + 1));
+  }
+
+  function handleClickDupeAbove() {
+    const cloned = [...piece.scores];
+    const dupedParts: EditScore[] = [];
+    for (const index of selected) {
+      const highestId =
+        Math.max(...cloned.map((part) => part.id)) +
+        Math.max(...dupedParts.map((part) => part.id), 0);
+      dupedParts.push({
+        ...cloned[index],
+        id: highestId + 1,
+      });
+    }
+    const lowestIndex = Math.min(...selected);
+    cloned.splice(lowestIndex, 0, ...dupedParts);
+    dispatch(setScores(cloned));
+  }
+
+  function handleClickDupeBelow() {
+    const cloned = [...piece.scores];
+    const dupedParts: EditScore[] = [];
+    for (const index of selected) {
+      const highestId =
+        Math.max(...cloned.map((part) => part.id)) +
+        Math.max(...dupedParts.map((part) => part.id), 0);
+      dupedParts.push({
+        ...cloned[index],
+        id: highestId + 1,
+      });
+    }
+    const highestIndex = Math.max(...selected);
+    cloned.splice(highestIndex + 1, 0, ...dupedParts);
+    dispatch(setScores(cloned));
   }
 
   async function handleClickSelect(
@@ -112,87 +179,6 @@ export function PartsList() {
     }
   }
 
-  function handleClickShow() {
-    for (const index of selected) {
-      dispatch(setPartShow({ index, show: true }));
-    }
-  }
-
-  function handleClickHide() {
-    for (const index of selected) {
-      dispatch(setPartShow({ index, show: false }));
-    }
-  }
-
-  function handleClickRename() {
-    dispatch(setPartRenaming({ partIndex: selected[0], renaming: true }));
-  }
-
-  function handleClickDelete() {
-    dispatch(setParts(parts.filter((_, index) => !selected.includes(index))));
-    dispatch(formatPartNumbers());
-  }
-
-  function handleClickMoveUp() {
-    const cloned = [...parts];
-    for (const index of selected) {
-      const part = cloned[index];
-      cloned.splice(index, 1);
-      cloned.splice(index - 1, 0, part);
-    }
-    dispatch(setParts(cloned));
-    dispatch(formatPartNumbers());
-    setSelected(selected.map((i) => i - 1));
-  }
-
-  function handleClickMoveDown() {
-    const cloned = [...parts];
-    for (const index of selected) {
-      const part = cloned[index];
-      cloned.splice(index, 1);
-      cloned.splice(index + 1, 0, part);
-    }
-    dispatch(setParts(cloned));
-    dispatch(formatPartNumbers());
-    setSelected(selected.map((i) => i + 1));
-  }
-
-  function handleClickDupeAbove() {
-    const cloned = [...parts];
-    const dupedParts: EditPart[] = [];
-    for (const index of selected) {
-      const highestId =
-        Math.max(...cloned.map((part) => part.id)) +
-        Math.max(...dupedParts.map((part) => part.id), 0);
-      dupedParts.push({
-        ...cloned[index],
-        id: highestId + 1,
-      });
-    }
-    const lowestIndex = Math.min(...selected);
-    cloned.splice(lowestIndex, 0, ...dupedParts);
-    dispatch(setParts(cloned));
-    dispatch(formatPartNumbers());
-  }
-
-  function handleClickDupeBelow() {
-    const cloned = [...parts];
-    const dupedParts: EditPart[] = [];
-    for (const index of selected) {
-      const highestId =
-        Math.max(...cloned.map((part) => part.id)) +
-        Math.max(...dupedParts.map((part) => part.id), 0);
-      dupedParts.push({
-        ...cloned[index],
-        id: highestId + 1,
-      });
-    }
-    const highestIndex = Math.max(...selected);
-    cloned.splice(highestIndex + 1, 0, ...dupedParts);
-    dispatch(setParts(cloned));
-    dispatch(formatPartNumbers());
-  }
-
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
@@ -203,10 +189,10 @@ export function PartsList() {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {parts.map((part, index) => (
+              {piece.scores.map((score, index) => (
                 <Draggable
-                  key={part.id}
-                  draggableId={part.id.toString()}
+                  key={score.id}
+                  draggableId={score.id.toString()}
                   index={index}
                 >
                   {(provided) => (
@@ -219,7 +205,7 @@ export function PartsList() {
                     >
                       <div onContextMenu={handleContextMenu} ref={cardRef}>
                         <Card
-                          part={part}
+                          score={score}
                           index={index}
                           selected={selected.includes(index)}
                         />
@@ -253,17 +239,6 @@ export function PartsList() {
               </MenuItem>
               <MenuDivider className="context-menu-divider" />
             </>
-          )}
-          {parts
-            .filter((_, index) => selected.includes(index))
-            .some((part) => part.show) ? (
-            <MenuItem className="context-menu-item" onClick={handleClickHide}>
-              Hide instruments
-            </MenuItem>
-          ) : (
-            <MenuItem className="context-menu-item" onClick={handleClickShow}>
-              Show instruments
-            </MenuItem>
           )}
           <MenuItem className="context-menu-item" onClick={handleClickDelete}>
             Delete

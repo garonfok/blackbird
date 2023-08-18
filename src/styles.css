@@ -20,7 +20,7 @@
   }
 
   .dropdown-item {
-    @apply px-[14px] py-[8px] bg-bg.inset hover:bg-bg.default transition-all;
+    @apply px-[14px] py-[8px] bg-bg.inset hover:bg-bg.default text-fg.muted transition-all truncate;
   }
 
   .context-menu-item {

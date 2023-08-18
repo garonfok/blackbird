@@ -1,5 +1,12 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Musician, EditPart, Tag, Instrument } from "../../app/types";
+import {
+  Musician,
+  EditPart,
+  Tag,
+  Instrument,
+  EditScore,
+  ByteFile,
+} from "../../app/types";
 import { invoke } from "@tauri-apps/api";
 
 interface EditPiece {
@@ -14,6 +21,7 @@ interface EditPiece {
   orchestrators: Musician[];
   lyricists: Musician[];
   parts: EditPart[];
+  scores: EditScore[];
 }
 
 const initialState: EditPiece = {
@@ -28,6 +36,14 @@ const initialState: EditPiece = {
   orchestrators: [],
   lyricists: [],
   parts: [],
+  scores: [
+    {
+      id: 1,
+      name: "Full score",
+      renaming: false,
+      file: null,
+    },
+  ],
 };
 
 const getPiece = createAsyncThunk("editPiece/getPiece", async (id: number) => {
@@ -211,6 +227,154 @@ export const pieceSlice = createSlice({
         }),
       };
     },
+    removePartInstrument: (
+      state,
+      action: PayloadAction<{ partIndex: number; instrumentIndex: number }>
+    ) => {
+      const { partIndex, instrumentIndex } = action.payload;
+      return {
+        ...state,
+        parts: state.parts.map((part, index) => {
+          if (index === partIndex) {
+            return {
+              ...part,
+              instruments: part.instruments.filter(
+                (_, index) => index !== instrumentIndex
+              ),
+            };
+          }
+          return part;
+        }),
+      };
+    },
+    setPartFile: (
+      state,
+      action: PayloadAction<{ partIndex: number; file: ByteFile }>
+    ) => {
+      const { partIndex, file } = action.payload;
+      return {
+        ...state,
+        parts: state.parts.map((part, index) => {
+          if (index === partIndex) {
+            return {
+              ...part,
+              file: file,
+            };
+          }
+          return part;
+        }),
+      };
+    },
+    removePartFile: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        parts: state.parts.map((part, index) => {
+          if (index === action.payload) {
+            return {
+              ...part,
+              file: null,
+            };
+          }
+          return part;
+        }),
+      };
+    },
+    setScores: (state, action: PayloadAction<EditScore[]>) => {
+      state.scores = action.payload;
+    },
+    pushScore: (state, action: PayloadAction<EditScore>) => {
+      state.scores.push(action.payload);
+    },
+    removeScore: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        scores: state.scores.filter((_, index) => index !== action.payload),
+      };
+    },
+    updateScoreName: (
+      state,
+      action: PayloadAction<{ index: number; name: string }>
+    ) => {
+      return {
+        ...state,
+        scores: state.scores.map((score, index) => {
+          if (index === action.payload.index) {
+            return { ...score, name: action.payload.name };
+          }
+          return score;
+        }),
+      };
+    },
+    setScoreRenaming: (
+      state,
+      action: PayloadAction<{ scoreIndex: number; renaming: boolean }>
+    ) => {
+      const { scoreIndex, renaming } = action.payload;
+      return {
+        ...state,
+        scores: state.scores.map((score, index) => {
+          if (index === scoreIndex) {
+            return { ...score, renaming: renaming };
+          }
+          return score;
+        }),
+      };
+    },
+    setScoreFile: (
+      state,
+      action: PayloadAction<{ scoreIndex: number; file: ByteFile }>
+    ) => {
+      const { scoreIndex, file } = action.payload;
+      return {
+        ...state,
+        scores: state.scores.map((score, index) => {
+          if (index === scoreIndex) {
+            return {
+              ...score,
+              file: file,
+            };
+          }
+          return score;
+        }),
+      };
+    },
+    removeScoreFile: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        scores: state.scores.map((score, index) => {
+          if (index === action.payload) {
+            return {
+              ...score,
+              file: null,
+            };
+          }
+          return score;
+        }),
+      };
+    },
+    cleanPiece: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        scores: state.scores.map((score) => {
+          if (score.file?.id === action.payload) {
+            return {
+              ...score,
+              file: null,
+            };
+          }
+          return score;
+        }),
+        parts: state.parts.map((part) => {
+          if (part.file?.id === action.payload) {
+            return {
+              ...part,
+              file: null,
+            };
+          }
+          return part;
+        }),
+      };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getPiece.fulfilled, (_, action: PayloadAction<any>) => {
@@ -228,6 +392,7 @@ export const pieceSlice = createSlice({
         orchestrators: piece.orchestrators,
         lyricists: piece.lyricists,
         parts: piece.parts,
+        scores: piece.scores,
       };
       return result;
     });
@@ -255,6 +420,17 @@ export const {
   formatPartNumbers,
   setPartInstruments,
   pushPartInstrument,
+  removePartInstrument,
+  setPartFile,
+  removePartFile,
+  setScores,
+  pushScore,
+  removeScore,
+  updateScoreName,
+  setScoreRenaming,
+  setScoreFile,
+  removeScoreFile,
+  cleanPiece,
 } = pieceSlice.actions;
 
 export { getPiece };

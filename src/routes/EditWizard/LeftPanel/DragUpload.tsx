@@ -38,12 +38,13 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
   async function uploadFiles(selectedFiles: string[]) {
     setIsUploading(true);
 
-    const uploadPromises = selectedFiles.map(async (selectedFile) => {
+    const uploadPromises = selectedFiles.map(async (selectedFile, index) => {
       if (files.some((file) => file.name === selectedFile)) return;
       if (!selectedFile.endsWith(".pdf")) return;
 
       const buffer = await readBinaryFile(selectedFile);
       const data: ByteFile = {
+        id: Math.max(...files.map((file) => file.id), 0) + index + 1,
         name: selectedFile,
         bytearray: buffer,
       };
