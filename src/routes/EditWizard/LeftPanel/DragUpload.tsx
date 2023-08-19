@@ -1,4 +1,4 @@
-import { mdiLoading, mdiUpload } from "@mdi/js";
+import { mdiCheckCircle, mdiClose, mdiLoading, mdiUpload } from "@mdi/js";
 import Icon from "@mdi/react";
 import { open } from "@tauri-apps/api/dialog";
 import { Event, listen } from "@tauri-apps/api/event";
@@ -8,6 +8,8 @@ import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { ByteFile } from "../../../app/types";
 import { pushFiles } from "../filesSlice";
+import { toast, Toaster } from "react-hot-toast";
+import classNames from "classnames";
 
 export function DragUpload(props: { isPanelSmall: boolean }) {
   const { isPanelSmall } = props;
@@ -53,6 +55,35 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
     });
     await Promise.all(uploadPromises);
     setIsUploading(false);
+    toastUploadComplete();
+  }
+
+  function toastUploadComplete() {
+    toast.custom(
+      (t) => (
+        <div
+          className={classNames(
+            "px-[14px] py-[8px] bg-bg.emphasis rounded-[4px] flex items-center gap-[4px] shadow-float w-[256px]"
+          )}
+        >
+          <div className="flex w-full gap-[4px]">
+            <Icon
+              path={mdiCheckCircle}
+              size={1}
+              className="text-success.default shrink-0"
+            />
+            <span className="text-fg.default">Finished uploading.</span>
+          </div>
+          <button
+            onClick={() => toast.remove(t.id)}
+            className="transition-all text-fg.muted hover:text-fg.default"
+          >
+            <Icon path={mdiClose} size={1} className="shrink-0" />
+          </button>
+        </div>
+      ),
+      { id: "uploadConfirm", duration: 3000, position: "bottom-center" }
+    );
   }
 
   const handleClickUploadFiles = useCallback(async () => {
@@ -70,20 +101,29 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
     await uploadFiles(selectedFiles as string[]);
   }, []);
 
-  return isUploading ? (
-    <div className="w-full items-center inline-flex py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted">
-      <Icon path={mdiLoading} size={1.5} className="shrink-0 animate-spin" />
-      <span>{!isPanelSmall ? "Uploading files" : "Uploading..."}</span>
-    </div>
-  ) : (
-    <button
-      onClick={handleClickUploadFiles}
-      className="w-full items-center border-dashed inline-flex border border-brand.default py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted hover:text-fg.default transition-all"
-    >
-      <Icon path={mdiUpload} size={1.5} className="shrink-0" />
-      <span>
-        {!isPanelSmall ? "Drag and drop PDFs, or browse" : "Upload PDFs"}
-      </span>
-    </button>
+  return (
+    <>
+      {isUploading ? (
+        <div className="w-full items-center inline-flex py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted">
+          <Icon
+            path={mdiLoading}
+            size={1.5}
+            className="shrink-0 animate-spin"
+          />
+          <span>{!isPanelSmall ? "Uploading files" : "Uploading..."}</span>
+        </div>
+      ) : (
+        <button
+          onClick={handleClickUploadFiles}
+          className="w-full items-center border-dashed inline-flex border border-brand.default py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted hover:text-fg.default transition-all"
+        >
+          <Icon path={mdiUpload} size={1.5} className="shrink-0" />
+          <span>
+            {!isPanelSmall ? "Drag and drop PDFs, or browse" : "Upload PDFs"}
+          </span>
+        </button>
+      )}
+      <Toaster />
+    </>
   );
 }

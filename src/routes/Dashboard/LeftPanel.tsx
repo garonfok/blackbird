@@ -78,7 +78,7 @@ export function LeftPanel() {
                 size={1}
                 className={classNames(
                   "transition-all",
-                  isTagsOpen && "transform rotate-180"
+                  isTagsOpen && "rotate-180"
                 )}
               />
               <span>Tags</span>

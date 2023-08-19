@@ -151,6 +151,7 @@ export function SelectMusicians(props: {
     } else {
       setRoleMusicians([...getRoleMusicians(), musician]);
     }
+    setIsFocused(false);
   }
 
   const filteredMusicians = musicians.filter((musician) => {
@@ -220,9 +221,14 @@ export function SelectMusicians(props: {
                   {provided.placeholder}
                   <input
                     type="text"
-                    className="flex-grow bg-transparent outline-none"
+                    className="flex-grow bg-transparent outline-none placeholder-fg.subtle"
                     onChange={(event) => setQuery(event.currentTarget.value)}
                     value={query}
+                    placeholder={
+                      role === "composer" && piece.composers.length === 0
+                        ? "Required"
+                        : ""
+                    }
                     onFocus={() => setIsFocused(true)}
                   />
                 </div>

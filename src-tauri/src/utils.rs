@@ -11,7 +11,3 @@ pub fn home_dir() -> String {
 
     home_dir.to_str().unwrap().to_string()
 }
-
-pub fn is_macos() -> bool {
-    cfg!(target_os = "macos")
-}

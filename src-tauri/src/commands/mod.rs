@@ -40,6 +40,7 @@ pub fn handler() -> impl Fn(Invoke) {
         db::pieces::pieces_delete,
         db::pieces::pieces_set_musicians,
         db::pieces::pieces_set_tags,
+        db::pieces::pieces_get_max_id,
         db::scores::scores_get_all,
         db::scores::scores_get_by_id,
         db::scores::scores_add,

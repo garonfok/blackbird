@@ -6,23 +6,9 @@ import {
   Instrument,
   EditScore,
   ByteFile,
+  EditPiece,
 } from "../../app/types";
 import { invoke } from "@tauri-apps/api";
-
-interface EditPiece {
-  title: string;
-  yearPublished?: number;
-  difficulty?: number;
-  notes: string;
-  tags: Tag[];
-  composers: Musician[];
-  arrangers: Musician[];
-  transcribers: Musician[];
-  orchestrators: Musician[];
-  lyricists: Musician[];
-  parts: EditPart[];
-  scores: EditScore[];
-}
 
 const initialState: EditPiece = {
   title: "",

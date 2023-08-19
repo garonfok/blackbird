@@ -39,13 +39,9 @@ export function LeftPanel() {
 
   function handleConfirmCancel() {
     setConfirmingCancel(false);
-    resetEditor();
+    dispatch(clearFiles());
     dispatch(clearPiece());
     navigate("/");
-  }
-
-  function resetEditor() {
-    dispatch(clearFiles());
   }
 
   return (

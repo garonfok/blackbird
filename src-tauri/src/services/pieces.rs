@@ -353,6 +353,24 @@ async fn get_parts(db: &DatabaseConnection, id: i32) -> Result<Vec<Value>, DbErr
     Ok(parts_with_instruments)
 }
 
+pub async fn get_max_id(db: &DatabaseConnection) -> Result<Option<i32>, DbErr> {
+    let piece = pieces::Entity::find()
+        .select_only()
+        .column(pieces::Column::Id)
+        .order_by_desc(pieces::Column::Id)
+        .into_json()
+        .one(db)
+        .await?;
+
+    match piece {
+        Some(piece) => {
+            let max_id = piece["id"].as_i64().unwrap() as i32;
+            Ok(Some(max_id))
+        }
+        None => Ok(None),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -114,18 +114,20 @@ export function RightPanel() {
         </div>
         <div className="flex flex-col flex-grow overflow-y-auto scrollbar-default gap-[14px]">
           <div className="flex flex-col text-fg.muted">
-            {piece.scores.map((score) => (
-              <div key={score.id} className="flex gap-[4px] items-center">
-                <span>{score.name}</span>
-                <Icon
-                  path={mdiCircle}
-                  size={0.5}
-                  className={classNames(
-                    score.file ? "text-fg.default" : "text-fg.subtle"
-                  )}
-                />
-              </div>
-            ))}
+            {piece.title.length > 0 &&
+              piece.composers.length > 0 &&
+              piece.scores.map((score) => (
+                <div key={score.id} className="flex gap-[4px] items-center">
+                  <span>{score.name}</span>
+                  <Icon
+                    path={mdiCircle}
+                    size={0.5}
+                    className={classNames(
+                      score.file ? "text-fg.default" : "text-fg.subtle"
+                    )}
+                  />
+                </div>
+              ))}
           </div>
           <div className="flex flex-col">
             {piece.parts.map((part, index) => (

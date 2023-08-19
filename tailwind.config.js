@@ -13,6 +13,8 @@ export default {
       "bg.default": "#333238",
       "bg.inset": "#1F1E24",
       "brand.default": "#FFAD0A",
+      "success.default": "#00C48C",
+      "success.emphasis": "#00D68F",
       "danger.default": "#FE2020",
       "danger.emphasis": "#FE4A49",
     },

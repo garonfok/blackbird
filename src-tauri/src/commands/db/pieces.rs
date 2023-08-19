@@ -124,3 +124,12 @@ pub fn pieces_set_tags(
         Err(e) => Err(e.to_string()),
     }
 }
+
+#[command]
+pub fn pieces_get_max_id(app_handle: AppHandle) -> Result<Option<i32>, String> {
+    let result = app_handle.db(|db| block_on(pieces::get_max_id(db)));
+    match result {
+        Ok(piece) => Ok(piece),
+        Err(e) => Err(e.to_string()),
+    }
+}

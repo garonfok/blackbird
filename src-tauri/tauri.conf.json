@@ -24,7 +24,12 @@
         "open": true
       },
       "fs": {
-        "all": true
+        "all": true,
+        "scope": [
+          "**",
+          "**/*",
+          "/**/*"
+        ]
       },
       "process": {
         "all": false,

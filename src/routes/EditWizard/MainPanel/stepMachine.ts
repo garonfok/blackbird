@@ -43,7 +43,7 @@ export const stepsMachine = createMachine({
     files: {
       on: {
         FINISH: "generalInfo",
-        PREVIOUS: "parts",
+        PREVIOUS: "scores",
       },
     },
   },
