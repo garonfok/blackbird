@@ -19,19 +19,21 @@ import {
   setOrchestrators,
   setTranscribers,
 } from "../../../pieceSlice";
+import { setMusicians } from "../musiciansSlice";
 
 export function SelectMusicians(props: {
   role: "composer" | "arranger" | "transcriber" | "orchestrator" | "lyricist";
 }) {
   const { role } = props;
 
-  const [musicians, setMusicians] = useState<Musician[]>([]);
   const [isFocused, setIsFocused] = useState(false);
   const [isEditMusicianModalOpen, setIsEditMusicianModalOpen] = useState(false);
 
   const [query, setQuery] = useState("");
   const piece = useAppSelector((state) => state.piece);
+
   const dispatch = useAppDispatch();
+  const musicians = useAppSelector((state) => state.musicians);
 
   const inputRef = useRef<HTMLDivElement>(null);
 
@@ -83,8 +85,9 @@ export function SelectMusicians(props: {
   }
 
   async function fetchMusicians() {
-    const musicians = (await invoke("musicians_get_all")) as Musician[];
-    setMusicians(musicians);
+    const fetchedMusicians = (await invoke("musicians_get_all")) as Musician[];
+
+    dispatch(setMusicians({ musicians: fetchedMusicians }));
   }
 
   async function handleConfirmCreateMusician(
