@@ -1,10 +1,14 @@
 import { mdiClose } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useEffect, useState } from "react";
-import { ResizableRight } from "../../components/ResizeableRight";
+import { ResizableRight } from "../../../components/ResizeableRight";
+import { useAppSelector } from "../../../app/hooks";
+import { Preview } from "./Preview";
 
 export function RightPanel() {
   const [maxWidth, setMaxWidth] = useState<number>(384);
+
+  const preview = useAppSelector((state) => state.preview);
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -30,7 +34,9 @@ export function RightPanel() {
           </button>
         </span>
         <hr className="text-fg.subtle" />
-        <div className="flex flex-col gap-[14px] flex-grow"></div>
+        <div className="flex flex-col gap-[14px] flex-grow">
+          {preview.piece && <Preview piece={preview.piece} />}
+        </div>
         <hr className="text-fg.subtle" />
         <div className="flex flex-col gap-[8px]">
           <button className="text-left text-fg.muted hover:text-fg.default transition-all">

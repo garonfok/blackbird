@@ -12,12 +12,16 @@ import {
 } from "@tanstack/react-table";
 import { invoke } from "@tauri-apps/api";
 import { useMachine } from "@xstate/react";
+import classNames from "classnames";
 import Fuse from "fuse.js";
 import { DateTime } from "luxon";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useAppSelector } from "../../../app/hooks";
-import { PieceVague } from "../../../app/types";
+import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { Piece, PieceVague } from "../../../app/types";
+import { isWindows } from "../../../app/utils";
+import { setPiece } from "../previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
+import { Menu } from "@headlessui/react";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -35,15 +39,16 @@ export function Table() {
     { id: "updatedAt", desc: true },
   ]);
   const [isMainTitle, setIsMainTitle] = useState(true);
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [anchor, setAnchor] = useState(0);
 
   const [mainSortState, sendMainSortState] = useMachine(mainSortMachine);
 
-  const sortDropdownRef = useRef<HTMLOListElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
   const rowRef = useRef<HTMLTableRowElement>(null);
 
   const query = useAppSelector((state) => state.query);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     table.getColumn("composers")?.toggleVisibility(false);
@@ -64,22 +69,16 @@ export function Table() {
 
     resizeObserver.observe(tableRef.current!);
 
-    window.addEventListener("mousedown", (e) => {
-      if (
-        isSortDropdownOpen &&
-        !sortDropdownRef.current?.contains(e.target as Node)
-      ) {
-        setIsSortDropdownOpen(false);
-      }
-    });
+    window.addEventListener("click", handleClick);
 
     return () => {
-      window.removeEventListener("mousedown", () => {});
+      window.removeEventListener("click", handleClick);
       resizeObserver.disconnect();
     };
   }, []);
 
   useEffect(() => {
+    setSelected([]);
     if (!query) {
       setFilteredPieces(pieces);
     } else {
@@ -199,6 +198,41 @@ export function Table() {
     setPieces(pieces);
   }
 
+  async function handleClickSelect(
+    event: MouseEvent<HTMLTableRowElement>,
+    index: number
+  ) {
+    if ((await isWindows()) ? event.ctrlKey : event.metaKey) {
+      if (selected.includes(index)) {
+        setSelected(selected.filter((i) => i !== index));
+        const nextGreatestIndex = selected
+          .filter((i) => i < index)
+          .sort((a, b) => b - a)[0];
+        setAnchor(nextGreatestIndex || 0);
+      } else {
+        setAnchor(index);
+        setSelected([...selected, index]);
+      }
+    } else if (event.shiftKey) {
+      const min = Math.min(anchor, index);
+      const max = Math.max(anchor, index);
+      setSelected([...Array(max - min + 1).keys()].map((i) => i + min));
+      setAnchor(index);
+    } else {
+      setSelected([index]);
+      setAnchor(index);
+    }
+    dispatch(
+      setPiece({ piece: table.getRowModel().rows[index].original as Piece })
+    );
+  }
+
+  function handleClick(event: globalThis.MouseEvent) {
+    if (rowRef.current && !rowRef.current.contains(event.target as Node)) {
+      setSelected([]);
+    }
+  }
+
   function handleClickSortColumn(headerColumn: Column<PieceVague, unknown>) {
     if (headerColumn.id !== "main") {
       if (
@@ -279,8 +313,6 @@ export function Table() {
     } else {
       setIsMainTitle(true);
     }
-
-    setIsSortDropdownOpen(false);
   }
 
   function handleClickResetFilters() {
@@ -309,11 +341,8 @@ export function Table() {
   return (
     <div className="p-[14px] flex flex-col gap-[14px]">
       <div className="flex gap-[14px] items-center text-fg.muted flex-wrap">
-        <div className="relative">
-          <button
-            className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[4px]"
-            onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
-          >
+        <Menu as="div" className="relative">
+          <Menu.Button className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[4px]">
             <span className="text-fg.default flex items-center">
               {sortOptions.find((option) => option.id === sorting[0].id)?.label}
               {sorting[0].desc ? (
@@ -322,34 +351,32 @@ export function Table() {
                 <Icon path={mdiChevronUp} size={1} className="shrink-0" />
               )}
             </span>
-          </button>
-          {isSortDropdownOpen && (
-            <ol
-              ref={sortDropdownRef}
-              className="absolute top-[37px] w-[160px] left-0 mt-[8px] z-10 shadow-float bg-bg.default rounded-[4px] px-[14px] py-[8px]"
-            >
-              {sortOptions.map((option) => (
-                <li key={option.id}>
-                  <button
-                    className="flex justify-between items-center gap-[4px] w-full text-fg.muted hover:text-fg.default"
-                    onClick={() => handleClickDropdownSelect(option.id)}
-                  >
-                    {option.label}
-                    {sorting[0].id === option.id ? (
-                      <Icon
-                        path={sorting[0].desc ? mdiChevronDown : mdiChevronUp}
-                        size={1}
-                        className=""
-                      />
-                    ) : (
-                      <span className="w-[14px]" />
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ol>
-          )}
-        </div>
+          </Menu.Button>
+          <Menu.Items
+            as="div"
+            className="absolute top-[37px] w-[160px] left-0 mt-[8px] z-10 shadow-float bg-bg.default rounded-[4px] px-[14px] py-[8px]"
+          >
+            {sortOptions.map((option) => (
+              <Menu.Item key={option.id}>
+                <button
+                  className="flex justify-between items-center gap-[4px] w-full text-fg.muted hover:text-fg.default"
+                  onClick={() => handleClickDropdownSelect(option.id)}
+                >
+                  {option.label}
+                  {sorting[0].id === option.id ? (
+                    <Icon
+                      path={sorting[0].desc ? mdiChevronDown : mdiChevronUp}
+                      size={1}
+                      className=""
+                    />
+                  ) : (
+                    <span className="w-[14px]" />
+                  )}
+                </button>
+              </Menu.Item>
+            ))}
+          </Menu.Items>
+        </Menu>
         <button
           className="flex gap-[8px] hover:text-fg.default"
           onClick={handleClickResetFilters}
@@ -414,11 +441,17 @@ export function Table() {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map((row, index) => (
             <tr
               ref={rowRef}
               key={row.original.id}
-              className="flex items-center hover:bg-bg.default gap-[14px] px-[14px]"
+              className={classNames(
+                "flex items-center  gap-[14px] px-[14px]",
+                selected.includes(index)
+                  ? "bg-bg.emphasis"
+                  : "hover:bg-bg.default"
+              )}
+              onClick={(event) => handleClickSelect(event, index)}
             >
               {row.getVisibleCells().map((cell) => (
                 <td

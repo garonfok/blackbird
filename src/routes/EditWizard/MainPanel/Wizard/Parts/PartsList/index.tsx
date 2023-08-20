@@ -18,7 +18,7 @@ import { isWindows } from "../../../../../../app/utils";
 import { EditPart } from "../../../../../../app/types";
 
 export function PartsList() {
-  const [anchor, setAnchor] = useState<number>(0);
+  const [anchor, setAnchor] = useState(0);
   const [selected, setSelected] = useState<number[]>([]);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);

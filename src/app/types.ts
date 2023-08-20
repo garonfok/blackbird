@@ -24,6 +24,7 @@ export interface Piece {
   orchestrators: Musician[];
   transcribers: Musician[];
   lyricists: Musician[];
+  scores: Score[];
   parts: Part[];
   tags: Tag[];
 }
@@ -35,12 +36,20 @@ export interface Musician {
   created_at: string;
   updated_at: string;
 }
+
+export interface Score {
+  id: number;
+  name: string;
+  path?: string;
+  created_at: string;
+  updated_at: string;
+}
 export interface Part {
   id: number;
   name: string;
-  path: string;
-  createdAt: string;
-  updatedAt: string;
+  path?: string;
+  created_at: string;
+  updated_at: string;
   piece_id: number;
   instruments: Instrument[];
 }
