@@ -77,7 +77,7 @@ pub async fn update(
 
             part.name = ActiveValue::Set(name);
             part.path = ActiveValue::Set(path);
-            part.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
+            part.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             parts::Entity::update(part).exec(db).await?;
             Ok(())
@@ -120,7 +120,7 @@ pub async fn set_instruments(
             }
 
             let mut part: parts::ActiveModel = part.into();
-            part.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
+            part.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
             parts::Entity::update(part).exec(db).await?;
 
             Ok(())

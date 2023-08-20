@@ -44,7 +44,7 @@ pub async fn update(
 
             tag.name = ActiveValue::Set(name);
             tag.color = ActiveValue::Set(color);
-            tag.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
+            tag.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             let _result = tags::Entity::update(tag).exec(db).await?;
             Ok(())

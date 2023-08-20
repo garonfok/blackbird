@@ -5,8 +5,8 @@ export interface PieceVague {
   path: string;
   difficulty?: number;
   notes: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   composers: Musician[];
   tags: Tag[];
 }
@@ -17,8 +17,8 @@ export interface PieceDetailed {
   path: string;
   difficulty?: number;
   notes: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   composers: Musician[];
   arrangers: Musician[];
   orchestrators: Musician[];
@@ -32,15 +32,15 @@ export interface Musician {
   id: number;
   first_name: string;
   last_name?: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
 }
 export interface Part {
   id: number;
   name: string;
   path: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
   piece_id: number;
   instruments: Instrument[];
 }

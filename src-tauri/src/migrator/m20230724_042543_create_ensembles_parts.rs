@@ -8,7 +8,7 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        let current_timestamp = chrono::offset::Local::now();
+        let current_timestamp = chrono::Local::now().naive_local();
         manager
             .create_table(
                 Table::create()

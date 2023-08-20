@@ -168,7 +168,7 @@ pub async fn update(
             piece.path = ActiveValue::Set(path);
             piece.difficulty = ActiveValue::Set(difficulty);
             piece.notes = ActiveValue::Set(notes);
-            piece.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            piece.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             let _result = pieces::Entity::update(piece).exec(db).await;
 
@@ -212,7 +212,7 @@ pub async fn set_tags(
             }
 
             let mut piece: pieces::ActiveModel = piece.into();
-            piece.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            piece.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
             let _result = pieces::Entity::update(piece).exec(db).await?;
 
             Ok(())
@@ -261,7 +261,7 @@ pub async fn set_musicians(
             }
 
             let mut piece: pieces::ActiveModel = piece.into();
-            piece.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            piece.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
             let _result = pieces::Entity::update(piece).exec(db).await?;
 
             Ok(())

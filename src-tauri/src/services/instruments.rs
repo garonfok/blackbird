@@ -79,7 +79,7 @@ pub async fn update(
 
             instrument.name = ActiveValue::Set(name);
             instrument.category = ActiveValue::Set(category);
-            instrument.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
+            instrument.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             let result = instruments::Entity::update(instrument).exec(db).await;
 

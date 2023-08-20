@@ -60,7 +60,7 @@ pub async fn update(db: &DatabaseConnection, id: i32, name: String) -> Result<()
             let mut setlist: setlists::ActiveModel = setlist.into();
 
             setlist.name = ActiveValue::Set(name);
-            setlist.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
+            setlist.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             let _result = setlists::Entity::update(setlist).exec(db).await?;
 

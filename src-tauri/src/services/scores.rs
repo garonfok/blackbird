@@ -55,7 +55,7 @@ pub async fn update(
 
             score.name = ActiveValue::Set(name);
             score.path = ActiveValue::Set(path);
-            score.updated_at = ActiveValue::Set(chrono::Utc::now().naive_utc().to_string());
+            score.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             let _result = scores::Entity::update(score).exec(db).await?;
 

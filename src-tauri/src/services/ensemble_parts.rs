@@ -61,7 +61,7 @@ pub async fn update(db: &DatabaseConnection, id: i32, name: String) -> Result<()
             let mut part: ensembles_parts::ActiveModel = part.into();
 
             part.name = ActiveValue::Set(name);
-            part.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
+            part.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             ensembles_parts::Entity::update(part).exec(db).await?;
             Ok(())
@@ -104,7 +104,7 @@ pub async fn set_instruments(
             }
 
             let mut part: ensembles_parts::ActiveModel = part.into();
-            part.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
+            part.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
             ensembles_parts::Entity::update(part).exec(db).await?;
 
             Ok(())

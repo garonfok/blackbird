@@ -67,7 +67,7 @@ pub async fn update(
 
             ensemble.name = ActiveValue::Set(name);
             ensemble.category = ActiveValue::Set(category);
-            ensemble.updated_at = ActiveValue::Set(chrono::offset::Local::now().to_string());
+            ensemble.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             let _result = ensembles::Entity::update(ensemble).exec(db).await?;
             Ok(())
