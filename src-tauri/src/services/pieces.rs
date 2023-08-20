@@ -234,7 +234,11 @@ pub async fn set_musicians(
     match piece {
         Some(piece) => {
             pieces_musicians::Entity::delete_many()
-                .filter(pieces_musicians::Column::PieceId.eq(piece_id))
+                .filter(
+                    Condition::all()
+                        .add(pieces_musicians::Column::PieceId.eq(piece_id))
+                        .add(pieces_musicians::Column::Role.eq(role.clone())),
+                )
                 .exec(db)
                 .await?;
 

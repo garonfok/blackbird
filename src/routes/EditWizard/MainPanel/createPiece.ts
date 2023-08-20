@@ -3,6 +3,8 @@ import { createDir, writeBinaryFile } from "@tauri-apps/api/fs";
 import { EditPiece } from "../../../app/types";
 
 export async function createPiece(piece: EditPiece) {
+  console.log(piece);
+
   const principalComposer = piece.composers[0];
 
   const composerName = principalComposer.last_name
@@ -32,7 +34,6 @@ export async function createPiece(piece: EditPiece) {
     pieceId,
     tagIds: piece.tags.map((tag) => tag.id),
   });
-
   //  composers
   await invoke("pieces_set_musicians", {
     pieceId,

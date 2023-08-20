@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PieceDetailed } from "../../../app/types";
+import { invoke } from "@tauri-apps/api";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -34,6 +35,8 @@ export function Table() {
 
   useEffect(() => {
     table.getColumn("composers")?.toggleVisibility(false);
+
+    fetchPiecesTable();
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -175,6 +178,12 @@ export function Table() {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  async function fetchPiecesTable() {
+    const pieces = await invoke("pieces_get_all");
+
+    console.log(pieces);
+  }
 
   function handleClickSortColumn(headerColumn: Column<PieceDetailed, unknown>) {
     if (headerColumn.id !== "main") {
