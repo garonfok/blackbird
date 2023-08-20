@@ -10,9 +10,14 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { PieceDetailed } from "../../../app/types";
 import { invoke } from "@tauri-apps/api";
+import { useMachine } from "@xstate/react";
+import Fuse from "fuse.js";
+import { DateTime } from "luxon";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAppSelector } from "../../../app/hooks";
+import { PieceVague } from "../../../app/types";
+import { mainSortMachine } from "./mainSortMachine";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -23,6 +28,8 @@ const sortOptions = [
 ];
 
 export function Table() {
+  const [pieces, setPieces] = useState<PieceVague[]>([]);
+  const [filteredPieces, setFilteredPieces] = useState<PieceVague[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([
     { id: "updatedAt", desc: true },
@@ -30,8 +37,13 @@ export function Table() {
   const [isMainTitle, setIsMainTitle] = useState(true);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false);
 
+  const [mainSortState, sendMainSortState] = useMachine(mainSortMachine);
+
   const sortDropdownRef = useRef<HTMLOListElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
+  const rowRef = useRef<HTMLTableRowElement>(null);
+
+  const query = useAppSelector((state) => state.query);
 
   useEffect(() => {
     table.getColumn("composers")?.toggleVisibility(false);
@@ -67,7 +79,16 @@ export function Table() {
     };
   }, []);
 
-  const columns = useMemo<ColumnDef<PieceDetailed>[]>(
+  useEffect(() => {
+    if (!query) {
+      setFilteredPieces(pieces);
+    } else {
+      const results = fuse.search(query);
+      setFilteredPieces(results.map((result) => result.item));
+    }
+  }, [query, pieces]);
+
+  const columns = useMemo<ColumnDef<PieceVague>[]>(
     () => [
       {
         accessorFn: (row) => row.id,
@@ -75,7 +96,7 @@ export function Table() {
         header: () => <span className="">#</span>,
         cell: (info) => {
           const id = info.getValue() as string;
-          return <span className="text-fg.default w-full">{id}</span>;
+          return <span className="text-fg.muted">{id}</span>;
         },
         size: 48,
       },
@@ -87,19 +108,25 @@ export function Table() {
         },
         cell: (info) => {
           return (
-            <div className="flex gap-[14px]">
+            <div className="flex gap-[14px] items-center">
               <div className="flex flex-col gap-[8px]">
-                <span className="text-lg text-white-primary">
+                <span className="text-lg text-fg.default">
                   {info.row.original.title}
                 </span>
-                <span className="text-sm text-white-secondary">
-                  {info.row.original.composers[0].last_name}
+                <span className="text-sm text-fg.muted">
+                  {info.row.original.composers
+                    .map((composer) =>
+                      composer.last_name
+                        ? `${composer.last_name}, ${composer.first_name}`
+                        : `${composer.first_name}`
+                    )
+                    .join(", ")}
                 </span>
               </div>
               <ol>
                 {info.row.original.tags.map((tag) => (
                   <li
-                    className="h-[14px] w-[14px]"
+                    className="h-[14px] w-[14px] rounded-[7px]"
                     style={{ backgroundColor: tag.color }}
                   />
                 ))}
@@ -110,67 +137,55 @@ export function Table() {
       },
       {
         id: "composers",
-        accessorFn: (row) => row.composers,
-        sortingFn: (a, b) => {
-          const aComposers = a.original.composers;
-          const bComposers = b.original.composers;
-          for (
-            let i = 0;
-            i < Math.max(aComposers.length, bComposers.length);
-            i++
-          ) {
-            const aComposer = aComposers[i];
-            const bComposer = bComposers[i];
-
-            if (!aComposer) {
-              return -1;
-            } else if (!bComposer) {
-              return 1;
-            }
-
-            const aLastName = aComposer.last_name || aComposer.first_name;
-            const bLastName = bComposer.last_name || bComposer.first_name;
-
-            if (aLastName < bLastName) {
-              return -1;
-            } else if (aLastName > bLastName) {
-              return 1;
-            }
-          }
-
-          if (a.original.title < b.original.title) {
-            return -1;
-          } else if (a.original.title > b.original.title) {
-            return 1;
-          }
-          return a.original.id - b.original.id;
+        accessorFn: (row) => {
+          const { composers } = row;
+          return composers
+            .map((composer) =>
+              composer.last_name
+                ? `${composer.last_name}, ${composer.first_name}`
+                : `${composer.first_name}`
+            )
+            .join(", ");
         },
       },
       {
         id: "yearPublished",
-        accessorFn: (row) => row.yearPublished,
+        accessorFn: (row) => row.year_published,
         header: () => <span className="">Year</span>,
         cell: (info) => {
-          const year = info.getValue() as number;
-          return <span className="text-fg.default">{year}</span>;
+          return (
+            <span className="text-fg.default">{info.getValue() as number}</span>
+          );
         },
         size: 64,
       },
       {
         id: "updatedAt",
-        accessorFn: (row) => row.updatedAt,
+        accessorFn: (row) => DateTime.fromSQL(row.updated_at),
         header: () => <span className="">Updated</span>,
         cell: (info) => {
-          const updatedAt = info.getValue() as string;
-          return <span className="text-fg.default">{updatedAt}</span>;
+          const updatedAt = info.getValue() as DateTime;
+
+          const formattedUpdatedAt = (() => {
+            if (updatedAt.hasSame(DateTime.now(), "day")) {
+              return updatedAt.toLocaleString(DateTime.TIME_SIMPLE);
+            } else if (updatedAt.hasSame(DateTime.now(), "year")) {
+              return updatedAt.toLocaleString(DateTime.DATE_SHORT);
+            } else {
+              return updatedAt.toLocaleString(DateTime.DATE_MED);
+            }
+          })();
+
+          return <span className="text-fg.muted">{formattedUpdatedAt}</span>;
         },
         size: 91,
       },
     ],
     []
   );
+
   const table = useReactTable({
-    data: [],
+    data: filteredPieces,
     state: { columnVisibility, sorting },
     onColumnVisibilityChange: setColumnVisibility,
     onSortingChange: setSorting,
@@ -180,18 +195,23 @@ export function Table() {
   });
 
   async function fetchPiecesTable() {
-    const pieces = await invoke("pieces_get_all");
-
-    console.log(pieces);
+    const pieces = (await invoke("pieces_get_all")) as PieceVague[];
+    setPieces(pieces);
   }
 
-  function handleClickSortColumn(headerColumn: Column<PieceDetailed, unknown>) {
+  function handleClickSortColumn(headerColumn: Column<PieceVague, unknown>) {
     if (headerColumn.id !== "main") {
-      if (!sorting[0].desc) {
+      if (
+        !sorting[0].desc &&
+        sorting[0].id !== "main" &&
+        sorting[0].id !== "composers"
+      ) {
         setSorting([{ id: "updatedAt", desc: true }]);
       } else {
         headerColumn.toggleSorting();
       }
+      sendMainSortState("RESET");
+      setIsMainTitle(true);
     } else {
       const mainColumn = table.getColumn("main");
       const composersColumn = table.getColumn("composers");
@@ -219,14 +239,45 @@ export function Table() {
           composersColumn?.toggleSorting();
         }
       }
+
+      switch (mainSortState.value) {
+        case "updatedDesc":
+          setIsMainTitle(true);
+          mainColumn?.toggleSorting(false);
+          break;
+        case "titleAsc":
+          setIsMainTitle(true);
+          mainColumn?.toggleSorting(true);
+          break;
+        case "titleDesc":
+          setIsMainTitle(false);
+          composersColumn?.toggleSorting(false);
+          break;
+        case "composersAsc":
+          setIsMainTitle(false);
+          composersColumn?.toggleSorting(true);
+          break;
+        case "composersDesc":
+          setIsMainTitle(true);
+          setSorting([{ id: "updatedAt", desc: true }]);
+          break;
+      }
+
+      sendMainSortState("CLICK");
     }
   }
 
   function handleClickDropdownSelect(optionId: string) {
-    if (!sorting[0].desc) {
+    if (optionId !== sorting[0].id) {
       setSorting([{ id: optionId, desc: true }]);
     } else {
-      table.getColumn(optionId)?.toggleSorting();
+      setSorting([{ id: optionId, desc: !sorting[0].desc }]);
+    }
+
+    if (optionId === "composers") {
+      setIsMainTitle(false);
+    } else {
+      setIsMainTitle(true);
     }
 
     setIsSortDropdownOpen(false);
@@ -235,6 +286,25 @@ export function Table() {
   function handleClickResetFilters() {
     setSorting([{ id: "updatedAt", desc: true }]);
   }
+
+  const fuse = new Fuse(pieces, {
+    useExtendedSearch: true,
+    keys: [
+      {
+        name: "title",
+        weight: 4,
+      },
+      {
+        name: "composers",
+        getFn: (piece) => {
+          return piece.composers
+            .map((composer) => `${composer.first_name} ${composer.last_name}`)
+            .join(" ");
+        },
+        weight: 2,
+      },
+    ],
+  });
 
   return (
     <div className="p-[14px] flex flex-col gap-[14px]">
@@ -247,9 +317,9 @@ export function Table() {
             <span className="text-fg.default flex items-center">
               {sortOptions.find((option) => option.id === sorting[0].id)?.label}
               {sorting[0].desc ? (
-                <Icon path={mdiChevronDown} size={1} className="" />
+                <Icon path={mdiChevronDown} size={1} className="shrink-0" />
               ) : (
-                <Icon path={mdiChevronUp} size={1} className="" />
+                <Icon path={mdiChevronUp} size={1} className="shrink-0" />
               )}
             </span>
           </button>
@@ -289,9 +359,9 @@ export function Table() {
         </button>
       </div>
       <table ref={tableRef} className="flex flex-col gap-[14px]">
-        <thead className="pb-[14px] border-b-fg.subtle border-b">
+        <thead className="pb-[14px] border-b-fg.subtle border-b px-[14px]">
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="flex">
+            <tr key={headerGroup.id} className="flex gap-[14px]">
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
@@ -304,7 +374,7 @@ export function Table() {
                 >
                   <button
                     onClick={() => handleClickSortColumn(header.column)}
-                    className="w-full text-left flex"
+                    className="w-full flex"
                   >
                     {header.id !== "main" || isMainTitle
                       ? flexRender(
@@ -315,9 +385,19 @@ export function Table() {
 
                     {
                       {
-                        asc: <Icon path={mdiChevronUp} size={1} className="" />,
+                        asc: (
+                          <Icon
+                            path={mdiChevronUp}
+                            size={1}
+                            className="shrink-0"
+                          />
+                        ),
                         desc: (
-                          <Icon path={mdiChevronDown} size={1} className="" />
+                          <Icon
+                            path={mdiChevronDown}
+                            size={1}
+                            className="shrink-0"
+                          />
                         ),
                       }[
                         header.id !== "main" || isMainTitle
@@ -333,7 +413,29 @@ export function Table() {
             </tr>
           ))}
         </thead>
-        <tbody></tbody>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr
+              ref={rowRef}
+              key={row.original.id}
+              className="flex items-center hover:bg-bg.default gap-[14px] px-[14px]"
+            >
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  className="h-full"
+                  style={
+                    cell.column.id === "main"
+                      ? { flexGrow: 1 }
+                      : { width: cell.column.getSize() }
+                  }
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   );

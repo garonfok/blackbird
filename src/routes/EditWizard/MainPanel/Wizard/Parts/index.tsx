@@ -72,8 +72,6 @@ export function Parts() {
 
   const handleConfirmSaveEnsemble = useCallback(
     async (name: string, category: string) => {
-      console.log("saving ensemble");
-      console.log(name, category);
 
       const ensembleId = (await invoke("ensembles_add", {
         name,
@@ -92,8 +90,6 @@ export function Parts() {
           ensemblePartId,
           instrumentIds: part.instruments.map((instrument) => instrument.id),
         });
-
-        console.log(ensemblePartId);
       }
     },
     [piece.parts]

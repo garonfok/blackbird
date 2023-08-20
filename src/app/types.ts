@@ -1,24 +1,24 @@
 export interface PieceVague {
   id: number;
   title: string;
-  yearPublished?: number;
+  year_published?: number;
   path: string;
   difficulty?: number;
   notes: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
   composers: Musician[];
   tags: Tag[];
 }
-export interface PieceDetailed {
+export interface Piece {
   id: number;
   title: string;
-  yearPublished?: number;
+  year_published?: number;
   path: string;
   difficulty?: number;
   notes: string;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
   composers: Musician[];
   arrangers: Musician[];
   orchestrators: Musician[];
@@ -104,4 +104,11 @@ export interface ByteFile {
   id: number;
   name: string;
   bytearray: Uint8Array;
+}
+
+export interface Setlist {
+  id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
 }

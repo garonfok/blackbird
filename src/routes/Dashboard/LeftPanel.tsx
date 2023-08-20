@@ -11,15 +11,17 @@ import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Tag } from "../../app/types";
+import { Setlist, Tag } from "../../app/types";
 import { ResizableLeft } from "../../components/ResizeableLeft";
 
 export function LeftPanel() {
   const [isTagsOpen, setTagsOpen] = useState(false);
+  const [setlists, setSetlists] = useState<Setlist[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
 
   useEffect(() => {
     fetchTags();
+    fetchSetlists();
   }, []);
 
   async function fetchTags() {
@@ -27,11 +29,13 @@ export function LeftPanel() {
     setTags(tags);
   }
 
-  const setlistCount = 15;
+  async function fetchSetlists() {
+    const setlists = (await invoke("setlists_get_all")) as Setlist[];
+    setSetlists(setlists);
+  }
 
   function handleContextMenuTags(e: React.MouseEvent) {
     e.preventDefault();
-    console.log("Hi");
   }
 
   return (
@@ -51,19 +55,16 @@ export function LeftPanel() {
               <span>All pieces</span>
             </button>
           </li>
-          {Array.from({ length: setlistCount }).map((_, i) => (
-            <li key={i}>
+          {setlists.map((setlist) => (
+            <li key={setlist.id}>
               <button className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default">
                 <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
-                <span className="truncate">
-                  {Math.random().toString(36).substring(2, 15) +
-                    Math.random().toString(36).substring(2, 15)}
-                </span>
+                <span className="truncate">{setlist.name}</span>
               </button>
             </li>
           ))}
         </ol>
-        {/* <hr className="text-fg.subtle" /> */}
+        <hr className="text-fg.subtle" />
         <div
           onContextMenu={handleContextMenuTags}
           className="flex flex-col gap-[14px] h-0 flex-grow"

@@ -1,13 +1,17 @@
 import { mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
-import { isWindows } from "../../../app/utils";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { debounce, isWindows } from "../../../app/utils";
+import { useAppDispatch } from "../../../app/hooks";
+import { setQuery } from "./querySlice";
 
 export function Navbar() {
   const [isSearchFocused, setSearchFocused] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -26,6 +30,12 @@ export function Navbar() {
       inputRef.current?.focus();
     }
   }
+
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    dispatch(setQuery({ query: event.target.value }));
+  }
+
+  const handleChangeDebounced = useCallback(debounce(handleChange), []);
 
   return (
     <div className="bg-bg.default p-[14px] shadow-panel">
@@ -51,6 +61,7 @@ export function Navbar() {
             placeholder="Type Ctrl + K to search"
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setSearchFocused(false)}
+            onChange={handleChangeDebounced}
           />
           <button>
             <Icon
