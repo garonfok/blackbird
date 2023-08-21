@@ -1,4 +1,10 @@
-import { mdiChevronDown, mdiChevronUp, mdiEraser } from "@mdi/js";
+import {
+  mdiChevronDown,
+  mdiChevronUp,
+  mdiClose,
+  mdiEraser,
+  mdiTag,
+} from "@mdi/js";
 import { Icon } from "@mdi/react";
 import {
   Column,
@@ -22,6 +28,7 @@ import { isWindows } from "../../../app/utils";
 import { setPiece } from "../previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
 import { Menu } from "@headlessui/react";
+import { removeTag, resetFilter } from "../filterSlice";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -47,6 +54,7 @@ export function Table() {
   const tableRef = useRef<HTMLTableElement>(null);
   const rowRef = useRef<HTMLTableRowElement>(null);
 
+  const filter = useAppSelector((state) => state.filter);
   const query = useAppSelector((state) => state.query);
   const dispatch = useAppDispatch();
 
@@ -79,13 +87,24 @@ export function Table() {
 
   useEffect(() => {
     setSelected([]);
-    if (!query) {
-      setFilteredPieces(pieces);
-    } else {
+
+    let filteringPieces = pieces;
+
+    if (query) {
       const results = fuse.search(query);
-      setFilteredPieces(results.map((result) => result.item));
+      filteringPieces = results.map((result) => result.item);
     }
-  }, [query, pieces]);
+
+    if (filter.tags.length > 0) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return filter.tags.every((tag) => {
+          return piece.tags.some((pieceTag) => pieceTag.id === tag.id);
+        });
+      });
+    }
+
+    setFilteredPieces(filteringPieces);
+  }, [query, filter, pieces]);
 
   const columns = useMemo<ColumnDef<Piece>[]>(
     () => [
@@ -116,7 +135,7 @@ export function Table() {
                   {info.row.original.composers
                     .map((composer) =>
                       composer.last_name
-                        ? `${composer.last_name}, ${composer.first_name}`
+                        ? `${composer.first_name} ${composer.last_name}`
                         : `${composer.first_name}`
                     )
                     .join(", ")}
@@ -319,6 +338,7 @@ export function Table() {
 
   function handleClickResetFilters() {
     setSorting([{ id: "updatedAt", desc: true }]);
+    dispatch(resetFilter());
   }
 
   const fuse = new Fuse(pieces, {
@@ -379,6 +399,22 @@ export function Table() {
             ))}
           </Menu.Items>
         </Menu>
+        {filter.tags.length > 0 &&
+          filter.tags.map((tag) => (
+            <div
+              key={tag.id}
+              className="rounded-[4px] bg-bg.default text-fg.default px-[14px] py-[8px] shadow-float flex gap-[14px]"
+            >
+              <Icon path={mdiTag} size={1} style={{ color: tag.color }} />
+              {tag.name}
+              <button
+                onClick={() => dispatch(removeTag(tag.id))}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          ))}
         <button
           className="flex gap-[8px] hover:text-fg.default"
           onClick={handleClickResetFilters}

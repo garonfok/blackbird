@@ -4,6 +4,7 @@ import pieceReducer from "../routes/EditWizard/pieceSlice";
 import musiciansReducer from "../routes/EditWizard/MainPanel/Wizard/musiciansSlice";
 import queryReducer from "../routes/Dashboard/MainPanel/querySlice";
 import previewReducer from "../routes/Dashboard/previewSlice";
+import filterReducer from "../routes/Dashboard/filterSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     musicians: musiciansReducer,
     query: queryReducer,
     preview: previewReducer,
+    filter: filterReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
