@@ -48,22 +48,25 @@ export function LeftPanel() {
           New piece
         </Link>
         <hr className="text-fg.subtle" />
-        <ol className="flex flex-col gap-[14px] overflow-y-auto max-h-[50%] scrollbar-default">
-          <li>
-            <button className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default">
-              <Icon path={mdiBookshelf} size={1} />
-              <span>All pieces</span>
-            </button>
-          </li>
+        <div className="flex flex-col gap-[14px] overflow-y-auto max-h-[50%] scrollbar-default">
+          <button className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default">
+            <Icon path={mdiBookshelf} size={1} />
+            <span>All pieces</span>
+          </button>
+          <button className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default">
+            <Icon path={mdiPlus} size={1} />
+            <span>Create setlist</span>
+          </button>
           {setlists.map((setlist) => (
-            <li key={setlist.id}>
-              <button className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default">
-                <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
-                <span className="truncate">{setlist.name}</span>
-              </button>
-            </li>
+            <button
+              key={setlist.id}
+              className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default"
+            >
+              <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
+              <span className="truncate">{setlist.name}</span>
+            </button>
           ))}
-        </ol>
+        </div>
         <hr className="text-fg.subtle" />
         <div
           onContextMenu={handleContextMenuTags}
@@ -93,21 +96,22 @@ export function LeftPanel() {
             </button>
           </span>
           {isTagsOpen && (
-            <ul className="ml-[14px] overflow-y-auto flex flex-col gap-[8px] scrollbar-default">
+            <div className="ml-[14px] overflow-y-auto flex flex-col gap-[8px] scrollbar-default">
               {tags.map((tag) => (
-                <li key={tag.id}>
-                  <button className="flex items-center gap-[14px] w-full text-fg.muted hover:text-fg.default">
-                    <Icon
-                      path={mdiTag}
-                      className="shrink-0"
-                      size={1}
-                      color={tag.color}
-                    />
-                    <span className="truncate">{tag.name}</span>
-                  </button>
-                </li>
+                <button
+                  key={tag.id}
+                  className="flex items-center gap-[14px] w-full text-fg.muted hover:text-fg.default"
+                >
+                  <Icon
+                    path={mdiTag}
+                    className="shrink-0"
+                    size={1}
+                    color={tag.color}
+                  />
+                  <span className="truncate">{tag.name}</span>
+                </button>
               ))}
-            </ul>
+            </div>
           )}
         </div>
         <hr className="text-fg.subtle" />
