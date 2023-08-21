@@ -5,9 +5,11 @@ import { isWindows } from "../../app/utils";
 import { LeftPanel } from "./LeftPanel";
 import { MainPanel } from "./MainPanel";
 import { RightPanel } from "./RightPanel";
+import { useAppSelector } from "../../app/hooks";
 
 export function Dashboard() {
   const navigate = useNavigate();
+  const preview = useAppSelector((state) => state.preview);
 
   useEffect(() => {
     const unlisten = listen("tauri://file-drop", handleDrop);
@@ -34,7 +36,7 @@ export function Dashboard() {
     <div className="flex h-full w-full">
       <LeftPanel />
       <MainPanel />
-      <RightPanel />
+      {preview.piece && <RightPanel />}
     </div>
   );
 }

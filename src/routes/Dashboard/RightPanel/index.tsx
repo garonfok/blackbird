@@ -1,14 +1,16 @@
 import { mdiClose } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { ResizableRight } from "../../../components/ResizeableRight";
-import { useAppSelector } from "../../../app/hooks";
+import { clearPiece } from "../previewSlice";
 import { Preview } from "./Preview";
 
 export function RightPanel() {
   const [maxWidth, setMaxWidth] = useState<number>(384);
 
   const preview = useAppSelector((state) => state.preview);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -24,12 +26,19 @@ export function RightPanel() {
     };
   }, []);
 
+  function handleClickClearPreview() {
+    dispatch(clearPiece());
+  }
+
   return (
     <ResizableRight width={256} minWidth={192} maxWidth={maxWidth}>
       <div className="flex flex-col h-full gap-[14px]">
         <span className="flex justify-between items-center py-[8px]">
           <span className="text-fg.muted">Viewing</span>
-          <button className="text-fg.muted hover:text-fg.default transition-all">
+          <button
+            onClick={handleClickClearPreview}
+            className="text-fg.muted hover:text-fg.default transition-all"
+          >
             <Icon path={mdiClose} size={1} />
           </button>
         </span>

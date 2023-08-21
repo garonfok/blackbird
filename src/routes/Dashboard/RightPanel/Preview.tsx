@@ -19,7 +19,7 @@ export function Preview(props: { piece: Piece }) {
 
   return (
     piece && (
-      <div className="flex flex-col h-full gap-[14px]">
+      <div className="flex flex-col h-0 gap-[14px] flex-grow overflow-y-auto scrollbar-default">
         <div className="flex flex-wrap gap-[14px]">
           {piece.tags.map((tag) => {
             return (
@@ -94,7 +94,7 @@ export function Preview(props: { piece: Piece }) {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow overflow-y-auto scrollbar-default gap-[14px]">
+        <div className="flex flex-col gap-[14px]">
           <div className="flex flex-col text-fg.muted">
             {piece.title.length > 0 &&
               piece.composers.length > 0 &&
