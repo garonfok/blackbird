@@ -13,10 +13,16 @@ pub async fn get_all(db: &DatabaseConnection) -> Result<Vec<Value>, DbErr> {
     let mut pieces_with_data: Vec<Value> = vec![];
 
     for piece in pieces {
-        let piece_id = piece.id;
+        let id = piece.id;
 
-        let composers = get_musicians(db, piece_id, "composer").await?;
-        let tags = get_tags(db, piece_id).await?;
+        let composers = get_musicians(db, id, "composer").await?;
+        let arrangers = get_musicians(db, id, "arranger").await?;
+        let orchestrators = get_musicians(db, id, "orchestrator").await?;
+        let lyricists = get_musicians(db, id, "lyricist").await?;
+        let transcribers = get_musicians(db, id, "transcriber").await?;
+        let tags = get_tags(db, id).await?;
+        let scores = get_scores(db, id).await?;
+        let parts = get_parts(db, id).await?;
 
         let piece = serde_json::json!({
             "id": piece.id,
@@ -27,8 +33,14 @@ pub async fn get_all(db: &DatabaseConnection) -> Result<Vec<Value>, DbErr> {
             "notes": piece.notes,
             "created_at": piece.created_at,
             "updated_at": piece.updated_at,
+            "scores": scores,
+            "parts": parts,
             "tags": tags,
             "composers": composers,
+            "arrangers": arrangers,
+            "orchestrators": orchestrators,
+            "lyricists": lyricists,
+            "transcribers": transcribers,
         });
 
         pieces_with_data.push(piece);
@@ -50,10 +62,16 @@ pub async fn get_by_setlist(db: &DatabaseConnection, setlist_id: i32) -> Result<
             let mut pieces_with_data: Vec<Value> = vec![];
 
             for piece in pieces {
-                let piece_id = piece.id;
+                let id = piece.id;
 
-                let composers = get_musicians(db, piece_id, "composer").await?;
-                let tags = get_tags(db, piece_id).await?;
+                let composers = get_musicians(db, id, "composer").await?;
+                let arrangers = get_musicians(db, id, "arranger").await?;
+                let orchestrators = get_musicians(db, id, "orchestrator").await?;
+                let lyricists = get_musicians(db, id, "lyricist").await?;
+                let transcribers = get_musicians(db, id, "transcriber").await?;
+                let tags = get_tags(db, id).await?;
+                let scores = get_scores(db, id).await?;
+                let parts = get_parts(db, id).await?;
 
                 let piece = serde_json::json!({
                     "id": piece.id,
@@ -64,8 +82,14 @@ pub async fn get_by_setlist(db: &DatabaseConnection, setlist_id: i32) -> Result<
                     "notes": piece.notes,
                     "created_at": piece.created_at,
                     "updated_at": piece.updated_at,
+                    "scores": scores,
+                    "parts": parts,
                     "tags": tags,
                     "composers": composers,
+                    "arrangers": arrangers,
+                    "orchestrators": orchestrators,
+                    "lyricists": lyricists,
+                    "transcribers": transcribers,
                 });
 
                 pieces_with_data.push(piece);

@@ -1,15 +1,3 @@
-export interface PieceVague {
-  id: number;
-  title: string;
-  year_published?: number;
-  path: string;
-  difficulty?: number;
-  notes: string;
-  created_at: string;
-  updated_at: string;
-  composers: Musician[];
-  tags: Tag[];
-}
 export interface Piece {
   id: number;
   title: string;

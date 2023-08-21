@@ -17,7 +17,7 @@ import Fuse from "fuse.js";
 import { DateTime } from "luxon";
 import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { Piece, PieceVague } from "../../../app/types";
+import { Piece } from "../../../app/types";
 import { isWindows } from "../../../app/utils";
 import { setPiece } from "../previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
@@ -32,8 +32,8 @@ const sortOptions = [
 ];
 
 export function Table() {
-  const [pieces, setPieces] = useState<PieceVague[]>([]);
-  const [filteredPieces, setFilteredPieces] = useState<PieceVague[]>([]);
+  const [pieces, setPieces] = useState<Piece[]>([]);
+  const [filteredPieces, setFilteredPieces] = useState<Piece[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([
     { id: "updatedAt", desc: true },
@@ -53,7 +53,7 @@ export function Table() {
   useEffect(() => {
     table.getColumn("composers")?.toggleVisibility(false);
 
-    fetchPiecesTable();
+    fetchPieces();
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -87,7 +87,7 @@ export function Table() {
     }
   }, [query, pieces]);
 
-  const columns = useMemo<ColumnDef<PieceVague>[]>(
+  const columns = useMemo<ColumnDef<Piece>[]>(
     () => [
       {
         accessorFn: (row) => row.id,
@@ -193,8 +193,10 @@ export function Table() {
     getSortedRowModel: getSortedRowModel(),
   });
 
-  async function fetchPiecesTable() {
-    const pieces = (await invoke("pieces_get_all")) as PieceVague[];
+  async function fetchPieces() {
+    const pieces = (await invoke("pieces_get_all")) as Piece[];
+    console.log(pieces);
+
     setPieces(pieces);
   }
 
@@ -233,7 +235,7 @@ export function Table() {
     }
   }
 
-  function handleClickSortColumn(headerColumn: Column<PieceVague, unknown>) {
+  function handleClickSortColumn(headerColumn: Column<Piece, unknown>) {
     if (headerColumn.id !== "main") {
       if (
         !sorting[0].desc &&
