@@ -37,7 +37,7 @@ export function RightPanel() {
   }
 
   async function handleClickOpenDirectory() {
-    await invoke("open_dir", { path: preview.piece!.path });
+    await invoke("open", { path: preview.piece!.path });
   }
 
   function handleClickDelete() {

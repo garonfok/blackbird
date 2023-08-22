@@ -33,7 +33,7 @@ pub fn get_dir_empty(path: String) -> Result<bool, String> {
 }
 
 #[command]
-pub fn open_dir(path: String) -> Result<(), String> {
+pub fn open(path: String) -> Result<(), String> {
     #[cfg(target_os = "macos")]
     {
         let path = PathBuf::from(path);
