@@ -55,7 +55,7 @@ export function Renameable(props: {
       {isRenaming ? (
         <input
           ref={inputRef}
-          className="text-fg.default bg-bg.inset outline-none px-[2px] rounded-[4px] w-fit"
+          className="text-fg.default bg-bg.inset outline-none px-[4px] rounded-[4px]"
           defaultValue={name}
           onChange={handleChangeDebounced}
         />

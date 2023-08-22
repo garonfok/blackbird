@@ -33,7 +33,7 @@ export function Files() {
                 {({ open }) => (
                   <div className="gap-[8px] flex flex-col">
                     <Listbox.Button className="input-text flex justify-between">
-                      <span>{score.file?.name}</span>
+                      <span className="text-left">{score.file?.name}</span>
                       <Icon
                         path={mdiChevronDown}
                         size={1}
