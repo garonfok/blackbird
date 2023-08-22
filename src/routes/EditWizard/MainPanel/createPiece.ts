@@ -73,7 +73,8 @@ export async function createPiece(piece: EditPiece) {
 
   // scores
   for (const [index, score] of piece.scores.entries()) {
-    const scorePath = score.file && `${path}/${0}.${index}_${score.name}.pdf`;
+    const scorePath =
+      score.file && `${path}/${0}.${index + 1}_${score.name}.pdf`;
 
     await invoke("scores_add", {
       name: score.name,
@@ -89,7 +90,7 @@ export async function createPiece(piece: EditPiece) {
 
   // parts
   for (const [index, part] of piece.parts.entries()) {
-    const partPath = part.file && `${path}/${1}.${index}_${part.name}.pdf`;
+    const partPath = part.file && `${path}/${1}.${index + 1}_${part.name}.pdf`;
 
     const partId = (await invoke("parts_add", {
       name: part.name,
