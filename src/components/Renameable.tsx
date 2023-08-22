@@ -17,14 +17,14 @@ export function Renameable(props: {
 
   const dispatch = useAppDispatch();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.value) return;
-    setName(event.target.value, index);
-  };
-
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleChangeDebounced = useCallback(debounce(handleChange), []);
+  const handleChangeDebounced = useCallback(debounce(handleChange), [index]);
+
+  function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+    if (!event.target.value) return;
+    setName(event.target.value, index);
+  }
 
   useEffect(() => {
     window.addEventListener("mousedown", (e) => {
@@ -40,7 +40,7 @@ export function Renameable(props: {
     return () => {
       window.removeEventListener("mousedown", () => {});
     };
-  }, []);
+  }, [index]);
 
   function handleDoubleClickRenaming() {
     if (isPart) {

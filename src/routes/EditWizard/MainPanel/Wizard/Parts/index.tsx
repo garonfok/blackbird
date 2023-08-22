@@ -54,7 +54,8 @@ export function Parts() {
         id: instrumentId,
       })) as Instrument;
 
-      const maxPartId = Math.max(...piece.parts.map((part) => part.id ?? 0));
+      const maxPartId = Math.max(...piece.parts.map((part) => part.id), 0);
+
       dispatch(
         pushPart({
           id: maxPartId + 1,
@@ -67,12 +68,11 @@ export function Parts() {
       );
       dispatch(formatPartNumbers());
     },
-    []
+    [piece.parts]
   );
 
   const handleConfirmSaveEnsemble = useCallback(
     async (name: string, category: string) => {
-
       const ensembleId = (await invoke("ensembles_add", {
         name,
         category: category === "" ? null : category,
