@@ -1,8 +1,10 @@
 import { invoke } from "@tauri-apps/api";
-import { createDir, writeBinaryFile } from "@tauri-apps/api/fs";
 import { EditPiece } from "../../../app/types";
+import { createDir, writeBinaryFile } from "@tauri-apps/api/fs";
 
-export async function createPiece(piece: EditPiece) {
+export async function updatePiece(piece: EditPiece, path: string) {
+  await invoke("delete_dir", { path });
+
   const principalComposer = piece.composers[0];
 
   const composerName = principalComposer.last_name
@@ -11,74 +13,63 @@ export async function createPiece(piece: EditPiece) {
 
   const workingDir = await invoke("get_working_directory");
 
-  const pieceId = (await invoke("pieces_add", {
-    title: piece.title,
-    yearPublished: piece.yearPublished,
-    path: "",
-    difficulty: piece.difficulty,
-    notes: piece.notes,
-  })) as number;
-
-  const path = `${workingDir}/${principalComposer.id}_${composerName}/${pieceId}_${piece.title}`;
-  await createDir(path, { recursive: true });
+  const newPath = `${workingDir}/${principalComposer.id}_${composerName}/${piece.id}_${piece.title}`;
+  await createDir(newPath, { recursive: true });
 
   await invoke("pieces_update", {
-    id: pieceId,
+    id: piece.id,
     title: piece.title,
     yearPublished: piece.yearPublished,
-    path,
+    path: newPath,
     difficulty: piece.difficulty,
     notes: piece.notes,
   });
 
-  // tags
   await invoke("pieces_set_tags", {
-    pieceId,
+    pieceId: piece.id,
     tagIds: piece.tags.map((tag) => tag.id),
   });
-  //  composers
+
   await invoke("pieces_set_musicians", {
-    pieceId,
+    pieceId: piece.id,
     musicianIds: piece.composers.map((composer) => composer.id),
     role: "composer",
   });
 
-  // arrangers
   await invoke("pieces_set_musicians", {
-    pieceId,
+    pieceId: piece.id,
     musicianIds: piece.arrangers.map((arranger) => arranger.id),
     role: "arranger",
   });
 
-  // transcribers
   await invoke("pieces_set_musicians", {
-    pieceId,
+    pieceId: piece.id,
     musicianIds: piece.transcribers.map((transcriber) => transcriber.id),
     role: "transcriber",
   });
 
-  // orchestrators
   await invoke("pieces_set_musicians", {
-    pieceId,
+    pieceId: piece.id,
     musicianIds: piece.orchestrators.map((orchestrator) => orchestrator.id),
     role: "orchestrator",
   });
 
-  // lyricists
   await invoke("pieces_set_musicians", {
-    pieceId,
+    pieceId: piece.id,
     musicianIds: piece.lyricists.map((lyricist) => lyricist.id),
     role: "lyricist",
   });
 
-  // scores
+  await invoke("pieces_drop_scores", { pieceId: piece.id });
+  await invoke("pieces_drop_parts", { pieceId: piece.id });
+
   for (const [index, score] of piece.scores.entries()) {
     const scorePath = score.file && `${path}/${0}.${index}_${score.name}.pdf`;
 
     await invoke("scores_add", {
       name: score.name,
       path: scorePath,
-      pieceId,
+      pieceId: piece.id,
     });
 
     // create file
@@ -87,14 +78,13 @@ export async function createPiece(piece: EditPiece) {
     }
   }
 
-  // parts
   for (const [index, part] of piece.parts.entries()) {
     const partPath = part.file && `${path}/${1}.${index}_${part.name}.pdf`;
 
     const partId = (await invoke("parts_add", {
       name: part.name,
       path: partPath,
-      pieceId,
+      pieceId: piece.id,
     })) as number;
 
     // instruments

@@ -40,6 +40,8 @@ pub fn handler() -> impl Fn(Invoke) {
         db::pieces::pieces_delete,
         db::pieces::pieces_set_musicians,
         db::pieces::pieces_set_tags,
+        db::pieces::pieces_drop_scores,
+        db::pieces::pieces_drop_parts,
         db::scores::scores_get_all,
         db::scores::scores_get_by_id,
         db::scores::scores_add,
@@ -58,6 +60,7 @@ pub fn handler() -> impl Fn(Invoke) {
         fs::get_database_exists,
         fs::get_dir_empty,
         fs::open,
+        fs::delete_dir,
         settings::get_working_directory,
         settings::set_working_directory,
     ]

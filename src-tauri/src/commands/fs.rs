@@ -50,3 +50,15 @@ pub fn open(path: String) -> Result<(), String> {
 
     Ok(())
 }
+
+#[command]
+pub fn delete_dir(path: String) -> Result<(), String> {
+    let path = PathBuf::from(path);
+
+    if !path.exists() {
+        return Ok(());
+    }
+
+    fs::remove_dir_all(path).unwrap();
+    Ok(())
+}

@@ -4,7 +4,7 @@ use sea_orm::{
     JoinType, QueryFilter, QueryOrder, QuerySelect, QueryTrait, RelationTrait,
 };
 use serde_json::Value;
-use std::path::PathBuf;
+use std::{fs, path::PathBuf};
 
 pub async fn get_all(db: &DatabaseConnection) -> Result<Vec<Value>, DbErr> {
     let pieces = pieces::Entity::find().all(db).await?;
@@ -217,11 +217,11 @@ pub async fn delete(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
         return Ok(());
     }
 
-    let _ = std::fs::remove_dir_all(path.clone());
+    let _ = fs::remove_dir_all(path.clone());
     let path = path.parent().unwrap();
 
     if path.exists() {
-        let files = std::fs::read_dir(path).unwrap();
+        let files = fs::read_dir(path).unwrap();
         let mut is_empty = true;
         for file in files {
             let file = file.unwrap();
@@ -232,7 +232,7 @@ pub async fn delete(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
             }
         }
         if is_empty {
-            let _ = std::fs::remove_dir_all(path);
+            let _ = fs::remove_dir_all(path);
         }
     }
 
@@ -325,6 +325,24 @@ pub async fn set_musicians(
             piece_id
         ))),
     }
+}
+
+pub async fn drop_scores(db: &DatabaseConnection, piece_id: i32) -> Result<(), DbErr> {
+    scores::Entity::delete_many()
+        .filter(scores::Column::PieceId.eq(piece_id))
+        .exec(db)
+        .await?;
+
+    Ok(())
+}
+
+pub async fn drop_parts(db: &DatabaseConnection, piece_id: i32) -> Result<(), DbErr> {
+    parts::Entity::delete_many()
+        .filter(parts::Column::PieceId.eq(piece_id))
+        .exec(db)
+        .await?;
+
+    Ok(())
 }
 
 async fn get_musicians(db: &DatabaseConnection, id: i32, role: &str) -> Result<Vec<Value>, DbErr> {

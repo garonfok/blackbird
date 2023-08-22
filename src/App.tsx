@@ -20,10 +20,6 @@ const router = createBrowserRouter([
     path: "/edit-wizard",
     element: <EditWizard />,
   },
-  {
-    path: "/edit-wizard/:pieceId",
-    element: <div>Edit Wizard but it has a piece</div>,
-  },
 ]);
 
 export function App() {

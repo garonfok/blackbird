@@ -1,10 +1,7 @@
-use tauri::{command, AppHandle};
-
-use futures::executor::block_on;
-
-use crate::state::ServiceAccess;
-
 use crate::services::pieces;
+use crate::state::ServiceAccess;
+use futures::executor::block_on;
+use tauri::{command, AppHandle};
 
 #[command]
 pub fn pieces_get_all(app_handle: AppHandle) -> Result<Vec<serde_json::Value>, String> {
@@ -119,6 +116,24 @@ pub fn pieces_set_tags(
     tag_ids: Vec<i32>,
 ) -> Result<(), String> {
     let result = app_handle.db(|db| block_on(pieces::set_tags(db, piece_id, tag_ids)));
+    match result {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[command]
+pub fn pieces_drop_scores(app_handle: AppHandle, piece_id: i32) -> Result<(), String> {
+    let result = app_handle.db(|db| block_on(pieces::drop_scores(db, piece_id)));
+    match result {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[command]
+pub fn pieces_drop_parts(app_handle: AppHandle, piece_id: i32) -> Result<(), String> {
+    let result = app_handle.db(|db| block_on(pieces::drop_parts(db, piece_id)));
     match result {
         Ok(_) => Ok(()),
         Err(e) => Err(e.to_string()),

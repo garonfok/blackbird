@@ -41,6 +41,9 @@ export const pieceSlice = createSlice({
   name: "piece",
   initialState: initialState,
   reducers: {
+    setPiece: (_, action: PayloadAction<EditPiece>) => {
+      return action.payload;
+    },
     clearPiece: () => {
       return initialState;
     },
@@ -386,6 +389,7 @@ export const pieceSlice = createSlice({
 });
 
 export const {
+  setPiece,
   clearPiece,
   setTitle,
   setYearPublished,

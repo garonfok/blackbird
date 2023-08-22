@@ -1,11 +1,12 @@
 import classNames from "classnames";
 import { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { clearFiles } from "../filesSlice";
 import { clearPiece } from "../pieceSlice";
 import { createPiece } from "./createPiece";
 import { StepEvent, StepState } from "./stepMachine";
+import { updatePiece } from "./updatePiece";
 
 export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   const { stepState, sendStep } = props;
@@ -13,9 +14,14 @@ export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   const dispatch = useAppDispatch();
   const piece = useAppSelector((state) => state.piece);
   const navigate = useNavigate();
+  const { state } = useLocation();
 
   async function handleClickFinish() {
-    await createPiece(piece);
+    if (piece.id) {
+      await updatePiece(piece, state?.piece?.path);
+    } else {
+      await createPiece(piece);
+    }
     sendStep("FINISH");
     dispatch(clearFiles());
     dispatch(clearPiece());
@@ -55,7 +61,7 @@ export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
       )}
       {stepState.nextEvents.includes("FINISH") && (
         <button onClick={handleClickFinish} className="text-right">
-          Create piece
+          {piece.id ? "Save changes" : "Create piece"}
         </button>
       )}
     </div>

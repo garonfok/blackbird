@@ -6,10 +6,11 @@ import { readBinaryFile } from "@tauri-apps/api/fs";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { ByteFile } from "../../../app/types";
+import { ByteFile, Piece } from "../../../app/types";
 import { pushFiles } from "../filesSlice";
 import { toast, Toaster } from "react-hot-toast";
 import classNames from "classnames";
+import { setPiece } from "../pieceSlice";
 
 export function DragUpload(props: { isPanelSmall: boolean }) {
   const { isPanelSmall } = props;
@@ -28,9 +29,74 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
   useEffect(() => {
     const unlisten = listen("tauri://file-drop", handleDrop);
 
-    if (!state) return;
-    const { files: dashboardDraggedFiles } = state;
-    uploadFiles(dashboardDraggedFiles);
+    if (state) {
+      if (state.files) {
+        const { files: dashboardDraggedFiles } = state;
+        uploadFiles(dashboardDraggedFiles);
+      }
+
+      if (state.piece) {
+        const { piece: uploadedPiece }: { piece: Piece } = state;
+
+        const {
+          id,
+          arrangers,
+          composers,
+          lyricists,
+          notes,
+          orchestrators,
+          parts,
+          scores,
+          tags,
+          title,
+          transcribers,
+          difficulty,
+          year_published,
+        } = uploadedPiece;
+
+        dispatch(
+          setPiece({
+            id,
+            arrangers,
+            composers,
+            lyricists,
+            notes,
+            orchestrators,
+            parts: parts
+              ? parts.map((part) => ({
+                  ...part,
+                  show: false,
+                  renaming: false,
+                  file: null,
+                }))
+              : [],
+            scores: scores
+              ? scores.map((score) => ({
+                  ...score,
+                  show: false,
+                  renaming: false,
+                  file: null,
+                }))
+              : [],
+            tags,
+            title,
+            transcribers,
+            difficulty,
+            yearPublished: year_published,
+          })
+        );
+
+        const partPaths = parts.map((part) => part.path);
+        const scorePaths = scores.map((score) => score.path);
+
+        // extract all unique paths that are not undefined
+        const paths = [...new Set([...partPaths, ...scorePaths])].filter(
+          (path): path is string => !!path
+        );
+
+        uploadFiles(paths);
+      }
+    }
 
     return () => {
       unlisten;
@@ -63,7 +129,7 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
       (t) => (
         <div
           className={classNames(
-            "px-[14px] py-[8px] bg-bg.emphasis rounded-[4px] flex items-center gap-[4px] shadow-float w-[256px]"
+            "z-auto px-[14px] py-[8px] bg-bg.emphasis rounded-[4px] flex items-center gap-[4px] shadow-float w-[256px]"
           )}
         >
           <div className="flex w-full gap-[4px]">

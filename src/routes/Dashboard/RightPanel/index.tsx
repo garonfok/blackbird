@@ -9,6 +9,7 @@ import { Modal } from "../../../components/Modal";
 import { invoke } from "@tauri-apps/api";
 import { Piece } from "../../../app/types";
 import { setPieces } from "../reducers/piecesSlice";
+import { useNavigate } from "react-router-dom";
 
 export function RightPanel() {
   const [maxWidth, setMaxWidth] = useState<number>(384);
@@ -17,6 +18,7 @@ export function RightPanel() {
 
   const preview = useAppSelector((state) => state.preview);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.addEventListener("resize", () => {
@@ -38,6 +40,10 @@ export function RightPanel() {
 
   async function handleClickOpenDirectory() {
     await invoke("open", { path: preview.piece!.path });
+  }
+
+  function handleClickEditPiece() {
+    navigate("/edit-wizard", { state: { piece: preview.piece } });
   }
 
   function handleClickDelete() {
@@ -85,7 +91,10 @@ export function RightPanel() {
             >
               Open folder
             </button>
-            <button className="text-left text-fg.muted hover:text-fg.default transition-all">
+            <button
+              onClick={handleClickEditPiece}
+              className="text-left text-fg.muted hover:text-fg.default transition-all"
+            >
               Edit data
             </button>
             <button className="text-left text-fg.muted hover:text-fg.default transition-all">

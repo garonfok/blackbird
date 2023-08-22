@@ -43,6 +43,7 @@ export interface Part {
 }
 
 export interface EditPiece {
+  id?: number;
   title: string;
   yearPublished?: number;
   difficulty?: number;
