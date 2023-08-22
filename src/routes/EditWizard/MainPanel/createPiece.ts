@@ -13,21 +13,25 @@ export async function createPiece(piece: EditPiece) {
 
   const workingDir = await invoke("get_working_directory");
 
-  const lastPieceId = (await invoke("pieces_get_max_id")) as number | null;
+  const pieceId = (await invoke("pieces_add", {
+    title: piece.title,
+    yearPublished: piece.yearPublished,
+    path: "",
+    difficulty: piece.difficulty,
+    notes: piece.notes,
+  })) as number;
 
-  const newId = (lastPieceId ?? 0) + 1;
-
-  const path = `${workingDir}/${principalComposer.id}_${composerName}/${newId}_${piece.title}`;
-
+  const path = `${workingDir}/${principalComposer.id}_${composerName}/${pieceId}_${piece.title}`;
   await createDir(path, { recursive: true });
 
-  const pieceId = (await invoke("pieces_add", {
+  await invoke("pieces_update", {
+    id: pieceId,
     title: piece.title,
     yearPublished: piece.yearPublished,
     path,
     difficulty: piece.difficulty,
     notes: piece.notes,
-  })) as number;
+  });
 
   // tags
   await invoke("pieces_set_tags", {
