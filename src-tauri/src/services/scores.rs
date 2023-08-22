@@ -69,6 +69,6 @@ pub async fn update(
 }
 
 pub async fn delete(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
-    let _result = scores::Entity::delete_by_id(id).exec(db).await?;
+    scores::Entity::delete_by_id(id).exec(db).await?;
     Ok(())
 }

@@ -206,7 +206,7 @@ pub async fn update(
 }
 
 pub async fn delete(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
-    pieces::Entity::find_by_id(id).one(db).await?;
+    pieces::Entity::delete_by_id(id).exec(db).await?;
     Ok(())
 }
 

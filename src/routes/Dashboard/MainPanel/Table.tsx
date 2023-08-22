@@ -25,10 +25,10 @@ import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { Piece } from "../../../app/types";
 import { isWindows } from "../../../app/utils";
-import { setPiece } from "../previewSlice";
+import { setPiece } from "../reducers/previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
 import { Menu } from "@headlessui/react";
-import { removeTag, resetFilter } from "../filterSlice";
+import { removeTag, resetFilter } from "../reducers/filterSlice";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -56,6 +56,7 @@ export function Table() {
 
   const filter = useAppSelector((state) => state.filter);
   const query = useAppSelector((state) => state.query);
+  const tags = useAppSelector((state) => state.tags);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -84,6 +85,10 @@ export function Table() {
       resizeObserver.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    fetchPieces();
+  }, [tags]);
 
   useEffect(() => {
     setSelected([]);

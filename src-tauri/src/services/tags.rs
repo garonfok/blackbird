@@ -57,6 +57,6 @@ pub async fn update(
 }
 
 pub async fn delete(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
-    tags::Entity::find_by_id(id).one(db).await?;
+    tags::Entity::delete_by_id(id).exec(db).await?;
     Ok(())
 }

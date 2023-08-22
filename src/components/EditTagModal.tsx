@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Tag } from "../app/types";
 
 type Colors = {
@@ -97,10 +97,14 @@ export function EditTagModal(props: {
   onConfirm: (name: string, color: string) => void;
 }) {
   const { defaultTag, isOpen, closeModal, onConfirm } = props;
-  const [name, setName] = useState<string>(defaultTag?.name || "");
-  const [selectedColor, setSelectedColor] = useState<string>(
-    defaultTag?.color || ""
-  );
+  const [name, setName] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string>("");
+
+  useEffect(() => {
+    if (!defaultTag) return;
+    setName(defaultTag.name);
+    setSelectedColor(defaultTag.color);
+  }, [defaultTag]);
 
   const handleClickCloseModal = useCallback(() => {
     closeModal();

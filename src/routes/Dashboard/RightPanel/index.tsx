@@ -3,7 +3,7 @@ import Icon from "@mdi/react";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { ResizableRight } from "../../../components/ResizeableRight";
-import { clearPiece } from "../previewSlice";
+import { clearPiece } from "../reducers/previewSlice";
 import { Preview } from "./Preview";
 
 export function RightPanel() {

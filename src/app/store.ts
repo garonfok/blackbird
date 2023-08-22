@@ -3,8 +3,9 @@ import filesReducer from "../routes/EditWizard/filesSlice";
 import pieceReducer from "../routes/EditWizard/pieceSlice";
 import musiciansReducer from "../routes/EditWizard/MainPanel/Wizard/musiciansSlice";
 import queryReducer from "../routes/Dashboard/MainPanel/querySlice";
-import previewReducer from "../routes/Dashboard/previewSlice";
-import filterReducer from "../routes/Dashboard/filterSlice";
+import previewReducer from "../routes/Dashboard/reducers/previewSlice";
+import filterReducer from "../routes/Dashboard/reducers/filterSlice";
+import tagsReducer from "../routes/Dashboard/reducers/tagsSlice";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ const store = configureStore({
     query: queryReducer,
     preview: previewReducer,
     filter: filterReducer,
+    tags: tagsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

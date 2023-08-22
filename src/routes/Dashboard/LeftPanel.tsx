@@ -12,19 +12,25 @@ import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Setlist, Tag } from "../../app/types";
 import { EditTagModal } from "../../components/EditTagModal";
 import { ResizableLeft } from "../../components/ResizeableLeft";
-import { pushTag } from "./filterSlice";
+import { pushTag, removeTag } from "./reducers/filterSlice";
+import { Menu } from "@headlessui/react";
+import { Modal } from "../../components/Modal";
+import { setTags } from "./reducers/tagsSlice";
 
 export function LeftPanel() {
   const [isTagsOpen, setTagsOpen] = useState(false);
   const [setlists, setSetlists] = useState<Setlist[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
+  const [selectedTag, setSelectedTag] = useState<Tag>();
   const [isEditTagModalOpen, setIsEditTagModalOpen] = useState(false);
+  const [isConfirmDeleteTagModalOpen, setIsConfirmDeleteTagModalOpen] =
+    useState(false);
 
   const dispatch = useAppDispatch();
+  const tags = useAppSelector((state) => state.tags);
 
   useEffect(() => {
     fetchTags();
@@ -33,7 +39,7 @@ export function LeftPanel() {
 
   async function fetchTags() {
     const tags = (await invoke("tags_get_all")) as Tag[];
-    setTags(tags);
+    dispatch(setTags({ tags }));
   }
 
   async function fetchSetlists() {
@@ -42,7 +48,11 @@ export function LeftPanel() {
   }
 
   async function handleConfirmCreateTag(name: string, color: string) {
-    await invoke("tags_add", { name, color });
+    if (selectedTag) {
+      await invoke("tags_update", { id: selectedTag.id, name, color });
+    } else {
+      await invoke("tags_add", { name, color });
+    }
     await fetchTags();
 
     setIsEditTagModalOpen(false);
@@ -54,6 +64,35 @@ export function LeftPanel() {
 
   async function handleClickPushTag(tag: Tag) {
     dispatch(pushTag(tag));
+  }
+
+  function handleClickEditTag(tag: Tag) {
+    setSelectedTag(tag);
+    setIsEditTagModalOpen(true);
+  }
+
+  async function handleClickDeleteTag(tag: Tag) {
+    setSelectedTag(tag);
+    setIsConfirmDeleteTagModalOpen(true);
+  }
+
+  async function handleConfirmDeleteTag() {
+    await invoke("tags_delete", { id: selectedTag!.id });
+    dispatch(removeTag(selectedTag!.id));
+    setSelectedTag(undefined);
+    setIsConfirmDeleteTagModalOpen(false);
+    await fetchTags();
+  }
+
+  function handleCancelDeleteTag() {
+    setIsConfirmDeleteTagModalOpen(false);
+    setSelectedTag(undefined);
+    setIsConfirmDeleteTagModalOpen(false);
+  }
+
+  function handleCloseEditTagModal() {
+    setIsEditTagModalOpen(false);
+    setTimeout(() => setSelectedTag(undefined), 150);
   }
 
   return (
@@ -135,13 +174,33 @@ export function LeftPanel() {
                         {tag.name}
                       </div>
                     </button>
-                    <button>
-                      <Icon
-                        path={mdiDotsHorizontal}
-                        size={1}
-                        className=" hover:text-fg.default transition-all shrink-0"
-                      />
-                    </button>
+                    <Menu>
+                      <div className="relative">
+                        <Menu.Button className="outline-none flex items-center">
+                          <Icon
+                            path={mdiDotsHorizontal}
+                            size={1}
+                            className=" hover:text-fg.default transition-all shrink-0"
+                          />
+                        </Menu.Button>
+                        <Menu.Items className="mt-[14px] fixed flex flex-col w-[192px] p-[4px] rounded-[4px] bg-bg.emphasis shadow-float outline-none z-10">
+                          <Menu.Item
+                            as="button"
+                            onClick={() => handleClickEditTag(tag)}
+                            className="context-menu-item"
+                          >
+                            Edit
+                          </Menu.Item>
+                          <Menu.Item
+                            as="button"
+                            onClick={() => handleClickDeleteTag(tag)}
+                            className="context-menu-item"
+                          >
+                            Delete
+                          </Menu.Item>
+                        </Menu.Items>
+                      </div>
+                    </Menu>
                   </div>
                 ))}
               </div>
@@ -158,10 +217,21 @@ export function LeftPanel() {
         </div>
       </ResizableLeft>
       <EditTagModal
+        defaultTag={selectedTag}
         isOpen={isEditTagModalOpen}
-        closeModal={() => setIsEditTagModalOpen(false)}
+        closeModal={handleCloseEditTagModal}
         onConfirm={handleConfirmCreateTag}
       />
+      <Modal
+        closeModal={handleCancelDeleteTag}
+        isOpen={isConfirmDeleteTagModalOpen}
+        onConfirm={handleConfirmDeleteTag}
+        cancelText="Cancel"
+        title="Are you sure you want to delete this tag?"
+        confirmText="Delete"
+      >
+        This cannot be undone!
+      </Modal>
     </>
   );
 }

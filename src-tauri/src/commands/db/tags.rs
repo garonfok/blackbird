@@ -50,6 +50,7 @@ pub fn tags_update(
 #[command]
 pub fn tags_delete(app_handle: AppHandle, id: i32) -> Result<(), String> {
     let result = app_handle.db(|db| block_on(tags::delete(db, id)));
+
     match result {
         Ok(_) => Ok(()),
         Err(e) => Err(e.to_string()),
