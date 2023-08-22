@@ -497,7 +497,7 @@ export function Table() {
             >
               {row.getVisibleCells().map((cell) => (
                 <td
-                  key={cell.id}
+                  key={cell.column.id}
                   className="h-full"
                   style={
                     cell.column.id === "main"
