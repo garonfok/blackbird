@@ -121,7 +121,7 @@ export function Card(props: {
                                 {...provided.dragHandleProps}
                               >
                                 <div className="flex items-center gap-[4px] w-full">
-                                  <Icon path={mdiDragVertical} size={1} />
+                                  <Icon path={mdiDragVertical} size={1} className="shrink-0" />
                                   {instrument.name}
                                 </div>
                                 <button

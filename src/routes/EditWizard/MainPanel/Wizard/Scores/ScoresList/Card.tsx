@@ -34,7 +34,7 @@ export function Card(props: {
         <Icon
           path={mdiDragVertical}
           size={1}
-          className="ml-[-10px] text-fg.muted"
+          className="ml-[-10px] text-fg.muted shrink-0"
         />
         <div className="flex flex-col w-full">
           <Renameable
