@@ -1,11 +1,10 @@
+use crate::entities::*;
 use sea_orm::{
     ActiveValue, ColumnTrait, Condition, DatabaseConnection, DbBackend, DbErr, EntityTrait,
     JoinType, QueryFilter, QueryOrder, QuerySelect, QueryTrait, RelationTrait,
 };
-
-use crate::entities::*;
-
 use serde_json::Value;
+use std::path::PathBuf;
 
 pub async fn get_all(db: &DatabaseConnection) -> Result<Vec<Value>, DbErr> {
     let pieces = pieces::Entity::find().all(db).await?;
@@ -206,6 +205,37 @@ pub async fn update(
 }
 
 pub async fn delete(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
+    let piece = pieces::Entity::find_by_id(id).one(db).await?;
+
+    let path_string = piece.unwrap().path;
+
+    let path = PathBuf::from(path_string);
+
+    // handle case where path does not exist
+    if !path.exists() {
+        pieces::Entity::delete_by_id(id).exec(db).await?;
+        return Ok(());
+    }
+
+    let _ = std::fs::remove_dir_all(path.clone());
+    let path = path.parent().unwrap();
+
+    if path.exists() {
+        let files = std::fs::read_dir(path).unwrap();
+        let mut is_empty = true;
+        for file in files {
+            let file = file.unwrap();
+            let file_name = file.file_name();
+            let file_name = file_name.to_str().unwrap();
+            if file_name != ".DS_Store" {
+                is_empty = false;
+            }
+        }
+        if is_empty {
+            let _ = std::fs::remove_dir_all(path);
+        }
+    }
+
     pieces::Entity::delete_by_id(id).exec(db).await?;
     Ok(())
 }

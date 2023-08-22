@@ -29,6 +29,7 @@ import { setPiece } from "../reducers/previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
 import { Menu } from "@headlessui/react";
 import { removeTag, resetFilter } from "../reducers/filterSlice";
+import { setPieces } from "../reducers/piecesSlice";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -39,7 +40,6 @@ const sortOptions = [
 ];
 
 export function Table() {
-  const [pieces, setPieces] = useState<Piece[]>([]);
   const [filteredPieces, setFilteredPieces] = useState<Piece[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([
@@ -57,6 +57,7 @@ export function Table() {
   const filter = useAppSelector((state) => state.filter);
   const query = useAppSelector((state) => state.query);
   const tags = useAppSelector((state) => state.tags);
+  const pieces = useAppSelector((state) => state.pieces);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -219,9 +220,7 @@ export function Table() {
 
   async function fetchPieces() {
     const pieces = (await invoke("pieces_get_all")) as Piece[];
-    console.log(pieces);
-
-    setPieces(pieces);
+    dispatch(setPieces({ pieces }));
   }
 
   async function handleClickSelect(

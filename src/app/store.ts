@@ -6,6 +6,7 @@ import queryReducer from "../routes/Dashboard/MainPanel/querySlice";
 import previewReducer from "../routes/Dashboard/reducers/previewSlice";
 import filterReducer from "../routes/Dashboard/reducers/filterSlice";
 import tagsReducer from "../routes/Dashboard/reducers/tagsSlice";
+import piecesReducer from "../routes/Dashboard/reducers/piecesSlice";
 
 const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ const store = configureStore({
     preview: previewReducer,
     filter: filterReducer,
     tags: tagsReducer,
+    pieces: piecesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
