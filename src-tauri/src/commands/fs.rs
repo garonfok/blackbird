@@ -1,5 +1,6 @@
 use std::fs;
 use std::path::PathBuf;
+use std::process::Command;
 use tauri::command;
 
 #[command]
@@ -29,4 +30,23 @@ pub fn get_dir_empty(path: String) -> Result<bool, String> {
     }
 
     Ok(true)
+}
+
+#[command]
+pub fn open_dir(path: String) -> Result<(), String> {
+    #[cfg(target_os = "macos")]
+    {
+        let path = PathBuf::from(path);
+        let path = path.to_str().unwrap();
+        let _ = Command::new("open").arg(path).output();
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        let path = PathBuf::from(path);
+        let path = path.to_str().unwrap();
+        let _ = Command::new("explorer").arg(path).output();
+    }
+
+    Ok(())
 }

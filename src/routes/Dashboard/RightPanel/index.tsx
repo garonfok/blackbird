@@ -36,6 +36,10 @@ export function RightPanel() {
     dispatch(clearPiece());
   }
 
+  async function handleClickOpenDirectory() {
+    await invoke("open_dir", { path: preview.piece!.path });
+  }
+
   function handleClickDelete() {
     setIsConfirmDeletePieceModalOpen(true);
   }
@@ -75,7 +79,10 @@ export function RightPanel() {
           </div>
           <hr className="text-fg.subtle" />
           <div className="flex flex-col gap-[8px]">
-            <button className="text-left text-fg.muted hover:text-fg.default transition-all">
+            <button
+              onClick={handleClickOpenDirectory}
+              className="text-left text-fg.muted hover:text-fg.default transition-all"
+            >
               Open folder
             </button>
             <button className="text-left text-fg.muted hover:text-fg.default transition-all">

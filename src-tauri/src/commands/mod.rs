@@ -58,6 +58,7 @@ pub fn handler() -> impl Fn(Invoke) {
         db::tags::tags_delete,
         fs::get_database_exists,
         fs::get_dir_empty,
+        fs::open_dir,
         settings::get_working_directory,
         settings::set_working_directory,
     ]
