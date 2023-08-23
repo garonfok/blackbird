@@ -58,6 +58,7 @@ export function Table() {
   const query = useAppSelector((state) => state.query);
   const tags = useAppSelector((state) => state.tags);
   const pieces = useAppSelector((state) => state.pieces);
+  const setlist = useAppSelector((state) => state.setlist);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -89,7 +90,7 @@ export function Table() {
 
   useEffect(() => {
     fetchPieces();
-  }, [tags]);
+  }, [tags, setlist]);
 
   useEffect(() => {
     setSelected([]);
@@ -219,7 +220,22 @@ export function Table() {
   });
 
   async function fetchPieces() {
-    const pieces = (await invoke("pieces_get_all")) as Piece[];
+    // if (!setlist.setlist) {
+    //   const pieces = (await invoke("pieces_get_all")) as Piece[];
+    //   dispatch(setPieces({ pieces }));
+    // } else {
+    //   const pieces
+    // }
+
+    const pieces = await (async () => {
+      if (setlist.setlist) {
+        return (await invoke("pieces_get_by_setlist", {
+          setlistId: setlist.setlist.id,
+        })) as Piece[];
+      } else {
+        return (await invoke("pieces_get_all")) as Piece[];
+      }
+    })();
     dispatch(setPieces({ pieces }));
   }
 

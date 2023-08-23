@@ -3,7 +3,7 @@ import { Icon } from "@mdi/react";
 import classNames from "classnames";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { debounce, isWindows } from "../../../app/utils";
-import { useAppDispatch } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { setQuery } from "./querySlice";
 
 export function Navbar() {
@@ -12,6 +12,7 @@ export function Navbar() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useAppDispatch();
+  const setlist = useAppSelector((state) => state.setlist);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -39,7 +40,7 @@ export function Navbar() {
 
   return (
     <div className="bg-bg.default p-[14px] shadow-panel">
-      <div className="flex">
+      <div className="flex gap-[14px] items-center">
         <span
           className={classNames(
             "bg-bg.inset gap-[14px] py-[8px] px-[14px] rounded-[4px] flex w-full max-w-[512px] text-fg.subtle items-center transition-all",
@@ -71,6 +72,7 @@ export function Navbar() {
             />
           </button>
         </span>
+        <span>{setlist.setlist && setlist.setlist.name}</span>
       </div>
     </div>
   );

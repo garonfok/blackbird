@@ -1,3 +1,4 @@
+import { Menu } from "@headlessui/react";
 import {
   mdiBookOpenOutline,
   mdiBookshelf,
@@ -12,16 +13,19 @@ import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Setlist, Tag } from "../../app/types";
-import { EditTagModal } from "../../components/EditTagModal";
-import { ResizableLeft } from "../../components/ResizeableLeft";
-import { pushTag, removeTag } from "./reducers/filterSlice";
-import { Menu } from "@headlessui/react";
-import { Modal } from "../../components/Modal";
-import { setTags } from "./reducers/tagsSlice";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { Setlist, Tag } from "../../../app/types";
+import { EditTagModal } from "../../../components/EditTagModal";
+import { Modal } from "../../../components/Modal";
+import { ResizableLeft } from "../../../components/ResizeableLeft";
+import { pushTag, removeTag } from "../reducers/filterSlice";
+import { setTags } from "../reducers/tagsSlice";
+import { CreateSetlistModal } from "./CreateSetlistModal";
+import { clearSetlist, setSetlist } from "../reducers/setlistSlice";
 
 export function LeftPanel() {
+  const [isCreateSetlistModalOpen, setIsCreateSetlistModalOpen] =
+    useState(false);
   const [isTagsOpen, setTagsOpen] = useState(false);
   const [setlists, setSetlists] = useState<Setlist[]>([]);
   const [selectedTag, setSelectedTag] = useState<Tag>();
@@ -45,6 +49,12 @@ export function LeftPanel() {
   async function fetchSetlists() {
     const setlists = (await invoke("setlists_get_all")) as Setlist[];
     setSetlists(setlists);
+  }
+
+  async function handleConfirmCreateSetlist(name: string) {
+    await invoke("setlists_add", { name });
+    setIsCreateSetlistModalOpen(false);
+    await fetchSetlists();
   }
 
   async function handleConfirmCreateTag(name: string, color: string) {
@@ -107,11 +117,17 @@ export function LeftPanel() {
           </Link>
           <hr className="text-fg.subtle" />
           <div className="flex flex-col gap-[14px] overflow-y-auto max-h-[50%] scrollbar-default">
-            <button className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default">
+            <button
+              onClick={() => dispatch(clearSetlist())}
+              className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default"
+            >
               <Icon path={mdiBookshelf} size={1} />
               <span>All pieces</span>
             </button>
-            <button className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default">
+            <button
+              onClick={() => setIsCreateSetlistModalOpen(true)}
+              className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default"
+            >
               <Icon path={mdiPlus} size={1} />
               <span>Create setlist</span>
             </button>
@@ -119,6 +135,7 @@ export function LeftPanel() {
               <button
                 key={setlist.id}
                 className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default"
+                onClick={() => dispatch(setSetlist({ setlist }))}
               >
                 <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
                 <span className="truncate">{setlist.name}</span>
@@ -216,6 +233,11 @@ export function LeftPanel() {
           </Link>
         </div>
       </ResizableLeft>
+      <CreateSetlistModal
+        closeModal={() => setIsCreateSetlistModalOpen(false)}
+        isOpen={isCreateSetlistModalOpen}
+        onConfirm={handleConfirmCreateSetlist}
+      />
       <EditTagModal
         defaultTag={selectedTag}
         isOpen={isEditTagModalOpen}
