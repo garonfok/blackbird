@@ -381,7 +381,7 @@ export function Table() {
   });
 
   return (
-    <div className="p-[14px] flex flex-col gap-[14px]">
+    <div className="p-[14px] flex flex-col gap-[14px] flex-grow">
       <div className="flex gap-[14px] items-center text-fg.muted flex-wrap">
         <Menu as="div" className="relative">
           <Menu.Button className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[4px]">
@@ -443,7 +443,10 @@ export function Table() {
           <span>Reset filters</span>
         </button>
       </div>
-      <table ref={tableRef} className="flex flex-col gap-[14px]">
+      <table
+        ref={tableRef}
+        className="flex flex-col gap-[14px] flex-grow h-0 overflow-y-auto scrollbar-default"
+      >
         <thead className="pb-[14px] border-b-fg.subtle border-b px-[14px]">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="flex gap-[14px]">
