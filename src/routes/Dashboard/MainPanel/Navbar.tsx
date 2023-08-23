@@ -40,7 +40,7 @@ export function Navbar() {
 
   return (
     <div className="bg-bg.default p-[14px] shadow-panel">
-      <div className="flex gap-[14px] items-center">
+      <div className="flex flex-wrap gap-[14px] items-center">
         <span
           className={classNames(
             "bg-bg.inset gap-[14px] py-[8px] px-[14px] rounded-[4px] flex w-full max-w-[512px] text-fg.subtle items-center transition-all",
@@ -72,7 +72,9 @@ export function Navbar() {
             />
           </button>
         </span>
-        <span>{setlist.setlist && setlist.setlist.name}</span>
+        <span className="text-[20px] font-bold">
+          {setlist.setlist && setlist.setlist.name}
+        </span>
       </div>
     </div>
   );

@@ -35,6 +35,7 @@ export function LeftPanel() {
 
   const dispatch = useAppDispatch();
   const tags = useAppSelector((state) => state.tags);
+  const setlist = useAppSelector((state) => state.setlist);
 
   useEffect(() => {
     fetchTags();
@@ -119,7 +120,10 @@ export function LeftPanel() {
           <div className="flex flex-col gap-[14px] overflow-y-auto max-h-[50%] scrollbar-default">
             <button
               onClick={() => dispatch(clearSetlist())}
-              className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default"
+              className={classNames(
+                "flex items-center gap-[14px] w-full hover:text-fg.default transition-all",
+                !setlist.setlist ? "text-fg.default" : "text-fg.muted"
+              )}
             >
               <Icon path={mdiBookshelf} size={1} />
               <span>All pieces</span>
@@ -131,14 +135,19 @@ export function LeftPanel() {
               <Icon path={mdiPlus} size={1} />
               <span>Create setlist</span>
             </button>
-            {setlists.map((setlist) => (
+            {setlists.map((sl) => (
               <button
-                key={setlist.id}
-                className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default"
-                onClick={() => dispatch(setSetlist({ setlist }))}
+                key={sl.id}
+                className={classNames(
+                  "flex items-center gap-[14px] w-full hover:text-fg.default transition-all",
+                  setlist.setlist?.id === sl.id
+                    ? "text-fg.default"
+                    : "text-fg.muted"
+                )}
+                onClick={() => dispatch(setSetlist({ setlist: sl }))}
               >
                 <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
-                <span className="truncate">{setlist.name}</span>
+                <span className="truncate">{sl.name}</span>
               </button>
             ))}
           </div>
