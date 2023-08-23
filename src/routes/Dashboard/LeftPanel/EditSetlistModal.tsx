@@ -1,14 +1,20 @@
 import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
-export function CreateSetlistModal(props: {
+export function EditSetlistModal(props: {
+  defaultName?: string;
   isOpen: boolean;
   closeModal: () => void;
   onConfirm: (name: string) => void;
 }) {
-  const { isOpen, closeModal, onConfirm } = props;
+  const { defaultName, isOpen, closeModal, onConfirm } = props;
   const [name, setName] = useState("");
+
+  useEffect(() => {
+    if (!defaultName) return;
+    setName(defaultName || "");
+  }, [defaultName]);
 
   function handleClickCloseModal() {
     closeModal();
@@ -42,6 +48,9 @@ export function CreateSetlistModal(props: {
             >
               <Dialog.Panel className="transform w-full max-w-md overflow-hidden rounded-[4px] bg-bg.default p-[14px] flex flex-col gap-[14px] shadow-float transition-all text-fg.default">
                 <div className="flex flex-col gap-[8px]">
+                  <Dialog.Title as="h3" className="text-[20px]">
+                    {defaultName ? "Edit Setlist" : "Create Setlist"}
+                  </Dialog.Title>
                   <div className="flex flex-col gap-[8px] text-fg.muted">
                     <label htmlFor="name" className="text-fg.muted">
                       Name
@@ -69,7 +78,7 @@ export function CreateSetlistModal(props: {
                     )}
                     onClick={() => onConfirm(name)}
                   >
-                    Create
+                    {defaultName ? "Save changes" : "Create"}
                   </button>
                   <button
                     type="button"

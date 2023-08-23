@@ -19,15 +19,17 @@ import { EditTagModal } from "../../../components/EditTagModal";
 import { Modal } from "../../../components/Modal";
 import { ResizableLeft } from "../../../components/ResizeableLeft";
 import { pushTag, removeTag } from "../reducers/filterSlice";
-import { setTags } from "../reducers/tagsSlice";
-import { CreateSetlistModal } from "./CreateSetlistModal";
 import { clearSetlist, setSetlist } from "../reducers/setlistSlice";
+import { setTags } from "../reducers/tagsSlice";
+import { EditSetlistModal } from "./EditSetlistModal";
 
 export function LeftPanel() {
-  const [isCreateSetlistModalOpen, setIsCreateSetlistModalOpen] =
-    useState(false);
+  const [isEditSetlistModalOpen, setIsEditSetlistModalOpen] = useState(false);
   const [isTagsOpen, setTagsOpen] = useState(false);
   const [setlists, setSetlists] = useState<Setlist[]>([]);
+  const [selectedSetlist, setSelectedSetlist] = useState<Setlist>();
+  const [isConfirmDeleteSetlistModalOpen, setIsConfirmDeleteSetlistModalOpen] =
+    useState(false);
   const [selectedTag, setSelectedTag] = useState<Tag>();
   const [isEditTagModalOpen, setIsEditTagModalOpen] = useState(false);
   const [isConfirmDeleteTagModalOpen, setIsConfirmDeleteTagModalOpen] =
@@ -52,13 +54,46 @@ export function LeftPanel() {
     setSetlists(setlists);
   }
 
-  async function handleConfirmCreateSetlist(name: string) {
-    await invoke("setlists_add", { name });
-    setIsCreateSetlistModalOpen(false);
+  async function handleConfirmEditSetlist(name: string) {
+    if (selectedSetlist) {
+      await invoke("setlists_update", { id: selectedSetlist.id, name });
+      dispatch(setSetlist({ setlist: { ...selectedSetlist, name } }));
+    } else {
+      await invoke("setlists_add", { name });
+    }
+    setIsEditSetlistModalOpen(false);
     await fetchSetlists();
   }
 
-  async function handleConfirmCreateTag(name: string, color: string) {
+  function handleClickEditSetlist(setlist: Setlist) {
+    setSelectedSetlist(setlist);
+    setIsEditSetlistModalOpen(true);
+  }
+
+  function handleClickDeleteSetlist(setlist: Setlist) {
+    setSelectedSetlist(setlist);
+    setIsConfirmDeleteSetlistModalOpen(true);
+  }
+
+  function handleCancelDeleteSetlist() {
+    setIsConfirmDeleteSetlistModalOpen(false);
+    setSelectedSetlist(undefined);
+  }
+
+  async function handleConfirmDeleteSetlist() {
+    await invoke("setlists_delete", { id: selectedSetlist!.id });
+    dispatch(clearSetlist());
+    setIsConfirmDeleteSetlistModalOpen(false);
+    setSelectedSetlist(undefined);
+    await fetchSetlists();
+  }
+
+  function handleCloseEditSetlistModal() {
+    setIsEditSetlistModalOpen(false);
+    setTimeout(() => setSelectedSetlist(undefined), 150);
+  }
+
+  async function handleConfirmEditTag(name: string, color: string) {
     if (selectedTag) {
       await invoke("tags_update", { id: selectedTag.id, name, color });
     } else {
@@ -82,7 +117,7 @@ export function LeftPanel() {
     setIsEditTagModalOpen(true);
   }
 
-  async function handleClickDeleteTag(tag: Tag) {
+  function handleClickDeleteTag(tag: Tag) {
     setSelectedTag(tag);
     setIsConfirmDeleteTagModalOpen(true);
   }
@@ -98,7 +133,6 @@ export function LeftPanel() {
   function handleCancelDeleteTag() {
     setIsConfirmDeleteTagModalOpen(false);
     setSelectedTag(undefined);
-    setIsConfirmDeleteTagModalOpen(false);
   }
 
   function handleCloseEditTagModal() {
@@ -129,26 +163,52 @@ export function LeftPanel() {
               <span>All pieces</span>
             </button>
             <button
-              onClick={() => setIsCreateSetlistModalOpen(true)}
+              onClick={() => setIsEditSetlistModalOpen(true)}
               className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default"
             >
               <Icon path={mdiPlus} size={1} />
               <span>Create setlist</span>
             </button>
             {setlists.map((sl) => (
-              <button
-                key={sl.id}
-                className={classNames(
-                  "flex items-center gap-[14px] w-full hover:text-fg.default transition-all",
-                  setlist.setlist?.id === sl.id
-                    ? "text-fg.default"
-                    : "text-fg.muted"
-                )}
-                onClick={() => dispatch(setSetlist({ setlist: sl }))}
-              >
-                <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
-                <span className="truncate">{sl.name}</span>
-              </button>
+              <div key={sl.id} className="flex gap-[4px] w-full">
+                <button
+                  className={classNames(
+                    "flex items-center gap-[14px] w-full hover:text-fg.default truncate transition-all",
+                    setlist.setlist?.id === sl.id
+                      ? "text-fg.default"
+                      : "text-fg.muted"
+                  )}
+                  onClick={() => dispatch(setSetlist({ setlist: sl }))}
+                >
+                  <Icon
+                    path={mdiBookOpenOutline}
+                    size={1}
+                    className="shrink-0"
+                  />
+                  <span className="truncate w-full text-left">{sl.name}</span>
+                </button>
+                <Menu as="div" className="relative">
+                  <Menu.Button className="text-fg.muted hover:text-fg.default flex items-center transition-all">
+                    <Icon path={mdiDotsHorizontal} size={1} />
+                  </Menu.Button>
+                  <Menu.Items className="mt-[14px] fixed flex flex-col w-[192px] p-[4px] rounded-[4px] bg-bg.emphasis shadow-float outline-none z-10">
+                    <Menu.Item
+                      as="button"
+                      onClick={() => handleClickEditSetlist(sl)}
+                      className="context-menu-item"
+                    >
+                      Edit
+                    </Menu.Item>
+                    <Menu.Item
+                      as="button"
+                      onClick={() => handleClickDeleteSetlist(sl)}
+                      className="context-menu-item"
+                    >
+                      Delete
+                    </Menu.Item>
+                  </Menu.Items>
+                </Menu>
+              </div>
             ))}
           </div>
           <hr className="text-fg.subtle" />
@@ -200,32 +260,30 @@ export function LeftPanel() {
                         {tag.name}
                       </div>
                     </button>
-                    <Menu>
-                      <div className="relative">
-                        <Menu.Button className="outline-none flex items-center">
-                          <Icon
-                            path={mdiDotsHorizontal}
-                            size={1}
-                            className=" hover:text-fg.default transition-all shrink-0"
-                          />
-                        </Menu.Button>
-                        <Menu.Items className="mt-[14px] fixed flex flex-col w-[192px] p-[4px] rounded-[4px] bg-bg.emphasis shadow-float outline-none z-10">
-                          <Menu.Item
-                            as="button"
-                            onClick={() => handleClickEditTag(tag)}
-                            className="context-menu-item"
-                          >
-                            Edit
-                          </Menu.Item>
-                          <Menu.Item
-                            as="button"
-                            onClick={() => handleClickDeleteTag(tag)}
-                            className="context-menu-item"
-                          >
-                            Delete
-                          </Menu.Item>
-                        </Menu.Items>
-                      </div>
+                    <Menu as="div" className="relative">
+                      <Menu.Button className="outline-none flex items-center">
+                        <Icon
+                          path={mdiDotsHorizontal}
+                          size={1}
+                          className=" hover:text-fg.default transition-all shrink-0"
+                        />
+                      </Menu.Button>
+                      <Menu.Items className="mt-[14px] fixed flex flex-col w-[192px] p-[4px] rounded-[4px] bg-bg.emphasis shadow-float outline-none z-10">
+                        <Menu.Item
+                          as="button"
+                          onClick={() => handleClickEditTag(tag)}
+                          className="context-menu-item"
+                        >
+                          Edit
+                        </Menu.Item>
+                        <Menu.Item
+                          as="button"
+                          onClick={() => handleClickDeleteTag(tag)}
+                          className="context-menu-item"
+                        >
+                          Delete
+                        </Menu.Item>
+                      </Menu.Items>
                     </Menu>
                   </div>
                 ))}
@@ -242,16 +300,27 @@ export function LeftPanel() {
           </Link>
         </div>
       </ResizableLeft>
-      <CreateSetlistModal
-        closeModal={() => setIsCreateSetlistModalOpen(false)}
-        isOpen={isCreateSetlistModalOpen}
-        onConfirm={handleConfirmCreateSetlist}
+      <EditSetlistModal
+        defaultName={selectedSetlist?.name}
+        closeModal={handleCloseEditSetlistModal}
+        isOpen={isEditSetlistModalOpen}
+        onConfirm={handleConfirmEditSetlist}
       />
+      <Modal
+        closeModal={handleCancelDeleteSetlist}
+        isOpen={isConfirmDeleteSetlistModalOpen}
+        onConfirm={handleConfirmDeleteSetlist}
+        cancelText="Cancel"
+        title="Are you sure you want to delete this setlist?"
+        confirmText="Delete"
+      >
+        This cannot be undone!
+      </Modal>
       <EditTagModal
         defaultTag={selectedTag}
         isOpen={isEditTagModalOpen}
         closeModal={handleCloseEditTagModal}
-        onConfirm={handleConfirmCreateTag}
+        onConfirm={handleConfirmEditTag}
       />
       <Modal
         closeModal={handleCancelDeleteTag}
