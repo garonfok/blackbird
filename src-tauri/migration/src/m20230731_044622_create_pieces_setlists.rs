@@ -30,6 +30,7 @@ impl MigrationTrait for Migration {
                             .name("fk_piece_setlist_piece")
                             .from(PiecesSetlists::Table, PiecesSetlists::PieceId)
                             .to(Pieces::Table, Pieces::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
                     )
                     .foreign_key(
                         ForeignKey::create()
