@@ -1,10 +1,8 @@
+use crate::entities::{pieces, pieces_setlists, setlists};
 use sea_orm::{
     ActiveValue, ColumnTrait, DatabaseConnection, DbErr, EntityTrait, JoinType, QueryFilter,
     QuerySelect, RelationTrait,
 };
-
-use crate::entities::{pieces, pieces_setlists, setlists};
-
 use serde_json::Value;
 
 pub async fn get_all(db: &DatabaseConnection) -> Result<Vec<Value>, DbErr> {
@@ -75,5 +73,35 @@ pub async fn update(db: &DatabaseConnection, id: i32, name: String) -> Result<()
 
 pub async fn delete(db: &DatabaseConnection, id: i32) -> Result<(), DbErr> {
     setlists::Entity::delete_by_id(id).exec(db).await?;
+    Ok(())
+}
+
+pub async fn add_piece(
+    db: &DatabaseConnection,
+    setlist_id: i32,
+    piece_id: i32,
+) -> Result<(), DbErr> {
+    let active_piece_setlist = pieces_setlists::ActiveModel {
+        piece_id: ActiveValue::Set(piece_id),
+        setlist_id: ActiveValue::Set(setlist_id),
+        ..Default::default()
+    };
+
+    pieces_setlists::Entity::insert(active_piece_setlist)
+        .exec(db)
+        .await?;
+
+    Ok(())
+}
+
+pub async fn remove_piece(
+    db: &DatabaseConnection,
+    setlist_id: i32,
+    piece_id: i32,
+) -> Result<(), DbErr> {
+    pieces_setlists::Entity::delete_by_id((piece_id, setlist_id))
+        .exec(db)
+        .await?;
+
     Ok(())
 }

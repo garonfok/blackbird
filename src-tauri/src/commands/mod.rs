@@ -52,6 +52,8 @@ pub fn handler() -> impl Fn(Invoke) {
         db::setlists::setlists_add,
         db::setlists::setlists_update,
         db::setlists::setlists_delete,
+        db::setlists::setlists_add_piece,
+        db::setlists::setlists_remove_piece,
         db::tags::tags_get_all,
         db::tags::tags_get_by_id,
         db::tags::tags_add,

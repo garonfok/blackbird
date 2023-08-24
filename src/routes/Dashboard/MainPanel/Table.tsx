@@ -490,7 +490,7 @@ export function Table() {
     setlistId: number
   ) {
     event.syntheticEvent?.stopPropagation();
-    // await invoke("pieces_add_to_setlist", { pieceId, setlistId });
+    await invoke("setlists_add_piece", { pieceId, setlistId });
     await fetchPieces();
   }
 

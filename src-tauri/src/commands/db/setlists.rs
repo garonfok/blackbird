@@ -50,3 +50,29 @@ pub fn setlists_delete(app_handle: AppHandle, id: i32) -> Result<(), String> {
         Err(e) => Err(e.to_string()),
     }
 }
+
+#[command]
+pub fn setlists_add_piece(
+    app_handle: AppHandle,
+    setlist_id: i32,
+    piece_id: i32,
+) -> Result<(), String> {
+    let result = app_handle.db(|db| block_on(setlists::add_piece(db, setlist_id, piece_id)));
+    match result {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+#[command]
+pub fn setlists_remove_piece(
+    app_handle: AppHandle,
+    setlist_id: i32,
+    piece_id: i32,
+) -> Result<(), String> {
+    let result = app_handle.db(|db| block_on(setlists::remove_piece(db, setlist_id, piece_id)));
+    match result {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
+}
