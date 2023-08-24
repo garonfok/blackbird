@@ -16,6 +16,12 @@ export function EditSetlistModal(props: {
     setName(defaultName || "");
   }, [defaultName]);
 
+  function handleClickConfirm() {
+    onConfirm(name);
+    closeModal();
+    setName("");
+  }
+
   function handleClickCloseModal() {
     closeModal();
     setName("");
@@ -76,7 +82,7 @@ export function EditSetlistModal(props: {
                         ? "text-fg.subtle border-fg.subtle"
                         : "text-fg.muted hover:bg-fg.default hover:text-bg.inset"
                     )}
-                    onClick={() => onConfirm(name)}
+                    onClick={handleClickConfirm}
                   >
                     {defaultName ? "Save changes" : "Create"}
                   </button>
