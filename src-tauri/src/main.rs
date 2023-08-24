@@ -2,9 +2,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use futures::executor::block_on;
-use tauri_plugin_autostart::MacosLauncher;
 use state::AppState;
 use tauri::{Manager, State};
+use tauri_plugin_autostart::MacosLauncher;
 
 mod commands;
 mod db;

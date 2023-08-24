@@ -29,7 +29,7 @@ impl Display for SettingsError {
 
 impl Error for SettingsError {
     fn description(&self) -> &str {
-        &self.message
+        &self.message.as_str()
     }
 }
 
@@ -57,6 +57,9 @@ impl Settings {
     fn store(&self) {
         let path = Settings::build_conf_path();
         let contents = serde_json::to_string_pretty(self).unwrap();
+        if !std::path::Path::new(&path).exists() {
+            let _ = std::fs::create_dir_all(utils::data_dir());
+        }
         let _ = std::fs::write(path, contents);
     }
 
