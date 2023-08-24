@@ -22,11 +22,11 @@ import { pushTag, removeTag } from "../reducers/filterSlice";
 import { clearSetlist, setSetlist } from "../reducers/setlistSlice";
 import { setTags } from "../reducers/tagsSlice";
 import { EditSetlistModal } from "./EditSetlistModal";
+import { setSetlists } from "../reducers/setlistsSlice";
 
 export function LeftPanel() {
   const [isEditSetlistModalOpen, setIsEditSetlistModalOpen] = useState(false);
   const [isTagsOpen, setTagsOpen] = useState(false);
-  const [setlists, setSetlists] = useState<Setlist[]>([]);
   const [selectedSetlist, setSelectedSetlist] = useState<Setlist>();
   const [isConfirmDeleteSetlistModalOpen, setIsConfirmDeleteSetlistModalOpen] =
     useState(false);
@@ -38,6 +38,7 @@ export function LeftPanel() {
   const dispatch = useAppDispatch();
   const tags = useAppSelector((state) => state.tags);
   const setlist = useAppSelector((state) => state.setlist);
+  const setlists = useAppSelector((state) => state.setlists);
 
   useEffect(() => {
     fetchTags();
@@ -51,7 +52,7 @@ export function LeftPanel() {
 
   async function fetchSetlists() {
     const setlists = (await invoke("setlists_get_all")) as Setlist[];
-    setSetlists(setlists);
+    dispatch(setSetlists({ setlists }));
   }
 
   async function handleConfirmEditSetlist(name: string) {

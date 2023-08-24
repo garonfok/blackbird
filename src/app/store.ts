@@ -8,6 +8,7 @@ import filterReducer from "../routes/Dashboard/reducers/filterSlice";
 import tagsReducer from "../routes/Dashboard/reducers/tagsSlice";
 import piecesReducer from "../routes/Dashboard/reducers/piecesSlice";
 import setlistReducer from "../routes/Dashboard/reducers/setlistSlice";
+import setlistsReducer from "../routes/Dashboard/reducers/setlistsSlice";
 
 const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ const store = configureStore({
     tags: tagsReducer,
     pieces: piecesReducer,
     setlist: setlistReducer,
+    setlists: setlistsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
