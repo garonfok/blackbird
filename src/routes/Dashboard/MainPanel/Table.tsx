@@ -1,3 +1,4 @@
+import { Menu } from "@headlessui/react";
 import {
   mdiChevronDown,
   mdiChevronRight,
@@ -8,6 +9,14 @@ import {
   mdiTag,
 } from "@mdi/js";
 import { Icon } from "@mdi/react";
+import {
+  ClickEvent,
+  Menu as ContextMenu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  SubMenu,
+} from "@szhsin/react-menu";
 import {
   Column,
   ColumnDef,
@@ -23,25 +32,23 @@ import { useMachine } from "@xstate/react";
 import classNames from "classnames";
 import Fuse from "fuse.js";
 import { DateTime } from "luxon";
-import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { Piece } from "../../../app/types";
 import { isWindows } from "../../../app/utils";
-import { clearPiece, setPiece } from "../reducers/previewSlice";
-import { mainSortMachine } from "./mainSortMachine";
-import { Menu } from "@headlessui/react";
-import {
-  ClickEvent,
-  Menu as ContextMenu,
-  MenuButton,
-  MenuDivider,
-  MenuItem,
-  SubMenu,
-} from "@szhsin/react-menu";
+import { Modal } from "../../../components/Modal";
 import { removeTag, resetFilter } from "../reducers/filterSlice";
 import { setPieces } from "../reducers/piecesSlice";
-import { useNavigate } from "react-router-dom";
-import { Modal } from "../../../components/Modal";
+import { clearPiece, setPiece } from "../reducers/previewSlice";
+import { mainSortMachine } from "./mainSortMachine";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -67,11 +74,8 @@ export function Table() {
   const [mainSortState, sendMainSortState] = useMachine(mainSortMachine);
 
   const navigate = useNavigate();
+
   const setlists = useAppSelector((state) => state.setlists);
-
-  const tableRef = useRef<HTMLTableElement>(null);
-  const rowRef = useRef<HTMLTableRowElement>(null);
-
   const filter = useAppSelector((state) => state.filter);
   const query = useAppSelector((state) => state.query);
   const tags = useAppSelector((state) => state.tags);
@@ -79,6 +83,9 @@ export function Table() {
   const setlist = useAppSelector((state) => state.setlist);
   const preview = useAppSelector((state) => state.preview);
   const dispatch = useAppDispatch();
+
+  const tableRef = useRef<HTMLTableElement>(null);
+  const rowRef = useRef<HTMLTableRowElement>(null);
 
   useEffect(() => {
     table.getColumn("composers")?.toggleVisibility(false);
@@ -190,32 +197,58 @@ export function Table() {
                   }
                 >
                   <div className="flex flex-col w-[192px] p-[4px] rounded-[4px] absolute bg-bg.emphasis shadow-float z-10">
-                    <SubMenu
-                      label={
-                        <span className="context-menu-item justify-between">
-                          Add to setlist
-                          <Icon path={mdiChevronRight} size={1} />
-                        </span>
-                      }
-                    >
-                      <div className="flex flex-col w-[192px] p-[4px] rounded-[4px] mx-[4px] bg-bg.emphasis shadow-float z-10">
-                        {setlists.map((setlist) => (
-                          <MenuItem
-                            onClick={(event) =>
-                              handleClickAddToSetlist(
-                                event,
-                                info.row.original.id,
-                                setlist.id
-                              )
-                            }
-                            className="context-menu-item"
-                          >
-                            {setlist.name}
-                          </MenuItem>
-                        ))}
-                      </div>
-                    </SubMenu>
-                    <MenuDivider className="context-menu-divider" />
+                    {isPieceInCurrentSetlist(info.row.original) && (
+                      <MenuItem
+                        onClick={(event) =>
+                          handleClickRemoveFromSetlist(
+                            event,
+                            info.row.original.id,
+                            setlist.setlist!.id
+                          )
+                        }
+                        className="context-menu-item outline-none"
+                      >
+                        Remove from setlist
+                      </MenuItem>
+                    )}
+                    {isAvailableToAddToSetlist(info.row.original) && (
+                      <SubMenu
+                        label={
+                          <span className="context-menu-item outline-none justify-between">
+                            Add to setlist
+                            <Icon path={mdiChevronRight} size={1} />
+                          </span>
+                        }
+                      >
+                        <div className="flex flex-col w-[192px] p-[4px] rounded-[4px] mx-[4px] bg-bg.emphasis shadow-float z-10">
+                          {setlists
+                            .filter(
+                              (sl) =>
+                                !info.row.original.setlists.some(
+                                  (pieceSl) => pieceSl.id === sl.id
+                                )
+                            )
+                            .map((sl) => (
+                              <MenuItem
+                                onClick={(event) =>
+                                  handleClickAddToSetlist(
+                                    event,
+                                    info.row.original.id,
+                                    sl.id
+                                  )
+                                }
+                                className="context-menu-item outline-none"
+                              >
+                                {sl.name}
+                              </MenuItem>
+                            ))}
+                        </div>
+                      </SubMenu>
+                    )}
+                    {(isPieceInCurrentSetlist(info.row.original) ||
+                      isAvailableToAddToSetlist(info.row.original)) && (
+                      <MenuDivider className="context-menu-divider" />
+                    )}
                     <MenuItem
                       onClick={async (event) =>
                         handleClickOpenFolder(event, info.row.original.path)
@@ -301,7 +334,7 @@ export function Table() {
         size: 91,
       },
     ],
-    []
+    [setlist.setlist, setlists]
   );
 
   const table = useReactTable({
@@ -493,6 +526,36 @@ export function Table() {
     await invoke("setlists_add_piece", { pieceId, setlistId });
     await fetchPieces();
   }
+
+  async function handleClickRemoveFromSetlist(
+    event: ClickEvent,
+    pieceId: number,
+    setlistId: number
+  ) {
+    event.syntheticEvent?.stopPropagation();
+    await invoke("setlists_remove_piece", { pieceId, setlistId });
+    await fetchPieces();
+  }
+
+  const isPieceInCurrentSetlist = useCallback(
+    (piece: Piece) => {
+      if (!setlist.setlist) return false;
+      return piece.setlists.some((sl) => sl.id === setlist.setlist!.id);
+    },
+    [setlist.setlist, setlists]
+  );
+
+  const isAvailableToAddToSetlist = useCallback(
+    (piece: Piece) => {
+      for (const pieceSetlist of setlists) {
+        if (!piece.setlists.some((sl) => sl.id === pieceSetlist.id)) {
+          return true;
+        }
+      }
+      return false;
+    },
+    [setlist.setlist, setlists]
+  );
 
   const fuse = new Fuse(pieces, {
     useExtendedSearch: true,

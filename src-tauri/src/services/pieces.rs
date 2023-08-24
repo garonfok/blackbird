@@ -19,6 +19,7 @@ pub async fn get_all(db: &DatabaseConnection) -> Result<Vec<Value>, DbErr> {
         let orchestrators = get_musicians(db, id, "orchestrator").await?;
         let lyricists = get_musicians(db, id, "lyricist").await?;
         let transcribers = get_musicians(db, id, "transcriber").await?;
+        let setlists = get_setlists(db, id).await?;
         let tags = get_tags(db, id).await?;
         let scores = get_scores(db, id).await?;
         let parts = get_parts(db, id).await?;
@@ -34,6 +35,7 @@ pub async fn get_all(db: &DatabaseConnection) -> Result<Vec<Value>, DbErr> {
             "updated_at": piece.updated_at,
             "scores": scores,
             "parts": parts,
+            "setlists": setlists,
             "tags": tags,
             "composers": composers,
             "arrangers": arrangers,
@@ -68,6 +70,7 @@ pub async fn get_by_setlist(db: &DatabaseConnection, setlist_id: i32) -> Result<
                 let orchestrators = get_musicians(db, id, "orchestrator").await?;
                 let lyricists = get_musicians(db, id, "lyricist").await?;
                 let transcribers = get_musicians(db, id, "transcriber").await?;
+                let setlists = get_setlists(db, id).await?;
                 let tags = get_tags(db, id).await?;
                 let scores = get_scores(db, id).await?;
                 let parts = get_parts(db, id).await?;
@@ -83,6 +86,7 @@ pub async fn get_by_setlist(db: &DatabaseConnection, setlist_id: i32) -> Result<
                     "updated_at": piece.updated_at,
                     "scores": scores,
                     "parts": parts,
+                    "setlists": setlists,
                     "tags": tags,
                     "composers": composers,
                     "arrangers": arrangers,
@@ -113,6 +117,7 @@ pub async fn get_by_id(db: &DatabaseConnection, id: i32) -> Result<Value, DbErr>
             let orchestrators = get_musicians(db, id, "orchestrator").await?;
             let lyricists = get_musicians(db, id, "lyricist").await?;
             let transcribers = get_musicians(db, id, "transcriber").await?;
+            let setlists = get_setlists(db, id).await?;
             let tags = get_tags(db, id).await?;
             let scores = get_scores(db, id).await?;
             let parts = get_parts(db, id).await?;
@@ -128,6 +133,7 @@ pub async fn get_by_id(db: &DatabaseConnection, id: i32) -> Result<Value, DbErr>
                 "updated_at": piece.updated_at,
                 "scores": scores,
                 "parts": parts,
+                "setlists": setlists,
                 "tags": tags,
                 "composers": composers,
                 "arrangers": arrangers,
@@ -381,6 +387,24 @@ async fn get_tags(db: &DatabaseConnection, id: i32) -> Result<Vec<Value>, DbErr>
         .await?;
 
     Ok(tags)
+}
+
+async fn get_setlists(db: &DatabaseConnection, id: i32) -> Result<Vec<Value>, DbErr> {
+    let setlists_search_statement = setlists::Entity::find()
+        .join_rev(
+            JoinType::InnerJoin,
+            pieces_setlists::Relation::Setlists.def(),
+        )
+        .filter(pieces_setlists::Column::PieceId.eq(id))
+        .build(DbBackend::Sqlite);
+
+    let setlists = setlists::Entity::find()
+        .from_raw_sql(setlists_search_statement)
+        .into_json()
+        .all(db)
+        .await?;
+
+    Ok(setlists)
 }
 
 async fn get_scores(db: &DatabaseConnection, id: i32) -> Result<Vec<Value>, DbErr> {

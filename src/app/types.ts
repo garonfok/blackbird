@@ -14,6 +14,7 @@ export interface Piece {
   lyricists: Musician[];
   scores: Score[];
   parts: Part[];
+  setlists: Setlist[];
   tags: Tag[];
 }
 
