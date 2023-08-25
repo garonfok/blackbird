@@ -2,92 +2,19 @@ import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { Tag } from "../app/types";
+import { getContrast } from "../app/utils";
 
 type Colors = {
-  [key: string]: {
-    [key: string]: string;
-  };
+  [key: string]: [string, string, string, string];
 };
 
 const COLORS: Colors = {
-  RED: {
-    "50": "#fef3f2",
-    "100": "#fee4e2",
-    "200": "#fececa",
-    "300": "#fcaca5",
-    "400": "#f88379",
-    "500": "#ee5245",
-    "600": "#db3527",
-    "700": "#b9281c",
-    "800": "#99251b",
-    "900": "#7f251d",
-    "950": "#450f0a",
-  },
-  ORANGE: {
-    "50": "#fff7ed",
-    "100": "#ffeed5",
-    "200": "#fed8aa",
-    "300": "#fdbc74",
-    "400": "#fba254",
-    "500": "#f87717",
-    "600": "#e95c0d",
-    "700": "#c1440d",
-    "800": "#9a3612",
-    "900": "#7c2f12",
-    "950": "#431507",
-  },
-  YELLOW: {
-    "50": "#fafcea",
-    "100": "#f5fac7",
-    "200": "#f0f692",
-    "300": "#ecf054",
-    "400": "#ebe831",
-    "500": "#dacf18",
-    "600": "#bca412",
-    "700": "#967812",
-    "800": "#7d6016",
-    "900": "#6a4e19",
-    "950": "#3e2b0a",
-  },
-  GREEN: {
-    "50": "#f0fdf5",
-    "100": "#dcfcea",
-    "200": "#bbf7d6",
-    "300": "#86efb7",
-    "400": "#41dc8a",
-    "500": "#22c56f",
-    "600": "#16a359",
-    "700": "#158048",
-    "800": "#16653c",
-    "900": "#145334",
-    "950": "#052e1a",
-  },
-  BLUE: {
-    "50": "#f1f9fe",
-    "100": "#e2f1fc",
-    "200": "#bee3f9",
-    "300": "#84cef5",
-    "400": "#5ebff0",
-    "500": "#1a9add",
-    "600": "#0d7cbc",
-    "700": "#0c6298",
-    "800": "#0e547e",
-    "900": "#114769",
-    "950": "#0c2c45",
-  },
-  VIOLET: {
-    "50": "#faf5fa",
-    "100": "#f5eef5",
-    "200": "#eddded",
-    "300": "#e0c1e0",
-    "400": "#cb99c9",
-    "500": "#b97bb5",
-    "600": "#a35f9b",
-    "700": "#8b4b82",
-    "800": "#73416b",
-    "900": "#62395c",
-    "950": "#391e35",
-  },
+  RED: ["#FBADA6", "#ee5245", "#B8291D", "#7E251E"],
+  ORANGE: ["#FCBC75", "#f87717", "#C1440D", "#7C2F12"],
+  YELLOW: ["#f0ee54", "#d8c518", "#967312", "#6a4b19"],
+  GREEN: ["#86efb7", "#22c56f", "#158048", "#145334"],
+  BLUE: ["#84cdf5", "#1a9add", "#0c6198", "#114669"],
+  VIOLET: ["#e0c1e0", "#b97bb5", "#8a4c81", "#62395c"],
 };
 
 export function EditTagModal(props: {
@@ -168,27 +95,22 @@ export function EditTagModal(props: {
                     <div className="flex flex-row justify-center gap-2">
                       {Object.keys(COLORS).map((color) => (
                         <div key={color} className="flex flex-col gap-2">
-                          {Object.keys(COLORS[color])
-                            .filter(
-                              (shade) =>
-                                parseInt(shade) >= 500 && parseInt(shade) <= 800
-                            )
-                            .map((shade) => (
-                              <div
-                                key={COLORS[color][shade]}
-                                className={classNames(
-                                  "h-[24px] w-[24px] cursor-pointer rounded-full transition-all hover:scale-110",
-                                  selectedColor === COLORS[color][shade] &&
-                                    "scale-110 ring-2 ring-fg.default"
-                                )}
-                                style={{
-                                  backgroundColor: COLORS[color][shade],
-                                }}
-                                onClick={() =>
-                                  setSelectedColor(COLORS[color][shade])
-                                }
-                              />
-                            ))}
+                          {COLORS[color].map((shade) => (
+                            <div
+                              key={shade}
+                              className={classNames(
+                                "h-[24px] w-[24px] cursor-pointer rounded-full transition-all hover:scale-110",
+                                (getContrast("#333238", shade) > 0.6 && selectedColor !== shade) &&
+                                  "ring-inset ring-1 ring-fg.subtle",
+                                selectedColor === shade &&
+                                  "scale-110 ring-2 ring-fg.default"
+                              )}
+                              style={{
+                                backgroundColor: shade,
+                              }}
+                              onClick={() => setSelectedColor(shade)}
+                            />
+                          ))}
                         </div>
                       ))}
                     </div>
