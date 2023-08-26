@@ -71,6 +71,9 @@ fn db_file_exists() -> bool {
 
 fn get_db_file_path() -> PathBuf {
     let working_directory = SETTINGS.read().unwrap().working_directory().to_string();
+    if !Path::new(&working_directory).exists() {
+        fs::create_dir_all(&working_directory).unwrap();
+    }
     Path::new(&working_directory).join("database.db")
 }
 
