@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Musician } from "../app/types";
 
 export function EditMusicianModal(props: {
@@ -16,6 +16,23 @@ export function EditMusicianModal(props: {
   );
   const [lastName, setLastName] = useState<string>(
     defaultMusician?.last_name || ""
+  );
+
+  const submitRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        submitRef.current?.click();
+      }
+    },
+    [submitRef]
   );
 
   const handleClickCloseModal = useCallback(() => {
@@ -96,7 +113,7 @@ export function EditMusicianModal(props: {
                 <div className="flex gap-[14px]">
                   <button
                     disabled={firstName.length === 0}
-                    type="button"
+                    ref={submitRef}
                     className={classNames(
                       "border px-[14px] py-[8px] rounded-[4px]   transition-all outline-none",
                       firstName.length === 0
@@ -108,7 +125,6 @@ export function EditMusicianModal(props: {
                     {defaultMusician ? "Save changes" : "Create"}
                   </button>
                   <button
-                    type="button"
                     className="text-fg.muted hover:text-fg.default transition-all"
                     onClick={handleClickCloseModal}
                   >

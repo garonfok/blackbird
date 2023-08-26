@@ -1,5 +1,11 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, PropsWithChildren } from "react";
+import {
+  Fragment,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 
 export function Modal(
   props: PropsWithChildren<{
@@ -20,6 +26,24 @@ export function Modal(
     cancelText,
     children,
   } = props;
+
+  const submitRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        submitRef.current?.click();
+      }
+    },
+    [submitRef]
+  );
+
   return (
     <Transition show={isOpen} as={Fragment}>
       <Dialog
@@ -63,6 +87,7 @@ export function Modal(
                     <hr className="text-fg.subtle" />
                     <div className="flex gap-[14px]">
                       <button
+                        ref={submitRef}
                         type="button"
                         className="text-fg.muted border px-[14px] py-[8px] rounded-[4px] hover:bg-fg.default hover:text-bg.inset transition-all outline-none"
                         onClick={onConfirm}
@@ -71,7 +96,6 @@ export function Modal(
                       </button>
                       {cancelText && (
                         <button
-                          type="button"
                           className="text-fg.muted hover:text-fg.default transition-all"
                           onClick={closeModal}
                         >

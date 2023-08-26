@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { Tag } from "../app/types";
 import { getContrast } from "../app/utils";
 
@@ -27,11 +27,28 @@ export function EditTagModal(props: {
   const [name, setName] = useState<string>("");
   const [selectedColor, setSelectedColor] = useState<string>("");
 
+  const submitRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   useEffect(() => {
     if (!defaultTag) return;
     setName(defaultTag.name);
     setSelectedColor(defaultTag.color);
   }, [defaultTag]);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        submitRef.current?.click();
+      }
+    },
+    [submitRef]
+  );
 
   const handleClickCloseModal = useCallback(() => {
     closeModal();
@@ -100,7 +117,8 @@ export function EditTagModal(props: {
                               key={shade}
                               className={classNames(
                                 "h-[24px] w-[24px] cursor-pointer rounded-full transition-all hover:scale-110",
-                                (getContrast("#333238", shade) > 0.6 && selectedColor !== shade) &&
+                                getContrast("#333238", shade) > 0.6 &&
+                                  selectedColor !== shade &&
                                   "ring-inset ring-1 ring-fg.subtle",
                                 selectedColor === shade &&
                                   "scale-110 ring-2 ring-fg.default"
@@ -119,8 +137,8 @@ export function EditTagModal(props: {
                 <hr className="text-fg.subtle" />
                 <div className="flex gap-[14px]">
                   <button
+                    ref={submitRef}
                     disabled={!name || !selectedColor}
-                    type="button"
                     className={classNames(
                       "border px-[14px] py-[8px] rounded-[4px]   transition-all outline-none",
                       !name || !selectedColor
@@ -132,7 +150,6 @@ export function EditTagModal(props: {
                     {defaultTag ? "Save changes" : "Create"}
                   </button>
                   <button
-                    type="button"
                     className="text-fg.muted hover:text-fg.default transition-all"
                     onClick={handleClickCloseModal}
                   >

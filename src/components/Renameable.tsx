@@ -27,6 +27,11 @@ export function Renameable(props: {
   }
 
   useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  useEffect(() => {
     window.addEventListener("mousedown", (e) => {
       if (inputRef.current && e.target !== inputRef.current) {
         if (isPart) {
@@ -49,6 +54,19 @@ export function Renameable(props: {
       dispatch(setScoreRenaming({ scoreIndex: index, renaming: true }));
     }
   }
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        if (isPart) {
+          dispatch(setPartRenaming({ partIndex: index, renaming: false }));
+        } else {
+          dispatch(setScoreRenaming({ scoreIndex: index, renaming: false }));
+        }
+      }
+    },
+    [isRenaming, index]
+  );
 
   return (
     <>

@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import classNames from "classnames";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 export function EditSetlistModal(props: {
   defaultName?: string;
@@ -10,6 +10,14 @@ export function EditSetlistModal(props: {
 }) {
   const { defaultName, isOpen, closeModal, onConfirm } = props;
   const [name, setName] = useState("");
+
+  const submitRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     if (!defaultName) return;
@@ -26,6 +34,15 @@ export function EditSetlistModal(props: {
     closeModal();
     setName("");
   }
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        submitRef.current?.click();
+      }
+    },
+    [submitRef]
+  );
 
   return (
     <Transition show={isOpen} as={Fragment}>
@@ -75,7 +92,7 @@ export function EditSetlistModal(props: {
                 <div className="flex gap-[14px]">
                   <button
                     disabled={!name}
-                    type="button"
+                    ref={submitRef}
                     className={classNames(
                       "border px-[14px] py-[8px] rounded-[4px]   transition-all outline-none",
                       !name
@@ -87,7 +104,6 @@ export function EditSetlistModal(props: {
                     {defaultName ? "Save changes" : "Create"}
                   </button>
                   <button
-                    type="button"
                     className="text-fg.muted hover:text-fg.default transition-all"
                     onClick={handleClickCloseModal}
                   >
