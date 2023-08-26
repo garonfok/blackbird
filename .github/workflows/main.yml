@@ -2,7 +2,7 @@ name: 'testing'
 on:
   push:
     branches:
-      - testing
+      - test
 
 jobs:
   publish-tauri:
