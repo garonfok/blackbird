@@ -144,6 +144,98 @@ export function Table() {
       });
     }
 
+    if (filter.yearPublishedMin !== 0 || filter.yearPublishedMax !== Infinity) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return (
+          piece.year_published &&
+          piece.year_published >= filter.yearPublishedMin &&
+          piece.year_published <= filter.yearPublishedMax
+        );
+      });
+    }
+
+    if (filter.yearPublishedMin !== 0 || filter.yearPublishedMax !== Infinity) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return (
+          piece.difficulty &&
+          piece.difficulty >= filter.difficultyMin &&
+          piece.difficulty <= filter.difficultyMax
+        );
+      });
+    }
+
+    if (filter.parts.length > 0) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return filter.parts.every((part) => {
+          return piece.parts.some(
+            (piecePart) => piecePart.name.toLowerCase() === part.toLowerCase()
+          );
+        });
+      });
+    }
+
+    if (filter.instruments.length > 0) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return filter.instruments.every((instrument) => {
+          return piece.parts.some((piecePart) => {
+            return piecePart.instruments.some(
+              (piecePartInstrument) => piecePartInstrument.id === instrument.id
+            );
+          });
+        });
+      });
+    }
+
+    if (filter.composers.length > 0) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return filter.composers.every((composer) => {
+          return piece.composers.some(
+            (pieceComposer) => pieceComposer.id === composer.id
+          );
+        });
+      });
+    }
+
+    if (filter.arrangers.length > 0) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return filter.arrangers.every((arranger) => {
+          return piece.arrangers.some(
+            (pieceArranger) => pieceArranger.id === arranger.id
+          );
+        });
+      });
+    }
+
+    if (filter.orchestrators.length > 0) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return filter.orchestrators.every((orchestrator) => {
+          return piece.orchestrators.some(
+            (pieceOrchestrator) => pieceOrchestrator.id === orchestrator.id
+          );
+        });
+      });
+    }
+
+    if (filter.transcribers.length > 0) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return filter.transcribers.every((transcriber) => {
+          return piece.transcribers.some(
+            (pieceTranscriber) => pieceTranscriber.id === transcriber.id
+          );
+        });
+      });
+    }
+
+    if (filter.lyricists.length > 0) {
+      filteringPieces = filteringPieces.filter((piece) => {
+        return filter.lyricists.every((lyricist) => {
+          return piece.lyricists.some(
+            (pieceLyricist) => pieceLyricist.id === lyricist.id
+          );
+        });
+      });
+    }
+
     setFilteredPieces(filteringPieces);
   }, [query, filter, pieces]);
 
