@@ -594,6 +594,7 @@ export function Table() {
 
   function handleClickPrintParts(event: ClickEvent, path: string) {
     event.syntheticEvent?.stopPropagation();
+    void path;
   }
 
   function handleClickDeletePiece(event: ClickEvent, pieceId: number) {
