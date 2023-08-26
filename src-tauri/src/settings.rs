@@ -51,7 +51,7 @@ impl Settings {
     }
 }
 
-const SETTINGS_FILE: &'static str = "/settings.json";
+const SETTINGS_FILE: &'static str = "settings.json";
 
 impl Settings {
     fn store(&self) {
@@ -70,18 +70,19 @@ impl Settings {
     }
 
     fn build_conf_path() -> String {
-        let path = format!("{}{}", utils::data_dir(), SETTINGS_FILE);
-        path
+        let path = utils::data_dir().join(SETTINGS_FILE);
+        path.to_str().unwrap().to_string()
     }
 }
 
-const LIBRARY_NAME: &'static str = "/Sheet Music Library";
+const LIBRARY_NAME: &'static str = "Sheet Music Library";
 
 impl Default for Settings {
     fn default() -> Self {
         Settings::load().unwrap_or_else(|_| {
+            let default_path = utils::home_dir().join(LIBRARY_NAME);
             let settings = Settings {
-                working_directory: format!("{}{}", utils::home_dir(), LIBRARY_NAME),
+                working_directory: default_path.to_str().unwrap().to_string(),
             };
             settings.store();
             settings
@@ -99,7 +100,11 @@ mod tests {
 
         assert_eq!(
             settings.working_directory,
-            format!("{}{}", utils::home_dir(), LIBRARY_NAME)
+            format!(
+                "{}{}",
+                utils::home_dir().to_str().unwrap(),
+                "/Sheet Music Library"
+            )
         );
     }
 
