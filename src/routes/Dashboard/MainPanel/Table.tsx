@@ -45,7 +45,15 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { Piece } from "../../../app/types";
 import { isWindows } from "../../../app/utils";
 import { Modal } from "../../../components/Modal";
-import { removeTag, resetFilter } from "../reducers/filterSlice";
+import {
+  clearDifficulty,
+  clearInstruments,
+  clearParts,
+  clearRole,
+  clearYearPublished,
+  removeTag,
+  resetFilter,
+} from "../reducers/filterSlice";
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece, setPiece } from "../reducers/previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
@@ -537,6 +545,16 @@ export function Table() {
     await fetchPieces();
   }
 
+  function parseNumberRange(num1: number, num2: number) {
+    if (num1 === 0) {
+      return `...${num2}`;
+    } else if (num2 === Infinity) {
+      return `${num1}...`;
+    } else {
+      return `${num1} - ${num2}`;
+    }
+  }
+
   const isPieceInCurrentSetlist = useCallback(
     (piece: Piece) => {
       if (!setlist.setlist) return false;
@@ -635,6 +653,209 @@ export function Table() {
                 </button>
               </div>
             ))}
+          {(filter.yearPublishedMin !== 0 ||
+            filter.yearPublishedMax !== Infinity) && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Published:</span>
+                <span className="text-fg.default">
+                  {parseNumberRange(
+                    filter.yearPublishedMin,
+                    filter.yearPublishedMax
+                  )}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearYearPublished())}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {(filter.difficultyMin !== 0 ||
+            filter.difficultyMax !== Infinity) && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Difficulty:</span>
+                <span className="text-fg.default">
+                  {parseNumberRange(filter.difficultyMin, filter.difficultyMax)}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearDifficulty())}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {filter.parts.length > 0 && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Parts:</span>
+                <span className="text-fg.default">
+                  {filter.parts.join(", ")}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearParts())}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {filter.instruments.length > 0 && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Instruments:</span>
+                <span className="text-fg.default">
+                  {filter.instruments
+                    .map((instrument) => instrument.name)
+                    .join(", ")}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearInstruments())}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {filter.composers.length > 0 && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Composers:</span>
+                <span className="text-fg.default">
+                  {filter.composers
+                    .map((musician) =>
+                      musician.last_name
+                        ? `${musician.first_name} ${musician.last_name}`
+                        : musician.first_name
+                    )
+                    .join(", ")}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearRole("composers"))}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {filter.composers.length > 0 && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Composers:</span>
+                <span className="text-fg.default">
+                  {filter.composers
+                    .map((musician) =>
+                      musician.last_name
+                        ? `${musician.first_name} ${musician.last_name}`
+                        : musician.first_name
+                    )
+                    .join(", ")}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearRole("composers"))}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {filter.arrangers.length > 0 && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Arrangers:</span>
+                <span className="text-fg.default">
+                  {filter.arrangers
+                    .map((musician) =>
+                      musician.last_name
+                        ? `${musician.first_name} ${musician.last_name}`
+                        : musician.first_name
+                    )
+                    .join(", ")}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearRole("arrangers"))}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {filter.orchestrators.length > 0 && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Orchestrators:</span>
+                <span className="text-fg.default">
+                  {filter.orchestrators
+                    .map((musician) =>
+                      musician.last_name
+                        ? `${musician.first_name} ${musician.last_name}`
+                        : musician.first_name
+                    )
+                    .join(", ")}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearRole("orchestrators"))}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {filter.transcribers.length > 0 && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Transcribers:</span>
+                <span className="text-fg.default">
+                  {filter.transcribers
+                    .map((musician) =>
+                      musician.last_name
+                        ? `${musician.first_name} ${musician.last_name}`
+                        : musician.first_name
+                    )
+                    .join(", ")}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearRole("transcribers"))}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
+          {filter.lyricists.length > 0 && (
+            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+              <span className="flex gap-[4px]">
+                <span className="text-fg.muted">Lyricists:</span>
+                <span className="text-fg.default">
+                  {filter.lyricists
+                    .map((musician) =>
+                      musician.last_name
+                        ? `${musician.first_name} ${musician.last_name}`
+                        : musician.first_name
+                    )
+                    .join(", ")}
+                </span>
+              </span>
+              <button
+                onClick={() => dispatch(clearRole("lyricists"))}
+                className="text-fg.muted transition-all hover:text-fg.default"
+              >
+                <Icon path={mdiClose} size={1} />
+              </button>
+            </div>
+          )}
           <button
             className="flex gap-[8px] hover:text-fg.default"
             onClick={handleClickResetFilters}

@@ -3,7 +3,24 @@ import { Instrument, Musician, Tag } from "../../../app/types";
 
 interface Filter {
   tags: Tag[];
-  yearPublished: number | null;
+  yearPublishedMin: number;
+  yearPublishedMax: number;
+  difficultyMin: number;
+  difficultyMax: number;
+  parts: string[];
+  instruments: Instrument[];
+  composers: Musician[];
+  arrangers: Musician[];
+  orchestrators: Musician[];
+  transcribers: Musician[];
+  lyricists: Musician[];
+}
+
+interface FilterExclTag {
+  yearPublishedMin: number;
+  yearPublishedMax: number;
+  difficultyMin: number;
+  difficultyMax: number;
   parts: string[];
   instruments: Instrument[];
   composers: Musician[];
@@ -15,7 +32,10 @@ interface Filter {
 
 const initialState: Filter = {
   tags: [],
-  yearPublished: null,
+  yearPublishedMin: 0,
+  yearPublishedMax: Infinity,
+  difficultyMin: 0,
+  difficultyMax: Infinity,
   parts: [],
   instruments: [],
   composers: [],
@@ -47,29 +67,77 @@ export const filterSlice = createSlice({
         state.tags.splice(index, 1);
       }
     },
-    setYearPublished: (state, action: PayloadAction<number | null>) => {
-      state.yearPublished = action.payload;
+    setFilterExclTag: (state, action: PayloadAction<FilterExclTag>) => {
+      return {
+        ...state,
+        ...action.payload,
+      };
     },
-    setParts: (state, action: PayloadAction<string[]>) => {
-      state.parts = action.payload;
+    clearYearPublished: (state) => {
+      return {
+        ...state,
+        yearPublishedMin: 0,
+        yearPublishedMax: Infinity,
+      };
     },
-    setInstruments: (state, action: PayloadAction<Instrument[]>) => {
-      state.instruments = action.payload;
+    clearDifficulty: (state) => {
+      return {
+        ...state,
+        difficultyMin: 0,
+        difficultyMax: Infinity,
+      };
     },
-    setComposers: (state, action: PayloadAction<Musician[]>) => {
-      state.composers = action.payload;
+    clearParts: (state) => {
+      return {
+        ...state,
+        parts: [],
+      };
     },
-    setArrangers: (state, action: PayloadAction<Musician[]>) => {
-      state.arrangers = action.payload;
+    clearInstruments: (state) => {
+      return {
+        ...state,
+        instruments: [],
+      };
     },
-    setOrchestrators: (state, action: PayloadAction<Musician[]>) => {
-      state.orchestrators = action.payload;
-    },
-    setTranscribers: (state, action: PayloadAction<Musician[]>) => {
-      state.transcribers = action.payload;
-    },
-    setLyricists: (state, action: PayloadAction<Musician[]>) => {
-      state.lyricists = action.payload;
+    clearRole: (
+      state,
+      action: PayloadAction<
+        | "composers"
+        | "arrangers"
+        | "orchestrators"
+        | "transcribers"
+        | "lyricists"
+      >
+    ) => {
+      switch (action.payload) {
+        case "composers":
+          return {
+            ...state,
+            composers: [],
+          };
+        case "arrangers":
+          return {
+            ...state,
+            arrangers: [],
+          };
+        case "orchestrators":
+          return {
+            ...state,
+            orchestrators: [],
+          };
+        case "transcribers":
+          return {
+            ...state,
+            transcribers: [],
+          };
+        case "lyricists":
+          return {
+            ...state,
+            lyricists: [],
+          };
+        default:
+          return state;
+      }
     },
     resetFilter: () => {
       return initialState;
@@ -80,14 +148,12 @@ export const filterSlice = createSlice({
 export const {
   pushTag,
   removeTag,
-  setYearPublished,
-  setParts,
-  setInstruments,
-  setComposers,
-  setArrangers,
-  setOrchestrators,
-  setTranscribers,
-  setLyricists,
+  setFilterExclTag,
+  clearYearPublished,
+  clearDifficulty,
+  clearParts,
+  clearInstruments,
+  clearRole,
   resetFilter,
 } = filterSlice.actions;
 

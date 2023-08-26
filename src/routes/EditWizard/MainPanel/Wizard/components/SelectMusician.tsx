@@ -176,9 +176,8 @@ export function SelectMusicians(props: {
                   ref={provided.innerRef}
                   {...provided.droppableProps}
                   className={classNames(
-                    "input-text flex-wrap flex gap-[14px]",
-                    isFocused &&
-                      "ring-1 ring-inset transition-all ring-fg.default"
+                    "input-text flex-wrap flex gap-[14px] transition-all",
+                    isFocused && "ring-1 ring-inset ring-fg.default"
                   )}
                 >
                   {getRoleMusicians().map((musician, index) => (
