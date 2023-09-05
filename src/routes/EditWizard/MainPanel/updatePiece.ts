@@ -13,7 +13,9 @@ export async function updatePiece(piece: EditPiece, path: string) {
 
   const workingDir = await invoke("get_working_directory");
 
-  const newPath = `${workingDir}/${principalComposer.id}_${composerName}/${piece.id}_${piece.title}`;
+  const pathSlash = window.navigator.userAgent.includes("Windows") ? "\\" : "/";
+
+  const newPath = `${workingDir}${pathSlash}${principalComposer.id}_${composerName}${pathSlash}${piece.id}_${piece.title}`;
   await createDir(newPath, { recursive: true });
 
   await invoke("pieces_update", {
@@ -65,7 +67,7 @@ export async function updatePiece(piece: EditPiece, path: string) {
 
   for (const [index, score] of piece.scores.entries()) {
     const scorePath =
-      score.file && `${path}/${0}.${index + 1}_${score.name}.pdf`;
+      score.file && `${path}${pathSlash}${0}.${index + 1}_${score.name}.pdf`;
 
     await invoke("scores_add", {
       name: score.name,
@@ -80,7 +82,8 @@ export async function updatePiece(piece: EditPiece, path: string) {
   }
 
   for (const [index, part] of piece.parts.entries()) {
-    const partPath = part.file && `${path}/${1}.${index + 1}_${part.name}.pdf`;
+    const partPath =
+      part.file && `${path}${pathSlash}${1}.${index + 1}_${part.name}.pdf`;
 
     const partId = (await invoke("parts_add", {
       name: part.name,

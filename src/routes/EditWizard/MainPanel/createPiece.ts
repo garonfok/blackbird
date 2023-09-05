@@ -19,7 +19,9 @@ export async function createPiece(piece: EditPiece) {
     notes: piece.notes,
   })) as number;
 
-  const path = `${workingDir}/${principalComposer.id}_${composerName}/${pieceId}_${piece.title}`;
+  const pathSlash = window.navigator.userAgent.includes("Windows") ? "\\" : "/";
+
+  const path = `${workingDir}${pathSlash}${principalComposer.id}_${composerName}${pathSlash}${pieceId}_${piece.title}`;
   await createDir(path, { recursive: true });
 
   await invoke("pieces_update", {
@@ -74,7 +76,7 @@ export async function createPiece(piece: EditPiece) {
   // scores
   for (const [index, score] of piece.scores.entries()) {
     const scorePath =
-      score.file && `${path}/${0}.${index + 1}_${score.name}.pdf`;
+      score.file && `${path}${pathSlash}${0}.${index + 1}_${score.name}.pdf`;
 
     await invoke("scores_add", {
       name: score.name,
@@ -90,7 +92,8 @@ export async function createPiece(piece: EditPiece) {
 
   // parts
   for (const [index, part] of piece.parts.entries()) {
-    const partPath = part.file && `${path}/${1}.${index + 1}_${part.name}.pdf`;
+    const partPath =
+      part.file && `${path}${pathSlash}${1}.${index + 1}_${part.name}.pdf`;
 
     const partId = (await invoke("parts_add", {
       name: part.name,
