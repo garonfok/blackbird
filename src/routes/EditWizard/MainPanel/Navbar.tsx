@@ -7,6 +7,7 @@ import { clearPiece } from "../pieceSlice";
 import { createPiece } from "./createPiece";
 import { StepEvent, StepState } from "./stepMachine";
 import { updatePiece } from "./updatePiece";
+import { setLoading } from "../loadingSlice";
 
 export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   const { stepState, sendStep } = props;
@@ -17,6 +18,7 @@ export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   const { state } = useLocation();
 
   async function handleClickFinish() {
+    dispatch(setLoading(true));
     if (piece.id) {
       await updatePiece(piece, state?.piece?.path);
     } else {
@@ -25,6 +27,7 @@ export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
     sendStep("FINISH");
     dispatch(clearFiles());
     dispatch(clearPiece());
+    dispatch(setLoading(false));
     navigate("/");
   }
 

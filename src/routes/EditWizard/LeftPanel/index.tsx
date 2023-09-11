@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { Modal } from "../../../components/Modal";
 import { ResizableLeft } from "../../../components/ResizeableLeft";
 import { clearFiles } from "../filesSlice";
@@ -15,6 +15,7 @@ export function LeftPanel() {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const loading = useAppSelector((state) => state.loading);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
@@ -48,15 +49,19 @@ export function LeftPanel() {
     <>
       <ResizableLeft minWidth={192} width={256} maxWidth={384}>
         <div ref={panelRef} className="flex flex-col h-full gap-[14px]">
-          <DragUpload isPanelSmall={isPanelSmall} />
-          <FileList />
-          <hr className="text-fg.subtle" />
-          <button
-            className="text-left text-fg.muted hover:text-fg.default outline-none transition-all"
-            onClick={() => setConfirmingCancel(true)}
-          >
-            Cancel
-          </button>
+          {!loading && (
+            <>
+              <DragUpload isPanelSmall={isPanelSmall} />
+              <FileList />
+              <hr className="text-fg.subtle" />
+              <button
+                className="text-left text-fg.muted hover:text-fg.default outline-none transition-all"
+                onClick={() => setConfirmingCancel(true)}
+              >
+                Cancel
+              </button>
+            </>
+          )}
         </div>
       </ResizableLeft>
 

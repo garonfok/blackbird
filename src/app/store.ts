@@ -9,6 +9,7 @@ import tagsReducer from "../routes/Dashboard/reducers/tagsSlice";
 import piecesReducer from "../routes/Dashboard/reducers/piecesSlice";
 import setlistReducer from "../routes/Dashboard/reducers/setlistSlice";
 import setlistsReducer from "../routes/Dashboard/reducers/setlistsSlice";
+import loadingReducer from "../routes/EditWizard/loadingSlice";
 
 const store = configureStore({
   reducer: {
@@ -22,6 +23,7 @@ const store = configureStore({
     pieces: piecesReducer,
     setlist: setlistReducer,
     setlists: setlistsReducer,
+    loading: loadingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
