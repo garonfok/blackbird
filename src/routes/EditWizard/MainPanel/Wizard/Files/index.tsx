@@ -2,8 +2,8 @@ import { Listbox } from "@headlessui/react";
 import { mdiChevronDown } from "@mdi/js";
 import Icon from "@mdi/react";
 import classNames from "classnames";
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-import { ByteFile } from "../../../../../app/types";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { ByteFile } from "src/app/types";
 import { setPartFile, setScoreFile } from "../../../pieceSlice";
 
 export function Files() {

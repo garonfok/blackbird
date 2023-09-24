@@ -2,8 +2,8 @@ import { Tab } from "@headlessui/react";
 import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Ensemble } from "../../../../../app/types";
-import { Modal } from "../../../../../components/Modal";
+import { Ensemble } from "src/app/types";
+import { Modal } from "src/components/Modal";
 
 interface GroupedEnsembles {
   [key: string]: Ensemble[];

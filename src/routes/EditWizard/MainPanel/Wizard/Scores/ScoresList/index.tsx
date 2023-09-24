@@ -4,13 +4,13 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
+import { ControlledMenu, MenuDivider, MenuItem } from "@szhsin/react-menu";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../../../app/hooks";
-import { isWindows } from "../../../../../../app/utils";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { EditScore } from "src/app/types";
+import { isWindows } from "src/app/utils";
 import { setScoreRenaming, setScores } from "../../../../pieceSlice";
 import { Card } from "./Card";
-import { ControlledMenu, MenuDivider, MenuItem } from "@szhsin/react-menu";
-import { EditScore } from "../../../../../../app/types";
 
 export function ScoresList() {
   const [anchor, setAnchor] = useState<number>(0);

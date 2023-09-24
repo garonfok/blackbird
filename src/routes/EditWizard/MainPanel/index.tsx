@@ -1,9 +1,9 @@
 import { useMachine } from "@xstate/react";
+import { ScaleLoader } from "react-spinners";
+import { useAppSelector } from "src/app/hooks";
 import { Navbar } from "./Navbar";
 import { Wizard } from "./Wizard";
 import { stepsMachine } from "./stepMachine";
-import { useAppSelector } from "../../../app/hooks";
-import { ScaleLoader } from "react-spinners";
 
 export function MainPanel() {
   const [stepState, sendStep] = useMachine(stepsMachine);

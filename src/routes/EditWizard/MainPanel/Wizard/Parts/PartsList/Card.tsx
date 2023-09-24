@@ -1,8 +1,17 @@
+import {
+  DragDropContext,
+  Draggable,
+  DropResult,
+  Droppable,
+} from "@hello-pangea/dnd";
 import { mdiClose, mdiDragVertical, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
+import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
-import { useAppDispatch } from "../../../../../../app/hooks";
-import { EditPart, Instrument } from "../../../../../../app/types";
+import { useState } from "react";
+import { useAppDispatch } from "src/app/hooks";
+import { EditPart, Instrument } from "src/app/types";
+import { Renameable } from "src/components/Renameable";
 import {
   formatPartNumbers,
   pushPartInstrument,
@@ -11,16 +20,7 @@ import {
   setPartInstruments,
   updatePartName,
 } from "../../../../pieceSlice";
-import { Renameable } from "../../../../../../components/Renameable";
-import {
-  DragDropContext,
-  Draggable,
-  DropResult,
-  Droppable,
-} from "@hello-pangea/dnd";
-import { useState } from "react";
 import { SelectInstrumentModal } from "../SelectInstrumentModal";
-import { invoke } from "@tauri-apps/api";
 
 export function Card(props: {
   index: number;
@@ -121,7 +121,11 @@ export function Card(props: {
                                 {...provided.dragHandleProps}
                               >
                                 <div className="flex items-center gap-[4px] w-full">
-                                  <Icon path={mdiDragVertical} size={1} className="shrink-0" />
+                                  <Icon
+                                    path={mdiDragVertical}
+                                    size={1}
+                                    className="shrink-0"
+                                  />
                                   {instrument.name}
                                 </div>
                                 <button

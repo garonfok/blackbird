@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Instrument, Musician, Tag } from "../../../app/types";
+import { Instrument, Musician, Tag } from "src/app/types";
 
 interface Filter {
   tags: Tag[];

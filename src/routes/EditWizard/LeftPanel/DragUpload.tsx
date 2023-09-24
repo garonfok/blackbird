@@ -3,13 +3,13 @@ import Icon from "@mdi/react";
 import { open } from "@tauri-apps/api/dialog";
 import { Event, listen } from "@tauri-apps/api/event";
 import { readBinaryFile } from "@tauri-apps/api/fs";
-import { useCallback, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { ByteFile, Piece } from "../../../app/types";
-import { pushFiles } from "../filesSlice";
-import { toast, Toaster } from "react-hot-toast";
 import classNames from "classnames";
+import { useCallback, useEffect, useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
+import { useLocation } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { ByteFile, Piece } from "src/app/types";
+import { pushFiles } from "../filesSlice";
 import { setPiece } from "../pieceSlice";
 
 export function DragUpload(props: { isPanelSmall: boolean }) {

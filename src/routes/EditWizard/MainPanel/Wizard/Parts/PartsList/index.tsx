@@ -6,7 +6,7 @@ import {
 } from "@hello-pangea/dnd";
 import { ControlledMenu, MenuDivider, MenuItem } from "@szhsin/react-menu";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import {
   formatPartNumbers,
   setPartRenaming,
@@ -14,8 +14,8 @@ import {
   setParts,
 } from "../../../../pieceSlice";
 import { Card } from "./Card";
-import { isWindows } from "../../../../../../app/utils";
-import { EditPart } from "../../../../../../app/types";
+import { isWindows } from "src/app/utils";
+import { EditPart } from "src/app/types";
 
 export function PartsList() {
   const [anchor, setAnchor] = useState(0);

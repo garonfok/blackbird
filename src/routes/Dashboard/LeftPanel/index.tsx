@@ -13,16 +13,16 @@ import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { Setlist, Tag } from "../../../app/types";
-import { EditTagModal } from "../../../components/EditTagModal";
-import { Modal } from "../../../components/Modal";
-import { ResizableLeft } from "../../../components/ResizeableLeft";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { Setlist, Tag } from "src/app/types";
+import { EditTagModal } from "src/components/EditTagModal";
+import { Modal } from "src/components/Modal";
+import { ResizableLeft } from "src/components/ResizeableLeft";
 import { pushTag, removeTag } from "../reducers/filterSlice";
 import { clearSetlist, setSetlist } from "../reducers/setlistSlice";
+import { setSetlists } from "../reducers/setlistsSlice";
 import { setTags } from "../reducers/tagsSlice";
 import { EditSetlistModal } from "./EditSetlistModal";
-import { setSetlists } from "../reducers/setlistsSlice";
 
 export function LeftPanel() {
   const [isEditSetlistModalOpen, setIsEditSetlistModalOpen] = useState(false);

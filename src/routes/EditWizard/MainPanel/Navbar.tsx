@@ -1,13 +1,13 @@
 import classNames from "classnames";
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { clearFiles } from "../filesSlice";
+import { setLoading } from "../loadingSlice";
 import { clearPiece } from "../pieceSlice";
 import { createPiece } from "./createPiece";
 import { StepEvent, StepState } from "./stepMachine";
 import { updatePiece } from "./updatePiece";
-import { setLoading } from "../loadingSlice";
 
 export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   const { stepState, sendStep } = props;

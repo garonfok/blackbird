@@ -1,15 +1,15 @@
 import { mdiClose } from "@mdi/js";
 import Icon from "@mdi/react";
+import { invoke } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { ResizableRight } from "../../../components/ResizeableRight";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { Piece } from "src/app/types";
+import { Modal } from "src/components/Modal";
+import { ResizableRight } from "src/components/ResizeableRight";
+import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece } from "../reducers/previewSlice";
 import { Preview } from "./Preview";
-import { Modal } from "../../../components/Modal";
-import { invoke } from "@tauri-apps/api";
-import { Piece } from "../../../app/types";
-import { setPieces } from "../reducers/piecesSlice";
-import { useNavigate } from "react-router-dom";
 
 export function RightPanel() {
   const [maxWidth, setMaxWidth] = useState<number>(384);

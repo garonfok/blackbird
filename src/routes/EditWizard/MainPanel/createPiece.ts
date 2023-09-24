@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api";
 import { createDir, writeBinaryFile } from "@tauri-apps/api/fs";
-import { EditPiece } from "../../../app/types";
+import { EditPiece } from "src/app/types";
 
 export async function createPiece(piece: EditPiece) {
   const principalComposer = piece.composers[0];

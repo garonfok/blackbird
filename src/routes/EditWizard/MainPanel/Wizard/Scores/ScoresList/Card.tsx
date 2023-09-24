@@ -1,10 +1,10 @@
-import classNames from "classnames";
-import { EditScore } from "../../../../../../app/types";
-import { useAppDispatch } from "../../../../../../app/hooks";
-import { removeScore, updateScoreName } from "../../../../pieceSlice";
-import Icon from "@mdi/react";
 import { mdiClose, mdiDragVertical } from "@mdi/js";
-import { Renameable } from "../../../../../../components/Renameable";
+import Icon from "@mdi/react";
+import classNames from "classnames";
+import { useAppDispatch } from "src/app/hooks";
+import { EditScore } from "src/app/types";
+import { Renameable } from "src/components/Renameable";
+import { removeScore, updateScoreName } from "../../../../pieceSlice";
 
 export function Card(props: {
   index: number;

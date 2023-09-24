@@ -4,7 +4,7 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { setFiles } from "../../filesSlice";
 import { Card } from "./Card";
 

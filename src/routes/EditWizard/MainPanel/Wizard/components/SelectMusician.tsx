@@ -9,9 +9,9 @@ import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-import { Musician } from "../../../../../app/types";
-import { EditMusicianModal } from "../../../../../components/EditMusicianModal";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { Musician } from "src/app/types";
+import { EditMusicianModal } from "src/components/EditMusicianModal";
 import {
   setArrangers,
   setComposers,

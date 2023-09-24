@@ -3,15 +3,15 @@ import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import { useMachine } from "@xstate/react";
 import { useCallback, useState } from "react";
+import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { EditPart, Ensemble, Instrument } from "src/app/types";
+import { Modal } from "src/components/Modal";
+import { SaveEnsembleModal } from "src/components/SaveEnsembleModal";
 import { createMachine } from "xstate";
-import { useAppDispatch, useAppSelector } from "../../../../../app/hooks";
-import { EditPart, Ensemble, Instrument } from "../../../../../app/types";
-import { Modal } from "../../../../../components/Modal";
 import { formatPartNumbers, pushPart, setParts } from "../../../pieceSlice";
 import { LoadEnsembleModal } from "./LoadEnsembleModal";
 import { PartsList } from "./PartsList";
 import { SelectInstrumentModal } from "./SelectInstrumentModal";
-import { SaveEnsembleModal } from "../../../../../components/SaveEnsembleModal";
 
 const loadEnsembleMachine = createMachine({
   id: "loadEnsemble",
