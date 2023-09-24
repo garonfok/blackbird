@@ -34,6 +34,41 @@ export function ScoresList() {
     };
   }, [piece.scores]);
 
+  async function handleKeyDown(event: globalThis.KeyboardEvent) {
+    if (
+      (await isWindows()) ? event.ctrlKey && event.key === "a" : event.metaKey && event.key === "a"
+    ) {
+      event.preventDefault();
+      setSelected([...Array(piece.scores.length).keys()]);
+    }
+  }
+
+  async function handleClickSelect(
+    event: MouseEvent<HTMLDivElement>,
+    index: number
+  ) {
+    if ((await isWindows()) ? event.ctrlKey : event.metaKey) {
+      if (selected.includes(index)) {
+        setSelected(selected.filter((i) => i !== index));
+        const nextGreatestIndex = selected
+          .filter((i) => i < index)
+          .sort((a, b) => b - a)[0];
+        setAnchor(nextGreatestIndex || 0);
+      } else {
+        setAnchor(index);
+        setSelected([...selected, index]);
+      }
+    } else if (event.shiftKey) {
+      const min = Math.min(anchor, index);
+      const max = Math.max(anchor, index);
+      setSelected([...Array(max - min + 1).keys()].map((i) => i + min));
+      setAnchor(index);
+    } else {
+      setSelected([index]);
+      setAnchor(index);
+    }
+  }
+
   function handleClick(event: globalThis.MouseEvent) {
     event.preventDefault();
     if (
@@ -43,15 +78,6 @@ export function ScoresList() {
       !menuRef.current.contains(event.target as Node)
     ) {
       setSelected([]);
-    }
-  }
-
-  async function handleKeyDown(event: globalThis.KeyboardEvent) {
-    if (
-      (await isWindows()) ? event.ctrlKey && event.key === "a" : event.metaKey
-    ) {
-      event.preventDefault();
-      setSelected([...Array(piece.scores.length).keys()]);
     }
   }
 
@@ -151,32 +177,6 @@ export function ScoresList() {
     const highestIndex = Math.max(...selected);
     cloned.splice(highestIndex + 1, 0, ...dupedParts);
     dispatch(setScores(cloned));
-  }
-
-  async function handleClickSelect(
-    event: MouseEvent<HTMLDivElement>,
-    index: number
-  ) {
-    if ((await isWindows()) ? event.ctrlKey : event.metaKey) {
-      if (selected.includes(index)) {
-        setSelected(selected.filter((i) => i !== index));
-        const nextGreatestIndex = selected
-          .filter((i) => i < index)
-          .sort((a, b) => b - a)[0];
-        setAnchor(nextGreatestIndex || 0);
-      } else {
-        setAnchor(index);
-        setSelected([...selected, index]);
-      }
-    } else if (event.shiftKey) {
-      const min = Math.min(anchor, index);
-      const max = Math.max(anchor, index);
-      setSelected([...Array(max - min + 1).keys()].map((i) => i + min));
-      setAnchor(index);
-    } else {
-      setSelected([index]);
-      setAnchor(index);
-    }
   }
 
   return (
