@@ -7,6 +7,8 @@ import {
 import { ControlledMenu, MenuDivider, MenuItem } from "@szhsin/react-menu";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { EditPart } from "src/app/types";
+import { isWindows } from "src/app/utils";
 import {
   formatPartNumbers,
   setPartRenaming,
@@ -14,12 +16,11 @@ import {
   setParts,
 } from "../../../../pieceSlice";
 import { Card } from "./Card";
-import { isWindows } from "src/app/utils";
-import { EditPart } from "src/app/types";
 
 export function PartsList() {
   const [anchor, setAnchor] = useState(0);
   const [selected, setSelected] = useState<number[]>([]);
+  const [partsClipboard, setPartsClipboard] = useState<number[]>([]);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 
@@ -39,51 +40,13 @@ export function PartsList() {
     };
   }, [parts]);
 
-  function handleClick(event: globalThis.MouseEvent) {
-    if (
-      cardRef.current &&
-      !cardRef.current.contains(event.target as Node) &&
-      menuRef.current &&
-      !menuRef.current.contains(event.target as Node)
-    ) {
-      setSelected([]);
-    }
-  }
-
-  function handleContextMenu(event: MouseEvent<HTMLDivElement>) {
-    if (typeof document.hasFocus === "function" && !document.hasFocus()) return;
-    event.preventDefault();
-    setAnchorPoint({ x: event.clientX, y: event.clientY });
-    setIsContextMenuOpen(true);
-  }
-
   async function handleKeyDown(event: globalThis.KeyboardEvent) {
     if (
-      (await isWindows()) ? event.ctrlKey && event.key === "a" : event.metaKey
+      (await isWindows()) ? event.ctrlKey && event.key === "a" : event.metaKey && event.key === "a"
     ) {
       event.preventDefault();
       setSelected([...Array(parts.length).keys()]);
     }
-  }
-
-  function handleDragEnd(result: DropResult) {
-    const { destination, source } = result;
-
-    if (!destination) return;
-
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    )
-      return;
-
-    const cloned = [...parts];
-    const file = cloned[source.index];
-    cloned.splice(source.index, 1);
-    cloned.splice(destination.index, 0, file);
-
-    dispatch(setParts(cloned));
-    dispatch(formatPartNumbers());
   }
 
   async function handleClickSelect(
@@ -110,6 +73,44 @@ export function PartsList() {
       setSelected([index]);
       setAnchor(index);
     }
+  }
+
+  function handleClick(event: globalThis.MouseEvent) {
+    if (
+      cardRef.current &&
+      !cardRef.current.contains(event.target as Node) &&
+      menuRef.current &&
+      !menuRef.current.contains(event.target as Node)
+    ) {
+      setSelected([]);
+    }
+  }
+
+  function handleContextMenu(event: MouseEvent<HTMLDivElement>) {
+    if (typeof document.hasFocus === "function" && !document.hasFocus()) return;
+    event.preventDefault();
+    setAnchorPoint({ x: event.clientX, y: event.clientY });
+    setIsContextMenuOpen(true);
+  }
+
+  function handleDragEnd(result: DropResult) {
+    const { destination, source } = result;
+
+    if (!destination) return;
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
+
+    const cloned = [...parts];
+    const file = cloned[source.index];
+    cloned.splice(source.index, 1);
+    cloned.splice(destination.index, 0, file);
+
+    dispatch(setParts(cloned));
+    dispatch(formatPartNumbers());
   }
 
   function handleClickShow() {
