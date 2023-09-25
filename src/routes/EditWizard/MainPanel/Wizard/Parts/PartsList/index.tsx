@@ -16,11 +16,12 @@ import {
   setParts,
 } from "../../../../pieceSlice";
 import { Card } from "./Card";
+import { s } from "node_modules/@tauri-apps/api/app-5190a154";
 
 export function PartsList() {
   const [anchor, setAnchor] = useState(0);
   const [selected, setSelected] = useState<number[]>([]);
-  const [partsClipboard, setPartsClipboard] = useState<number[]>([]);
+  const [partsClipboard, setPartsClipboard] = useState<EditPart[]>([]);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 
@@ -38,14 +39,43 @@ export function PartsList() {
       document.removeEventListener("click", handleClick);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [parts]);
+  }, [parts, selected, partsClipboard]);
 
   async function handleKeyDown(event: globalThis.KeyboardEvent) {
-    if (
-      (await isWindows()) ? event.ctrlKey && event.key === "a" : event.metaKey && event.key === "a"
-    ) {
-      event.preventDefault();
-      setSelected([...Array(parts.length).keys()]);
+    event.preventDefault();
+    if ((await isWindows()) ? event.ctrlKey : event.metaKey) {
+      switch (event.key) {
+        case "a":
+          setSelected([...Array(parts.length).keys()]);
+          break;
+        case "c":
+          setPartsClipboard(
+            parts.filter((_, index) => selected.includes(index))
+          );
+          break;
+        case "v":
+          const cloned = [...parts];
+          const index =
+            selected.length > 0 ? selected[selected.length - 1] : cloned.length;
+          const pasted = partsClipboard.map((part, index) => ({
+            ...part,
+            id: Math.max(...parts.map((p) => p.id), 0) + index + 1,
+          }));
+          cloned.splice(index + 1, 0, ...pasted);
+          dispatch(setParts(cloned));
+          dispatch(formatPartNumbers());
+          break;
+      }
+    } else {
+      switch (event.key) {
+        case "Backspace":
+          dispatch(
+            setParts(parts.filter((_, index) => !selected.includes(index)))
+          );
+          dispatch(formatPartNumbers());
+          break;
+        default:
+      }
     }
   }
 

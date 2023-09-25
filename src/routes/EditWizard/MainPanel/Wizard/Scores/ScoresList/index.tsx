@@ -15,10 +15,11 @@ import { Card } from "./Card";
 export function ScoresList() {
   const [anchor, setAnchor] = useState<number>(0);
   const [selected, setSelected] = useState<number[]>([]);
+  const [scoresClipboard, setPartsClipboard] = useState<EditScore[]>([]);
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 
-  const piece = useAppSelector((state) => state.piece);
+  const scores = useAppSelector((state) => state.piece.scores);
   const dispatch = useAppDispatch();
 
   const cardRef = useRef<HTMLDivElement>(null);
@@ -32,14 +33,41 @@ export function ScoresList() {
       document.removeEventListener("click", handleClick);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [piece.scores]);
+  }, [scores, selected, scoresClipboard]);
 
   async function handleKeyDown(event: globalThis.KeyboardEvent) {
-    if (
-      (await isWindows()) ? event.ctrlKey && event.key === "a" : event.metaKey && event.key === "a"
-    ) {
-      event.preventDefault();
-      setSelected([...Array(piece.scores.length).keys()]);
+    event.preventDefault();
+    if ((await isWindows()) ? event.ctrlKey : event.metaKey) {
+      switch (event.key) {
+        case "a":
+          setSelected([...Array(scores.length).keys()]);
+          break;
+        case "c":
+          setPartsClipboard(
+            scores.filter((_, index) => selected.includes(index))
+          );
+          break;
+        case "v":
+          const cloned = [...scores];
+          const index =
+            selected.length > 0 ? selected[selected.length - 1] : cloned.length;
+          const pasted = scoresClipboard.map((score, index) => ({
+            ...score,
+            id: Math.max(...scores.map((s) => s.id), 0) + index + 1,
+          }));
+          cloned.splice(index + 1, 0, ...pasted);
+          dispatch(setScores(cloned));
+          break;
+      }
+    } else {
+      switch (event.key) {
+        case "Backspace":
+          dispatch(
+            setScores(scores.filter((_, index) => !selected.includes(index)))
+          );
+          break;
+        default:
+      }
     }
   }
 
@@ -100,7 +128,7 @@ export function ScoresList() {
     )
       return;
 
-    const cloned = [...piece.scores];
+    const cloned = [...scores];
     const score = cloned[source.index];
 
     cloned.splice(source.index, 1);
@@ -118,13 +146,11 @@ export function ScoresList() {
   }
 
   function handleClickDelete() {
-    dispatch(
-      setScores(piece.scores.filter((_, index) => !selected.includes(index)))
-    );
+    dispatch(setScores(scores.filter((_, index) => !selected.includes(index))));
   }
 
   function handleClickMoveUp() {
-    const cloned = [...piece.scores];
+    const cloned = [...scores];
     for (const index of selected) {
       const part = cloned[index];
       cloned.splice(index, 1);
@@ -135,7 +161,7 @@ export function ScoresList() {
   }
 
   function handleClickMoveDown() {
-    const cloned = [...piece.scores];
+    const cloned = [...scores];
     for (const index of selected) {
       const part = cloned[index];
       cloned.splice(index, 1);
@@ -146,7 +172,7 @@ export function ScoresList() {
   }
 
   function handleClickDupeAbove() {
-    const cloned = [...piece.scores];
+    const cloned = [...scores];
     const dupedParts: EditScore[] = [];
     for (const index of selected) {
       const highestId =
@@ -163,7 +189,7 @@ export function ScoresList() {
   }
 
   function handleClickDupeBelow() {
-    const cloned = [...piece.scores];
+    const cloned = [...scores];
     const dupedParts: EditScore[] = [];
     for (const index of selected) {
       const highestId =
@@ -189,7 +215,7 @@ export function ScoresList() {
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
-              {piece.scores.map((score, index) => (
+              {scores.map((score, index) => (
                 <Draggable
                   key={score.id}
                   draggableId={score.id.toString()}
