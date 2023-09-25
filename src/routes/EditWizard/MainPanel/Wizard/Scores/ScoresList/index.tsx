@@ -37,6 +37,7 @@ export function ScoresList() {
 
   async function handleKeyDown(event: globalThis.KeyboardEvent) {
     event.preventDefault();
+    setIsContextMenuOpen(false);
     if ((await isWindows()) ? event.ctrlKey : event.metaKey) {
       switch (event.key) {
         case "a":
