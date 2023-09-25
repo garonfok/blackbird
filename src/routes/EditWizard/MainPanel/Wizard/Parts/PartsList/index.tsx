@@ -16,7 +16,6 @@ import {
   setParts,
 } from "../../../../pieceSlice";
 import { Card } from "./Card";
-import { s } from "node_modules/@tauri-apps/api/app-5190a154";
 
 export function PartsList() {
   const [anchor, setAnchor] = useState(0);
