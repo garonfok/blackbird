@@ -17,7 +17,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@szhsin/react-menu": "^4.0.3",
     "@tanstack/react-table": "^8.9.3",
-    "@tauri-apps/api": "^1.4.0",
+    "@tauri-apps/api": "^1.5.2",
     "@xstate/react": "^3.2.2",
     "classnames": "^2.3.2",
     "fuse.js": "^6.6.2",
@@ -34,7 +34,7 @@
     "xstate": "^4.38.2"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.4.0",
+    "@tauri-apps/cli": "^1.5.8",
     "@types/classnames": "^2.3.1",
     "@types/luxon": "^3.3.1",
     "@types/react": "^18.2.15",
