@@ -40,7 +40,7 @@ export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   }, []);
 
   return (
-    <div className="bg-bg.default p-[14px] shadow-panel grid grid-cols-3">
+    <div className="bg-bg.default p-[14px] shadow-panel flex justify-between">
       {stepState.nextEvents.includes("PREVIOUS") ? (
         <button onClick={handleClickPrevious} className="text-left">
           Previous
