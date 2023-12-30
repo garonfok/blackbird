@@ -13,7 +13,7 @@ pub fn init() -> Menu {
             CustomMenuItem::new("check_update", "Check for Updates").into(),
             MenuItem::Separator.into(),
             CustomMenuItem::new("settings", "Settings")
-                .accelerator("CommandorCtrl+,")
+                .accelerator("CmdorCtrl+,")
                 .into(),
             MenuItem::Separator.into(),
             MenuItem::Services.into(),
@@ -26,11 +26,15 @@ pub fn init() -> Menu {
         ]),
     );
 
-    let edit = Submenu::new(
+    let edit_menu = Submenu::new(
         "Edit",
         Menu::with_items([
-            MenuItem::Undo.into(),
-            MenuItem::Redo.into(),
+            CustomMenuItem::new("undo", "Undo")
+                .accelerator("CmdorCtrl+Z")
+                .into(),
+            CustomMenuItem::new("redo", "Redo")
+                .accelerator("CmdorCtrl+Shift+Z")
+                .into(),
             MenuItem::Separator.into(),
             MenuItem::Cut.into(),
             MenuItem::Copy.into(),
@@ -38,14 +42,31 @@ pub fn init() -> Menu {
             MenuItem::SelectAll.into(),
             MenuItem::Separator.into(),
             CustomMenuItem::new("search", "Search")
-                .accelerator("CommandorCtrl+K")
+                .accelerator("CmdorCtrl+K")
                 .into(),
         ]),
     );
 
-    let view = Submenu::new("View", Menu::with_items([]));
+    let view_menu = Submenu::new(
+        "View",
+        Menu::with_items([
+            CustomMenuItem::new("zoom_0", "Zoom to Actual Size")
+                .accelerator("CmdOrCtrl+0")
+                .into(),
+            CustomMenuItem::new("zoom_out", "Zoom Out")
+                .accelerator("CmdOrCtrl+-")
+                .into(),
+            CustomMenuItem::new("zoom_in", "Zoom In")
+                .accelerator("CmdOrCtrl+Plus")
+                .into(),
+            MenuItem::Separator.into(),
+            CustomMenuItem::new("reload", "Reload")
+                .accelerator("CmdOrCtrl+R")
+                .into(),
+        ]),
+    );
 
-    let window = Submenu::new(
+    let window_menu = Submenu::new(
         "Window",
         Menu::with_items([
             MenuItem::CloseWindow.into(),
@@ -56,7 +77,7 @@ pub fn init() -> Menu {
         ]),
     );
 
-    let help = Submenu::new(
+    let help_menu = Submenu::new(
         "Help",
         Menu::with_items([
             CustomMenuItem::new("learn_more", "Learn More").into(),
@@ -68,16 +89,21 @@ pub fn init() -> Menu {
 
     Menu::new()
         .add_submenu(app_menu)
-        .add_submenu(edit)
-        .add_submenu(view)
-        .add_submenu(window)
-        .add_submenu(help)
+        .add_submenu(edit_menu)
+        .add_submenu(view_menu)
+        .add_submenu(window_menu)
+        .add_submenu(help_menu)
 }
 
 pub fn menu_handler(event: WindowMenuEvent<tauri::Wry>) {
     let menu_id = event.menu_item_id();
+    let win = Some(event.window()).unwrap();
 
     match menu_id {
+        "zoom_0" => win.eval("window.__zoom0 && window.__zoom0()").unwrap(),
+        "zoom_out" => win.eval("window.__zoomOut && window.__zoomOut()").unwrap(),
+        "zoom_in" => win.eval("window.__zoomIn && window.__zoomIn()").unwrap(),
+        "reload" => win.eval("window.location.reload()").unwrap(),
         _ => {
             println!("Unhandled menu event: {}", menu_id);
         }
