@@ -9,6 +9,7 @@ use tauri_plugin_autostart::MacosLauncher;
 mod commands;
 mod db;
 mod entities;
+mod menu;
 mod migrator;
 mod services;
 mod settings;
@@ -33,6 +34,8 @@ async fn main() {
         .manage(AppState {
             db: Default::default(),
         })
+        .menu(menu::init())
+        .on_menu_event(menu::menu_handler)
         .setup(|app| {
             let handle = app.handle();
             let app_state: State<AppState> = handle.state();
