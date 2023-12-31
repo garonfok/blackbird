@@ -30,21 +30,8 @@ async fn main() {
     if let Err(e) = block_on(db::init()) {
         println!("Error: {}", e);
     }
-    tauri::Builder::default()
-        .manage(AppState {
-            db: Default::default(),
-        })
-        .menu(menu::init())
-        .on_menu_event(menu::menu_handler)
-        .setup(|app| {
-            let handle = app.handle();
-            let app_state: State<AppState> = handle.state();
-            let db = block_on(db::init()).unwrap();
 
-            *app_state.db.lock().unwrap() = Some(db);
-            Ok(())
-        })
-        .invoke_handler(commands::handler())
+    let builder = tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
 
@@ -55,6 +42,22 @@ async fn main() {
             MacosLauncher::LaunchAgent,
             Some(vec!["--flag1", "--flag2"]),
         ))
+        .manage(AppState {
+            db: Default::default(),
+        })
+        .invoke_handler(commands::init())
+        .setup(|app| {
+            let handle = app.handle();
+            let app_state: State<AppState> = handle.state();
+            let db = block_on(db::init()).unwrap();
+
+            *app_state.db.lock().unwrap() = Some(db);
+            Ok(())
+        })
+        .menu(menu::init());
+
+    builder
+        .on_menu_event(menu::menu_handler)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

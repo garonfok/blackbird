@@ -4,7 +4,7 @@ mod db;
 mod fs;
 mod settings;
 
-pub fn handler() -> impl Fn(Invoke) {
+pub fn init() -> impl Fn(Invoke) {
     generate_handler![
         db::ensemble_parts::ensemble_parts_get_by_id,
         db::ensemble_parts::ensemble_parts_add,
