@@ -1,127 +1,107 @@
-use std::error::Error;
-use std::fmt::{Display, Formatter};
-use std::sync::RwLock;
-
-use serde::{Deserialize, Serialize};
-
 use crate::utils;
+use std::{collections::BTreeMap, path::PathBuf};
 
-lazy_static! {
-    pub static ref SETTINGS: RwLock<Settings> = RwLock::new(Settings::default());
-}
+use serde_json::Value;
+#[cfg(target_os = "macos")]
 
-#[derive(Debug)]
-pub struct SettingsError {
-    message: String,
-}
+const LIBRARY_NAME: &str = "Sheet Music Library";
+const SETTINGS_FILE: &str = "settings.json";
 
-impl SettingsError {
-    pub fn new(message: String) -> Self {
-        SettingsError { message }
+macro_rules! pub_struct {
+  ($name:ident {$($field:ident : $t:ty,)*}) => {
+    #[derive(serde::Serialize, serde::Deserialize, Debug, Clone)]
+    pub struct $name {
+      $(pub $field: $t,)*
     }
+  }
 }
 
-impl Display for SettingsError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Settings Error: {}", self.message)
-    }
-}
+pub_struct!(AppSettings {
+    hide_dock_icon: bool,
+    // auto update: prompt / silent/ disable
+    auto_update: String,
+    stay_on_top: bool,
 
-impl Error for SettingsError {
-    fn description(&self) -> &str {
-        &self.message.as_str()
-    }
-}
+    working_directory: String,
+});
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Settings {
-    pub working_directory: String,
-}
-
-impl Settings {
-    pub fn working_directory(&self) -> &str {
-        &self.working_directory
-    }
-}
-
-impl Settings {
-    pub fn set_working_directory(&mut self, path: String) {
-        self.working_directory = path;
-        self.store();
-    }
-}
-
-const SETTINGS_FILE: &'static str = "settings.json";
-
-impl Settings {
-    fn store(&self) {
-        let path = Settings::build_conf_path();
-        let contents = serde_json::to_string_pretty(self).unwrap();
-        if !std::path::Path::new(&path).exists() {
-            let _ = std::fs::create_dir_all(utils::data_dir());
+impl AppSettings {
+    pub fn new() -> Self {
+        println!("settings_init");
+        let default_path = utils::home_dir().join(LIBRARY_NAME);
+        Self {
+            hide_dock_icon: cfg!(target_os = "macos"),
+            auto_update: "prompt".into(),
+            stay_on_top: false,
+            working_directory: default_path.to_str().unwrap().into(),
         }
-        let _ = std::fs::write(path, contents);
     }
 
-    fn load() -> std::result::Result<Settings, Box<dyn Error>> {
-        let path = Settings::build_conf_path();
-        let string = std::fs::read_to_string(path)?;
-        serde_json::from_str(&string).map_err(|x| x.to_string().into())
+    pub fn file_path() -> PathBuf {
+        utils::data_dir().join(SETTINGS_FILE)
     }
 
-    fn build_conf_path() -> String {
-        let path = utils::data_dir().join(SETTINGS_FILE);
-        path.to_str().unwrap().to_string()
+    pub fn read() -> Self {
+        match std::fs::read_to_string(Self::file_path()) {
+            Ok(settings) => {
+                if let Ok(string2) = serde_json::from_str::<AppSettings>(&settings) {
+                    string2
+                } else {
+                    println!("settings_read_parse_error");
+                    Self::default()
+                }
+            }
+            Err(err) => {
+                println!("settings_read_error: {}", err);
+                Self::default()
+            }
+        }
+    }
+
+    pub fn write(self) -> Self {
+        let path = &Self::file_path();
+        if !utils::exists(path) {
+            utils::create_file(path).unwrap();
+            println!("settings_create");
+        }
+        if let Ok(settings) = serde_json::to_string_pretty(&self) {
+            std::fs::write(path, settings).unwrap_or_else(|err| {
+                println!("settings_write_error: {}", err);
+                Self::default().write();
+            });
+        } else {
+            println!("settings_write_parse_error");
+        }
+        self
+    }
+
+    pub fn amend(self, json: Value) -> Self {
+        let val = serde_json::to_value(&self).unwrap();
+        let mut config: BTreeMap<String, Value> = serde_json::from_value(val).unwrap();
+        let new_json: BTreeMap<String, Value> = serde_json::from_value(json).unwrap();
+
+        for (key, value) in new_json {
+            config.insert(key, value);
+        }
+
+        match serde_json::to_string_pretty(&config) {
+            Ok(v) => match serde_json::from_str::<AppSettings>(&v) {
+                Ok(v) => v,
+                Err(err) => {
+                    println!("conf_amend_parse: {}", err);
+                    self
+                }
+            },
+            Err(err) => {
+                println!("conf_amend_str: {}", err);
+                self
+            }
+        }
     }
 }
 
-const LIBRARY_NAME: &'static str = "Sheet Music Library";
-
-impl Default for Settings {
+impl Default for AppSettings {
     fn default() -> Self {
-        Settings::load().unwrap_or_else(|_| {
-            let default_path = utils::home_dir().join(LIBRARY_NAME);
-            let settings = Settings {
-                working_directory: default_path.to_str().unwrap().to_string(),
-            };
-            settings.store();
-            settings
-        })
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_default_settings() {
-        let settings = Settings::default();
-
-        assert_eq!(
-            settings.working_directory,
-            format!(
-                "{}{}",
-                utils::home_dir().to_str().unwrap(),
-                "/Sheet Music Library"
-            )
-        );
-    }
-
-    #[test]
-    fn test_set_working_directory() {
-        let mut settings = Settings::default();
-
-        settings.set_working_directory("test".to_string());
-
-        assert_eq!(settings.working_directory, "test");
-    }
-
-    #[test]
-    fn test_store() {
-        let mut settings = Settings::default();
-
-        settings.set_working_directory("test".to_string());
-        assert_eq!(settings.working_directory, "test");
+        Self::new()
     }
 }

@@ -1,6 +1,5 @@
 use crate::migrator::Migrator;
-use crate::settings::SETTINGS;
-
+use crate::settings::AppSettings;
 use sea_orm::{Database, DatabaseConnection, DbErr};
 use sea_orm_migration::prelude::*;
 use sea_orm_migration::SchemaManager;
@@ -70,7 +69,7 @@ fn db_file_exists() -> bool {
 }
 
 fn get_db_file_path() -> PathBuf {
-    let working_directory = SETTINGS.read().unwrap().working_directory().to_string();
+    let working_directory = AppSettings::read().working_directory;
     if !Path::new(&working_directory).exists() {
         fs::create_dir_all(&working_directory).unwrap();
     }

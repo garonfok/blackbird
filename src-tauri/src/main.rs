@@ -1,23 +1,20 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use futures::executor::block_on;
 use state::AppState;
-use tauri::{Manager, State};
+use tauri::Manager;
 use tauri_plugin_autostart::MacosLauncher;
 
-mod commands;
+mod app;
 mod db;
 mod entities;
-mod menu;
 mod migrator;
 mod services;
 mod settings;
 mod state;
 mod utils;
 
-#[macro_use]
-extern crate lazy_static;
+use app::{handlers, menu, setup};
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -27,10 +24,6 @@ struct Payload {
 
 #[tokio::main]
 async fn main() {
-    if let Err(e) = block_on(db::init()) {
-        println!("Error: {}", e);
-    }
-
     let builder = tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             println!("{}, {argv:?}, {cwd}", app.package_info().name);
@@ -45,15 +38,8 @@ async fn main() {
         .manage(AppState {
             db: Default::default(),
         })
-        .invoke_handler(commands::init())
-        .setup(|app| {
-            let handle = app.handle();
-            let app_state: State<AppState> = handle.state();
-            let db = block_on(db::init()).unwrap();
-
-            *app_state.db.lock().unwrap() = Some(db);
-            Ok(())
-        })
+        .invoke_handler(handlers::init())
+        .setup(setup::init)
         .menu(menu::init());
 
     builder
