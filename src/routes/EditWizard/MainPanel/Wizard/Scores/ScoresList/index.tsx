@@ -19,7 +19,7 @@ export function ScoresList() {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 
-  const scores = useAppSelector((state) => state.piece.scores);
+  const scores = useAppSelector((state) => state.piece.present.scores);
   const dispatch = useAppDispatch();
 
   const cardRef = useRef<HTMLDivElement>(null);

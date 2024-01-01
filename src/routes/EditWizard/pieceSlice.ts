@@ -9,6 +9,7 @@ import {
   EditPiece,
 } from "../../app/types";
 import { invoke } from "@tauri-apps/api";
+import undoable from "redux-undo";
 
 const initialState: EditPiece = {
   title: "",
@@ -425,4 +426,4 @@ export const {
 
 export { getPiece };
 
-export default pieceSlice.reducer;
+export default undoable(pieceSlice.reducer);

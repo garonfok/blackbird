@@ -8,7 +8,7 @@ import { setPartFile, setScoreFile } from "../../../pieceSlice";
 
 export function Files() {
   const files = useAppSelector((state) => state.files);
-  const piece = useAppSelector((state) => state.piece);
+  const piece = useAppSelector((state) => state.piece.present);
   const dispatch = useAppDispatch();
 
   function handleChangeScoreSetFile(index: number, file: ByteFile | null) {

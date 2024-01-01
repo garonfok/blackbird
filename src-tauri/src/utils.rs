@@ -4,7 +4,6 @@ use std::{
     fs,
     path::{Path, PathBuf},
 };
-
 pub fn data_dir() -> PathBuf {
     let project_dir = ProjectDirs::from("com", "blackbird", "blackbird").unwrap();
 

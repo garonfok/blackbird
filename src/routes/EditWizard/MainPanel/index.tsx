@@ -8,7 +8,7 @@ import { stepsMachine } from "./stepMachine";
 export function MainPanel() {
   const [stepState, sendStep] = useMachine(stepsMachine);
   const loading = useAppSelector((state) => state.loading);
-  const piece = useAppSelector((state) => state.piece);
+  const piece = useAppSelector((state) => state.piece.present);
 
   return (
     <div className="w-full flex flex-col overflow-hidden">

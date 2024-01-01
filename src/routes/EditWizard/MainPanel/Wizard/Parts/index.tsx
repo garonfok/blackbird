@@ -46,7 +46,7 @@ export function Parts() {
   const [loadEnsembleState, sendLoadEnsemble] = useMachine(loadEnsembleMachine);
 
   const dispatch = useAppDispatch();
-  const piece = useAppSelector((state) => state.piece);
+  const piece = useAppSelector((state) => state.piece.present);
 
   const handleConfirmSelectInstrument = useCallback(
     async (instrumentId: number) => {

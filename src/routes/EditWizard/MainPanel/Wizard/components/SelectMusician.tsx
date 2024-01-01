@@ -30,7 +30,7 @@ export function SelectMusicians(props: {
   const [isEditMusicianModalOpen, setIsEditMusicianModalOpen] = useState(false);
 
   const [query, setQuery] = useState("");
-  const piece = useAppSelector((state) => state.piece);
+  const piece = useAppSelector((state) => state.piece.present);
 
   const dispatch = useAppDispatch();
   const musicians = useAppSelector((state) => state.musicians);

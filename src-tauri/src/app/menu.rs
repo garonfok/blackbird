@@ -100,6 +100,24 @@ pub fn menu_handler(event: WindowMenuEvent<tauri::Wry>) {
     let win = Some(event.window()).unwrap();
 
     match menu_id {
+        "undo" => match win.url().path() {
+            "/edit-wizard" => {
+                win.emit("undo", "undo").unwrap();
+            }
+            "/settings" => {}
+            _ => {
+                println!("Unhandled menu event");
+            }
+        },
+        "redo" => match win.url().path() {
+            "/edit-wizard" => {
+                win.emit("redo", "redo").unwrap();
+            }
+            "/settings" => {}
+            _ => {
+                println!("Unhandled menu event");
+            }
+        },
         "zoom_0" => win.eval("window.__zoom0 && window.__zoom0()").unwrap(),
         "zoom_out" => win.eval("window.__zoomOut && window.__zoomOut()").unwrap(),
         "zoom_in" => win.eval("window.__zoomIn && window.__zoomIn()").unwrap(),

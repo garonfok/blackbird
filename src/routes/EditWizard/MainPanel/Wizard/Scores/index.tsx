@@ -5,7 +5,7 @@ import { pushScore } from "../../../pieceSlice";
 import { ScoresList } from "./ScoresList";
 
 export function Scores() {
-  const piece = useAppSelector((state) => state.piece);
+  const piece = useAppSelector((state) => state.piece.present);
   const dispatch = useAppDispatch();
 
   function handleClickAddScore() {

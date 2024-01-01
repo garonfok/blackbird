@@ -13,7 +13,7 @@ export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   const { stepState, sendStep } = props;
 
   const dispatch = useAppDispatch();
-  const piece = useAppSelector((state) => state.piece);
+  const piece = useAppSelector((state) => state.piece.present);
   const navigate = useNavigate();
   const { state } = useLocation();
 

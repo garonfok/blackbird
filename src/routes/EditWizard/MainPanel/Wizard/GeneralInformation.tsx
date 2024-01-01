@@ -22,7 +22,7 @@ export function GeneralInformation() {
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [isEditTagModalOpen, setIsEditTagModalOpen] = useState(false);
 
-  const piece = useAppSelector((state) => state.piece);
+  const piece = useAppSelector((state) => state.piece.present);
   const dispatch = useAppDispatch();
 
   const tagDropdownRef = useRef<HTMLButtonElement>(null);

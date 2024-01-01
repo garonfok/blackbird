@@ -7,6 +7,7 @@ import { clearFiles } from "../filesSlice";
 import { clearPiece } from "../pieceSlice";
 import { DragUpload } from "./DragUpload";
 import { FileList } from "./FileList";
+import { ActionCreators } from "redux-undo";
 
 export function LeftPanel() {
   const [isPanelSmall, setPanelSmall] = useState(false);
@@ -41,6 +42,7 @@ export function LeftPanel() {
   function handleConfirmCancel() {
     setConfirmingCancel(false);
     dispatch(clearFiles());
+    dispatch(ActionCreators.clearHistory());
     dispatch(clearPiece());
     navigate("/");
   }

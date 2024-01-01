@@ -24,7 +24,7 @@ export function PartsList() {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
   const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 
-  const parts = useAppSelector((state) => state.piece.parts);
+  const parts = useAppSelector((state) => state.piece.present.parts);
   const dispatch = useAppDispatch();
 
   const cardRef = useRef<HTMLDivElement>(null);

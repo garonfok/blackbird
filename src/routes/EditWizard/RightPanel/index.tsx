@@ -6,7 +6,7 @@ import { useAppSelector } from "src/app/hooks";
 import { ResizableRight } from "src/components/ResizeableRight";
 
 export function RightPanel() {
-  const piece = useAppSelector((state) => state.piece);
+  const piece = useAppSelector((state) => state.piece.present);
 
   const [maxWidth, setMaxWidth] = useState<number>(512);
   const [open, setOpen] = useState<boolean[]>(

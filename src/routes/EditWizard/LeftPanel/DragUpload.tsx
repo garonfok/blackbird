@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { ByteFile, Piece } from "src/app/types";
 import { pushFiles } from "../filesSlice";
 import { setPiece } from "../pieceSlice";
+import { ActionCreators } from "redux-undo";
 
 export function DragUpload(props: { isPanelSmall: boolean }) {
   const { isPanelSmall } = props;
@@ -85,6 +86,7 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
             yearPublished: year_published,
           })
         );
+        dispatch(ActionCreators.clearHistory());
 
         const partPaths = parts.map((part) => part.path);
         const scorePaths = scores.map((score) => score.path);
