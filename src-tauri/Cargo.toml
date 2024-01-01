@@ -33,6 +33,7 @@ tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-wo
 indexmap = "2.0.0"
 tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 base64 = "0.21.2"
+eyre = "0.6.11"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
