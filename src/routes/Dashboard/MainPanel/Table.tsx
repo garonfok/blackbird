@@ -13,7 +13,6 @@ import {
   ClickEvent,
   Menu as ContextMenu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   SubMenu,
 } from "@szhsin/react-menu";
@@ -247,7 +246,7 @@ export function Table() {
         header: () => <span className="">#</span>,
         cell: (info) => {
           const id = info.getValue() as string;
-          return <span className="text-fg.muted">{id}</span>;
+          return <span>{id}</span>;
         },
         size: 48,
       },
@@ -261,11 +260,11 @@ export function Table() {
           return (
             <div className="flex gap-[14px] items-center justify-between">
               <div className="flex gap-[14px] items-center">
-                <div className="flex flex-col gap-[8px]">
-                  <span className="text-lg text-fg.default">
+                <div className="flex flex-col">
+                  <span className="text-heading-default text-fg.0">
                     {info.row.original.title}
                   </span>
-                  <span className="text-sm text-fg.muted">
+                  <span className="text-body-default">
                     {info.row.original.composers
                       .map((composer) =>
                         composer.last_name
@@ -278,7 +277,7 @@ export function Table() {
                 <ol>
                   {info.row.original.tags.map((tag) => (
                     <li
-                      className="h-[14px] w-[14px] rounded-[7px]"
+                      className="h-[14px] w-[14px] rounded-full"
                       style={{ backgroundColor: tag.color }}
                     />
                   ))}
@@ -291,12 +290,12 @@ export function Table() {
                       <Icon
                         path={mdiDotsHorizontal}
                         size={1}
-                        className="shrink-0 text-fg.muted hover:text-fg.default transition-all"
+                        className="shrink-0 link"
                       />
                     </MenuButton>
                   }
                 >
-                  <div className="flex flex-col w-[192px] p-[4px] rounded-[4px] absolute bg-bg.emphasis shadow-float z-10">
+                  <div className="dropdown">
                     {isPieceInCurrentSetlist(info.row.original) && (
                       <MenuItem
                         onClick={(event) =>
@@ -306,7 +305,7 @@ export function Table() {
                             setlist.setlist!.id
                           )
                         }
-                        className="context-menu-item outline-none"
+                        className="dropdown-item outline-none"
                       >
                         Remove from setlist
                       </MenuItem>
@@ -314,13 +313,13 @@ export function Table() {
                     {isAvailableToAddToSetlist(info.row.original) && (
                       <SubMenu
                         label={
-                          <span className="context-menu-item outline-none justify-between">
+                          <span className="dropdown-item outline-none">
                             Add to setlist
                             <Icon path={mdiChevronRight} size={1} />
                           </span>
                         }
                       >
-                        <div className="flex flex-col w-[192px] p-[4px] rounded-[4px] mx-[4px] bg-bg.emphasis shadow-float z-10">
+                        <div className="dropdown">
                           {setlists
                             .filter(
                               (sl) =>
@@ -337,7 +336,7 @@ export function Table() {
                                     sl.id
                                   )
                                 }
-                                className="context-menu-item outline-none"
+                                className="dropdown-item outline-none"
                               >
                                 {sl.name}
                               </MenuItem>
@@ -345,15 +344,11 @@ export function Table() {
                         </div>
                       </SubMenu>
                     )}
-                    {(isPieceInCurrentSetlist(info.row.original) ||
-                      isAvailableToAddToSetlist(info.row.original)) && (
-                      <MenuDivider className="context-menu-divider" />
-                    )}
                     <MenuItem
                       onClick={async (event) =>
                         handleClickOpenFolder(event, info.row.original.path)
                       }
-                      className="context-menu-item outline-none"
+                      className="dropdown-item outline-none"
                     >
                       Open folder
                     </MenuItem>
@@ -361,7 +356,7 @@ export function Table() {
                       onClick={(event) =>
                         handleClickEditPiece(event, info.row.original)
                       }
-                      className="context-menu-item outline-none"
+                      className="dropdown-item outline-none"
                     >
                       Edit data
                     </MenuItem>
@@ -369,7 +364,7 @@ export function Table() {
                       onClick={(event) =>
                         handleClickPrintParts(event, info.row.original.path)
                       }
-                      className="context-menu-item outline-none"
+                      className="dropdown-item outline-none"
                     >
                       Print parts
                     </MenuItem>
@@ -377,7 +372,7 @@ export function Table() {
                       onClick={(event) =>
                         handleClickDeletePiece(event, info.row.original.id)
                       }
-                      className="context-menu-item outline-none text-danger.default hover:text-danger.emphasis"
+                      className="dropdown-item outline-none text-error.default hover:text-error.default"
                     >
                       Delete
                     </MenuItem>
@@ -406,9 +401,7 @@ export function Table() {
         accessorFn: (row) => row.year_published,
         header: () => <span className="">Year</span>,
         cell: (info) => {
-          return (
-            <span className="text-fg.default">{info.getValue() as number}</span>
-          );
+          return <span className="text-fg.0">{info.getValue() as number}</span>;
         },
         size: 64,
       },
@@ -429,9 +422,13 @@ export function Table() {
             }
           })();
 
-          return <span className="text-fg.muted">{formattedUpdatedAt}</span>;
+          return (
+            <span className="text-body-small-default">
+              {formattedUpdatedAt}
+            </span>
+          );
         },
-        size: 91,
+        size: 80,
       },
     ],
     [setlist.setlist, setlists]
@@ -690,29 +687,21 @@ export function Table() {
   return (
     <>
       <div className="p-[14px] flex flex-col gap-[14px] flex-grow">
-        <div className="flex gap-[14px] items-center text-fg.muted flex-wrap">
+        <div className="flex gap-[14px] items-center text-fg.1 flex-wrap">
           <Menu as="div" className="relative">
-            <Menu.Button className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[4px]">
-              <span className="text-fg.default flex items-center">
-                {
-                  sortOptions.find((option) => option.id === sorting[0].id)
-                    ?.label
-                }
-                {sorting[0].desc ? (
-                  <Icon path={mdiChevronDown} size={1} className="shrink-0" />
-                ) : (
-                  <Icon path={mdiChevronUp} size={1} className="shrink-0" />
-                )}
-              </span>
+            <Menu.Button className="link flex items-center gap-2">
+              {sortOptions.find((option) => option.id === sorting[0].id)?.label}
+              {sorting[0].desc ? (
+                <Icon path={mdiChevronDown} size={1} className="shrink-0" />
+              ) : (
+                <Icon path={mdiChevronUp} size={1} className="shrink-0" />
+              )}
             </Menu.Button>
-            <Menu.Items
-              as="div"
-              className="absolute top-[37px] w-[160px] left-0 mt-[8px] z-10 shadow-float bg-bg.default rounded-[4px] px-[14px] py-[8px]"
-            >
+            <Menu.Items as="div" className="dropdown">
               {sortOptions.map((option) => (
                 <Menu.Item key={option.id}>
                   <button
-                    className="flex justify-between items-center gap-[4px] w-full text-fg.muted hover:text-fg.default"
+                    className="dropdown-item outline-none gap-2"
                     onClick={() => handleClickDropdownSelect(option.id)}
                   >
                     {option.label}
@@ -734,13 +723,13 @@ export function Table() {
             filter.tags.map((tag) => (
               <div
                 key={tag.id}
-                className="rounded-[4px] bg-bg.default text-fg.default px-[14px] py-[8px] shadow-float flex gap-[14px]"
+                className="rounded-default text-fg.1 px-[14px] py-[8px] bg-bg.1 flex gap-[14px]"
               >
                 <Icon path={mdiTag} size={1} style={{ color: tag.color }} />
                 {tag.name}
                 <button
                   onClick={() => dispatch(removeTag(tag.id))}
-                  className="text-fg.muted transition-all hover:text-fg.default"
+                  className="link"
                 >
                   <Icon path={mdiClose} size={1} />
                 </button>
@@ -748,10 +737,10 @@ export function Table() {
             ))}
           {(filter.yearPublishedMin !== 0 ||
             filter.yearPublishedMax !== Infinity) && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Published:</span>
-                <span className="text-fg.default">
+                <span className="text-fg.1">Published:</span>
+                <span className="text-fg.0">
                   {parseNumberRange(
                     filter.yearPublishedMin,
                     filter.yearPublishedMax
@@ -760,7 +749,7 @@ export function Table() {
               </span>
               <button
                 onClick={() => dispatch(clearYearPublished())}
-                className="text-fg.muted transition-all hover:text-fg.default"
+                className="link"
               >
                 <Icon path={mdiClose} size={1} />
               </button>
@@ -768,42 +757,37 @@ export function Table() {
           )}
           {(filter.difficultyMin !== 0 ||
             filter.difficultyMax !== Infinity) && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Difficulty:</span>
-                <span className="text-fg.default">
+                <span className="text-fg.1">Difficulty:</span>
+                <span className="text-fg.0">
                   {parseNumberRange(filter.difficultyMin, filter.difficultyMax)}
                 </span>
               </span>
               <button
                 onClick={() => dispatch(clearDifficulty())}
-                className="text-fg.muted transition-all hover:text-fg.default"
+                className="link"
               >
                 <Icon path={mdiClose} size={1} />
               </button>
             </div>
           )}
           {filter.parts.length > 0 && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Parts:</span>
-                <span className="text-fg.default">
-                  {filter.parts.join(", ")}
-                </span>
+                <span className="text-fg.1">Parts:</span>
+                <span className="text-fg.0">{filter.parts.join(", ")}</span>
               </span>
-              <button
-                onClick={() => dispatch(clearParts())}
-                className="text-fg.muted transition-all hover:text-fg.default"
-              >
+              <button onClick={() => dispatch(clearParts())} className="link">
                 <Icon path={mdiClose} size={1} />
               </button>
             </div>
           )}
           {filter.instruments.length > 0 && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Instruments:</span>
-                <span className="text-fg.default">
+                <span className="text-fg.1">Instruments:</span>
+                <span className="text-fg.0">
                   {filter.instruments
                     .map((instrument) => instrument.name)
                     .join(", ")}
@@ -811,17 +795,17 @@ export function Table() {
               </span>
               <button
                 onClick={() => dispatch(clearInstruments())}
-                className="text-fg.muted transition-all hover:text-fg.default"
+                className="link"
               >
                 <Icon path={mdiClose} size={1} />
               </button>
             </div>
           )}
           {filter.composers.length > 0 && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Composers:</span>
-                <span className="text-fg.default">
+                <span className="text-fg.1">Composers:</span>
+                <span className="text-fg.0">
                   {filter.composers
                     .map((musician) =>
                       musician.last_name
@@ -833,39 +817,17 @@ export function Table() {
               </span>
               <button
                 onClick={() => dispatch(clearRole("composers"))}
-                className="text-fg.muted transition-all hover:text-fg.default"
-              >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
-          )}
-          {filter.composers.length > 0 && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
-              <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Composers:</span>
-                <span className="text-fg.default">
-                  {filter.composers
-                    .map((musician) =>
-                      musician.last_name
-                        ? `${musician.first_name} ${musician.last_name}`
-                        : musician.first_name
-                    )
-                    .join(", ")}
-                </span>
-              </span>
-              <button
-                onClick={() => dispatch(clearRole("composers"))}
-                className="text-fg.muted transition-all hover:text-fg.default"
+                className="link"
               >
                 <Icon path={mdiClose} size={1} />
               </button>
             </div>
           )}
           {filter.arrangers.length > 0 && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Arrangers:</span>
-                <span className="text-fg.default">
+                <span className="text-fg.1">Arrangers:</span>
+                <span className="text-fg.0">
                   {filter.arrangers
                     .map((musician) =>
                       musician.last_name
@@ -877,17 +839,17 @@ export function Table() {
               </span>
               <button
                 onClick={() => dispatch(clearRole("arrangers"))}
-                className="text-fg.muted transition-all hover:text-fg.default"
+                className="link"
               >
                 <Icon path={mdiClose} size={1} />
               </button>
             </div>
           )}
           {filter.orchestrators.length > 0 && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Orchestrators:</span>
-                <span className="text-fg.default">
+                <span className="text-fg.1">orchestrators:</span>
+                <span className="text-fg.0">
                   {filter.orchestrators
                     .map((musician) =>
                       musician.last_name
@@ -899,17 +861,17 @@ export function Table() {
               </span>
               <button
                 onClick={() => dispatch(clearRole("orchestrators"))}
-                className="text-fg.muted transition-all hover:text-fg.default"
+                className="link"
               >
                 <Icon path={mdiClose} size={1} />
               </button>
             </div>
           )}
           {filter.transcribers.length > 0 && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Transcribers:</span>
-                <span className="text-fg.default">
+                <span className="text-fg.1">transcribers:</span>
+                <span className="text-fg.0">
                   {filter.transcribers
                     .map((musician) =>
                       musician.last_name
@@ -921,17 +883,17 @@ export function Table() {
               </span>
               <button
                 onClick={() => dispatch(clearRole("transcribers"))}
-                className="text-fg.muted transition-all hover:text-fg.default"
+                className="link"
               >
                 <Icon path={mdiClose} size={1} />
               </button>
             </div>
           )}
           {filter.lyricists.length > 0 && (
-            <div className="rounded-[4px] bg-bg.default px-[14px] py-[8px] shadow-float flex gap-[14px]">
+            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
-                <span className="text-fg.muted">Lyricists:</span>
-                <span className="text-fg.default">
+                <span className="text-fg.1">lyricists:</span>
+                <span className="text-fg.0">
                   {filter.lyricists
                     .map((musician) =>
                       musician.last_name
@@ -943,16 +905,13 @@ export function Table() {
               </span>
               <button
                 onClick={() => dispatch(clearRole("lyricists"))}
-                className="text-fg.muted transition-all hover:text-fg.default"
+                className="link"
               >
                 <Icon path={mdiClose} size={1} />
               </button>
             </div>
           )}
-          <button
-            className="flex gap-[8px] hover:text-fg.default"
-            onClick={handleClickResetFilters}
-          >
+          <button className="button-default" onClick={handleClickResetFilters}>
             <Icon path={mdiEraser} size={1} className="shrink-0" />
             <span>Reset filters</span>
           </button>
@@ -961,13 +920,13 @@ export function Table() {
           ref={tableRef}
           className="flex flex-col gap-[14px] flex-grow h-0 overflow-y-auto scrollbar-default"
         >
-          <thead className="pb-[14px] border-b-fg.subtle border-b px-[14px]">
+          <thead className="pb-[14px] border-b-fg.2 border-b px-[14px]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="flex gap-[14px]">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="text-fg.muted font-medium hover:text-fg.default"
+                    className="text-body-default"
                     style={
                       header.id === "main"
                         ? { flexGrow: 1 }
@@ -1021,10 +980,8 @@ export function Table() {
                 ref={rowRef}
                 key={row.original.id}
                 className={classNames(
-                  "flex items-center  gap-[14px] px-[14px]",
-                  selected.includes(index)
-                    ? "bg-bg.emphasis"
-                    : "hover:bg-bg.default"
+                  "flex items-center  gap-[14px] px-[14px] py-[4px]",
+                  selected.includes(index) ? "bg-bg.2" : "hover:bg-bg.1"
                 )}
                 onClick={(event) => handleClickSelect(event, index)}
               >

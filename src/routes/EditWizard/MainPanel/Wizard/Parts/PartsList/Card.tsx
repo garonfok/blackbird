@@ -78,15 +78,15 @@ export function Card(props: {
     <>
       <div
         className={classNames(
-          "flex items-center justify-between px-[14px] py-[8px] rounded-[4px] shadow-float hover:ring-1 ring-fg.default",
-          selected ? "bg-bg.emphasis" : "bg-bg.default"
+          "flex items-center justify-between px-[14px] py-[8px] rounded-default border border-fg.2 bg-bg.1 hover:ring-1 ring-fg.0",
+          selected && "border-fg.0"
         )}
       >
         <div className="w-full flex items-start gap-[2px]">
           <Icon
             path={mdiDragVertical}
             size={1}
-            className="ml-[-10px] text-fg.muted shrink-0"
+            className="ml-[-10px] text-fg.1 shrink-0"
           />
           <div className="flex flex-col gap-[8px] w-full">
             <Renameable
@@ -102,7 +102,7 @@ export function Card(props: {
                   <Droppable droppableId="droppable" direction="vertical">
                     {(provided) => (
                       <div
-                        className="w-full p-[4px] bg-bg.inset rounded-[4px] flex flex-col gap-[4px]"
+                        className="w-full p-[4px] bg-bg.2 rounded-default flex flex-col gap-[4px]"
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                       >
@@ -115,7 +115,7 @@ export function Card(props: {
                             {(provided) => (
                               <div
                                 key={index}
-                                className="flex gap-[4px] items-center border border-fg.subtle rounded-[4px] p-[4px] bg-bg.default"
+                                className="flex gap-[4px] items-center border border-fg.2 rounded-default p-[4px] bg-bg.0"
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
@@ -136,7 +136,7 @@ export function Card(props: {
                                   <Icon
                                     path={mdiClose}
                                     size={1}
-                                    className="text-fg.muted hover:text-fg.default transition-all"
+                                    className="link"
                                   />
                                 </button>
                               </div>
@@ -149,7 +149,7 @@ export function Card(props: {
                   </Droppable>
                 </DragDropContext>
                 <button
-                  className="flex gap-[4px] text-fg.muted hover:text-fg.default transition-all"
+                  className="flex gap-[4px] link"
                   onClick={() => setIsSelectInstrumentModalOpen(true)}
                 >
                   <Icon path={mdiPlus} size={1} />
@@ -166,7 +166,7 @@ export function Card(props: {
           <Icon
             path={mdiClose}
             size={1}
-            className="text-fg.muted hover:text-fg.default transition-all"
+            className="link"
           />
         </button>
       </div>

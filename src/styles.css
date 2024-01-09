@@ -3,31 +3,60 @@
 @tailwind utilities;
 
 @layer components {
-  .scrollbar-default {
-    @apply scrollbar-thin scrollbar-thumb-fg.subtle;
-  }
-  .shadow-panel {
-    @apply shadow-[0px_13px_27px_-5px_#53515840,0px_4px_8px_0px_#0000004d];
-  }
-  .shadow-float {
-    @apply shadow-[0px_2px_5px_-1px_#53515840,0px_4px_4px_0px_#0000004d];
-  }
-  .input-text {
-    @apply px-[14px] w-full py-[8px] bg-bg.inset rounded-[4px] placeholder-fg.subtle outline-none focus:ring-inset focus:ring-1 ring-fg.default transition-all;
-  }
   .edit-wizard-panel {
     @apply flex flex-col gap-[14px] h-full overflow-y-auto scrollbar-default flex-grow;
   }
 
-  .dropdown-item {
-    @apply px-[14px] py-[8px] bg-bg.inset hover:bg-bg.default text-fg.muted transition-all truncate;
+  .text-heading-default {
+    @apply text-fg.0 font-semibold text-[16px];
   }
 
-  .context-menu-item {
-    @apply flex items-center w-full px-[4px] py-[2px] rounded-[4px] text-fg.default hover:bg-bg.default transition-all;
+  .text-body-default {
+    @apply text-fg.1 font-normal text-[14px];
   }
-  .context-menu-divider {
-    @apply h-px bg-fg.subtle my-[4px];
+
+  .text-body-bold {
+    @apply text-fg.1 font-semibold text-[14px];
+  }
+
+  .text-body-small-default {
+    @apply text-fg.1 font-normal text-[12px];
+  }
+
+  .text-body-small-bold {
+    @apply text-fg.1 font-semibold text-[12px];
+  }
+
+  .input-text {
+    @apply px-[4px] w-full py-[2px] bg-bg.2 rounded-default placeholder-fg.2 outline-none focus:ring-inset focus:ring-1 ring-fg.0 transition-all;
+  }
+
+  .rounded-default {
+    @apply rounded-[3px];
+  }
+
+  .button-primary {
+    @apply bg-primary.default text-bg.0 rounded-default px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all hover:bg-primary.hover;
+  }
+
+  .button-default {
+    @apply bg-fg.0 text-bg.0 rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all hover:bg-fg.1;
+  }
+
+  .link {
+    @apply text-fg.1 transition-all hover:text-fg.0;
+  }
+
+  .dropdown {
+    @apply bg-bg.0 border border-fg.2 absolute w-[160px] mt-[8px] z-10 rounded-default flex flex-col overflow-hidden;
+  }
+
+  .dropdown-item {
+    @apply px-[8px] py-[4px] flex items-center hover:bg-bg.2 link;
+  }
+
+  .scrollbar-default {
+    @apply scrollbar-thin scrollbar-thumb-fg.2;
   }
 }
 

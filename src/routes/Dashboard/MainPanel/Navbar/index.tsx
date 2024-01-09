@@ -41,13 +41,13 @@ export function Navbar() {
   const handleChangeDebounced = useCallback(debounce(handleChange), []);
 
   return (
-    <div className="bg-bg.default p-[14px] shadow-panel">
+    <div className="p-[14px]">
       <div className="flex flex-wrap gap-[14px] items-center">
         <Popover className="w-full max-w-[512px] flex flex-col">
           <span
             className={classNames(
-              "bg-bg.inset gap-[14px] py-[8px] px-[14px] rounded-[4px] flex text-fg.subtle items-center transition-all",
-              isSearchFocused && "ring-1 ring-fg.default"
+              "bg-bg.2 gap-[14px] py-[8px] px-[14px] rounded-default flex text-fg.2 items-center transition-all",
+              isSearchFocused && "ring-1 ring-fg.0"
             )}
           >
             <Icon
@@ -55,12 +55,12 @@ export function Navbar() {
               size={1}
               className={classNames(
                 "shrink-0 transition-all",
-                isSearchFocused && "text-fg.default"
+                isSearchFocused && "text-fg.0"
               )}
             />
             <input
               ref={inputRef}
-              className="bg-transparent outline-none w-full placeholder-fg.subtle text-fg.default"
+              className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
               type="text"
               placeholder="Type Ctrl + K to search"
               onFocus={() => setSearchFocused(true)}
@@ -71,7 +71,7 @@ export function Navbar() {
               <Icon
                 path={mdiTune}
                 size={1}
-                className="text-fg.muted hover:text-fg.default"
+                className="shrink-0 link"
               />
             </Popover.Button>
           </span>
@@ -82,7 +82,7 @@ export function Navbar() {
           </div>
         </Popover>
         {setlist.setlist && (
-          <span className="text-[20px] font-bold">{setlist.setlist.name}</span>
+          <span className="text-heading-default">{setlist.setlist.name}</span>
         )}
       </div>
     </div>

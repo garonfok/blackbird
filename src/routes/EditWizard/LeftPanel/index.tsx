@@ -55,9 +55,9 @@ export function LeftPanel() {
             <>
               <DragUpload isPanelSmall={isPanelSmall} />
               <FileList />
-              <hr className="text-fg.subtle" />
+              <hr className="text-fg.2" />
               <button
-                className="text-left text-fg.muted hover:text-fg.default outline-none transition-all"
+                className="text-left outline-none link"
                 onClick={() => setConfirmingCancel(true)}
               >
                 Cancel

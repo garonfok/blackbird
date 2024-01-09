@@ -50,13 +50,9 @@ export function RightPanel() {
         </div>
         <div className="flex flex-col gap-[14px]">
           <div className="flex flex-col gap-[4px]">
-            {piece.difficulty && (
-              <span className="text-fg.muted">Grade {piece.difficulty}</span>
-            )}
+            {piece.difficulty && <span>Grade {piece.difficulty}</span>}
             <span className="text-[20px] font-bold">{piece.title}</span>
-            {piece.yearPublished && (
-              <span className="text-fg.muted">{piece.yearPublished}</span>
-            )}
+            {piece.yearPublished && <span>{piece.yearPublished}</span>}
           </div>
           <div>
             <div className="">
@@ -68,7 +64,7 @@ export function RightPanel() {
                   .join(", ")}
               </span>
               {piece.arrangers.length > 0 && (
-                <span className="flex flex-wrap text-fg.muted">
+                <span className="flex flex-wrap">
                   Arr.{" "}
                   {piece.arrangers
                     .map((arranger) =>
@@ -78,7 +74,7 @@ export function RightPanel() {
                 </span>
               )}
               {piece.transcribers.length > 0 && (
-                <span className="flex flex-wrap text-fg.muted">
+                <span className="flex flex-wrap">
                   Trans.{" "}
                   {piece.transcribers
                     .map((transcriber) =>
@@ -88,7 +84,7 @@ export function RightPanel() {
                 </span>
               )}
               {piece.orchestrators.length > 0 && (
-                <span className="flex flex-wrap text-fg.muted">
+                <span className="flex flex-wrap">
                   Orch.{" "}
                   {piece.orchestrators
                     .map((orchestrator) =>
@@ -100,7 +96,7 @@ export function RightPanel() {
                 </span>
               )}
               {piece.lyricists.length > 0 && (
-                <span className="flex flex-wrap text-fg.muted">
+                <span className="flex flex-wrap">
                   Lyr.{" "}
                   {piece.lyricists
                     .map((lyricist) =>
@@ -113,7 +109,7 @@ export function RightPanel() {
           </div>
         </div>
         <div className="flex flex-col flex-grow overflow-y-auto scrollbar-default gap-[14px]">
-          <div className="flex flex-col text-fg.muted">
+          <div className="flex flex-col text-fg.1">
             {piece.title.length > 0 &&
               piece.composers.length > 0 &&
               piece.scores.map((score) => (
@@ -123,7 +119,7 @@ export function RightPanel() {
                     path={mdiCircle}
                     size={0.5}
                     className={classNames(
-                      score.file ? "text-fg.default" : "text-fg.subtle"
+                      score.file ? "text-fg.0" : "text-fg.2"
                     )}
                   />
                 </div>
@@ -142,7 +138,7 @@ export function RightPanel() {
                       path={mdiCircle}
                       size={0.5}
                       className={classNames(
-                        part.file ? "text-fg.default" : "text-fg.subtle"
+                        part.file ? "text-fg.0" : "text-fg.2"
                       )}
                     />
                   </span>
@@ -156,7 +152,7 @@ export function RightPanel() {
                   />
                 </button>
                 {open[index] && (
-                  <div className="ml-[14px] flex-wrap flex text-fg.muted">
+                  <div className="ml-[14px] flex-wrap flex text-fg.1">
                     {part.instruments
                       .map((instrument) => instrument.name)
                       .join(", ")}
@@ -168,7 +164,7 @@ export function RightPanel() {
         </div>
 
         {piece.notes.length > 0 && (
-          <div className="break-words px-[14px] py-[8px] rounded-[4px] bg-bg.inset">
+          <div className="break-words px-[14px] py-[8px] rounded-default bg-bg.1">
             {piece.notes}
           </div>
         )}

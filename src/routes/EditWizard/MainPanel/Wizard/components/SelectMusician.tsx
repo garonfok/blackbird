@@ -165,7 +165,7 @@ export function SelectMusicians(props: {
   return (
     <>
       <div className="flex flex-col gap-[8px]">
-        <label htmlFor="title" className="text-fg.muted">
+        <label htmlFor="title">
           {role.charAt(0).toUpperCase() + role.slice(1)}s
         </label>
         <div ref={inputRef} className="w-full gap-[4px] flex flex-col">
@@ -177,7 +177,7 @@ export function SelectMusicians(props: {
                   {...provided.droppableProps}
                   className={classNames(
                     "input-text flex-wrap flex gap-[14px] transition-all",
-                    isFocused && "ring-1 ring-inset ring-fg.default"
+                    isFocused && "ring-1 ring-inset ring-fg.0"
                   )}
                 >
                   {getRoleMusicians().map((musician, index) => (
@@ -194,13 +194,13 @@ export function SelectMusicians(props: {
                         >
                           <span
                             key={musician.id}
-                            className="px-[14px] py-[8px] rounded-[4px] flex items-center gap-[8px] bg-bg.default w-fit shadow-float"
+                            className="px-[14px] py-[8px] rounded-default flex items-center gap-[8px] bg-bg.1"
                           >
                             <span className="flex gap-[2px]">
                               <Icon
                                 path={mdiDragVertical}
                                 size={1}
-                                className="ml-[-10px] text-fg.muted"
+                                className="ml-[-10px]"
                               />
                               {musician.first_name} {musician.last_name}
                             </span>
@@ -209,11 +209,7 @@ export function SelectMusicians(props: {
                                 handleClickRemoveMusician(musician.id)
                               }
                             >
-                              <Icon
-                                path={mdiClose}
-                                size={1}
-                                className="text-fg.muted hover:text-fg.default transition-all"
-                              />
+                              <Icon path={mdiClose} size={1} className="link" />
                             </button>
                           </span>
                         </div>
@@ -223,7 +219,7 @@ export function SelectMusicians(props: {
                   {provided.placeholder}
                   <input
                     type="text"
-                    className="flex-grow bg-transparent outline-none placeholder-fg.subtle"
+                    className="flex-grow bg-transparent outline-none placeholder-fg.2"
                     onChange={(event) => setQuery(event.currentTarget.value)}
                     value={query}
                     placeholder={
@@ -239,30 +235,28 @@ export function SelectMusicians(props: {
           </DragDropContext>
           <div className="relative">
             {isFocused && (
-              <div className="absolute left-0 top-[14px] rounded-[4px] bg-bg.inset w-full z-10">
+              <div className="dropdown w-full">
                 {filteredMusicians.length > 0 ? (
-                  <div className="flex flex-col rounded-[4px] border-bg.inset border overflow-clip">
-                    {filteredMusicians.map((musician) => (
-                      <button
-                        key={musician.id}
-                        className="dropdown-item text-left"
-                        onClick={() => handleClickSelectMusician(musician)}
-                      >
-                        {musician.first_name} {musician.last_name}
-                        {getRoleMusicians()
-                          .map((c) => c.id)
-                          .includes(musician.id) && (
-                          <Icon
-                            path={mdiCheck}
-                            size={1}
-                            className="float-right"
-                          />
-                        )}
-                      </button>
-                    ))}
-                  </div>
+                  filteredMusicians.map((musician) => (
+                    <button
+                      key={musician.id}
+                      className="dropdown-item justify-between"
+                      onClick={() => handleClickSelectMusician(musician)}
+                    >
+                      {musician.first_name} {musician.last_name}
+                      {getRoleMusicians()
+                        .map((c) => c.id)
+                        .includes(musician.id) && (
+                        <Icon
+                          path={mdiCheck}
+                          size={1}
+                          className="float-right"
+                        />
+                      )}
+                    </button>
+                  ))
                 ) : (
-                  <div className="px-[14px] py-[8px] text-fg.subtle">
+                  <div className="px-[14px] py-[8px] text-fg.2">
                     No results
                   </div>
                 )}
@@ -270,7 +264,7 @@ export function SelectMusicians(props: {
             )}
           </div>
           <button
-            className="text-fg.muted hover:text-fg.default transition-all text-left flex items-center gap-[8px]"
+            className="link flex items-center gap-[8px]"
             onClick={handleClickOpenEditMusicianModal}
           >
             <Icon path={mdiPlus} size={1} />

@@ -56,7 +56,7 @@ export function EditSetlistModal(props: {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-[#000] bg-opacity-50" />
         </Transition.Child>
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex h-full items-center justify-center">
@@ -69,15 +69,13 @@ export function EditSetlistModal(props: {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform w-full max-w-md overflow-hidden rounded-[4px] bg-bg.default p-[14px] flex flex-col gap-[14px] shadow-float transition-all text-fg.default">
+              <Dialog.Panel className="transform w-full max-w-md overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
                 <div className="flex flex-col gap-[8px]">
-                  <Dialog.Title as="h3" className="text-[20px]">
+                  <Dialog.Title as="h3" className="text-heading-default">
                     {defaultName ? "Edit Setlist" : "Create Setlist"}
                   </Dialog.Title>
-                  <div className="flex flex-col gap-[8px] text-fg.muted">
-                    <label htmlFor="name" className="text-fg.muted">
-                      Name
-                    </label>
+                  <div className="flex flex-col gap-[8px] text-body-default">
+                    <label htmlFor="name">Name</label>
                     <input
                       id="name"
                       type="text"
@@ -88,23 +86,23 @@ export function EditSetlistModal(props: {
                     />
                   </div>
                 </div>
-                <hr className="text-fg.subtle" />
+                <hr className="text-fg.2" />
                 <div className="flex gap-[14px]">
                   <button
                     disabled={!name}
                     ref={submitRef}
                     className={classNames(
-                      "border px-[14px] py-[8px] rounded-[4px]   transition-all outline-none",
+                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all",
                       !name
-                        ? "text-fg.subtle border-fg.subtle"
-                        : "text-fg.muted hover:bg-fg.default hover:text-bg.inset"
+                        ? "text-fg.2 bg-bg.2"
+                        : "button-default"
                     )}
                     onClick={handleClickConfirm}
                   >
                     {defaultName ? "Save changes" : "Create"}
                   </button>
                   <button
-                    className="text-fg.muted hover:text-fg.default transition-all"
+                    className="link"
                     onClick={handleClickCloseModal}
                   >
                     Cancel

@@ -14,8 +14,9 @@ export function MainPanel() {
     <div className="w-full flex flex-col overflow-hidden">
       {loading ? (
         <div className="h-full w-full flex justify-center items-center flex-col">
-          <ScaleLoader color="#fff" />
-          <span className="text-[20px] font-bold">
+          {/* TODO: Replace this with shadcn/ui component */}
+          <ScaleLoader color="#FFBB33" />
+          <span className="text-heading-default">
             {piece.id ? "Saving piece..." : "Creating piece..."}
           </span>
         </div>

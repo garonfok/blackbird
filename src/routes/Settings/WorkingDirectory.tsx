@@ -96,10 +96,7 @@ export function WorkingDirectory() {
         name="Working Directory"
         description={workingDirectory || "Loading..."}
       >
-        <button
-          className="border px-[14px] py-[8px] rounded-[4px] hover:bg-fg.default hover:text-bg.inset transition-all"
-          onClick={handleClickChangeDirectory}
-        >
+        <button className="button-default" onClick={handleClickChangeDirectory}>
           Change Working Directory
         </button>
       </SettingsEntry>

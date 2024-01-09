@@ -24,7 +24,7 @@ export function Card(props: { file: ByteFile; index: number }) {
   }
 
   return (
-    <span className="border border-fg.subtle bg-bg.default rounded-[4px] px-[14px] py-[8px] flex items-center gap-[14px] w-full">
+    <span className="border border-fg.2 bg-bg.1 rounded-default px-[14px] py-[8px] flex items-center gap-[14px] w-full">
       <span
         onDoubleClick={handleDoubleClickOpenFile}
         className="flex gap-[14px] truncate w-full"
@@ -35,11 +35,7 @@ export function Card(props: { file: ByteFile; index: number }) {
         </span>
       </span>
       <button onClick={handleClickDelete}>
-        <Icon
-          path={mdiClose}
-          size={1}
-          className="text-fg.muted hover:text-fg.default transition-all"
-        />
+        <Icon path={mdiClose} size={1} className="link" />
       </button>
     </span>
   );

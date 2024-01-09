@@ -42,17 +42,17 @@ export function ResizableLeft(props: ResizableLeftProps) {
   }, [resize]);
 
   return (
-    <div ref={sidebarRef} className="flex shadow-panel">
+    <div ref={sidebarRef} className="flex">
       <div
-        className="bg-bg.default p-[14px]"
+        className="bg-bg.0 p-[14px]"
         style={{ width: panelWidth, minWidth, maxWidth }}
       >
         {children}
       </div>
       <div
         className={classNames(
-          "w-[2px] hover:cursor-col-resize resize-x hover:bg-fg.default",
-          isResizing ? "bg-fg.default" : "bg-fg.subtle"
+          "w-[1px] flex items-center justify-center hover:cursor-col-resize resize-x hover:bg-fg.1",
+          isResizing ? "bg-fg.1" : "bg-fg.2"
         )}
         onMouseDown={() => setIsResizing(true)}
       />

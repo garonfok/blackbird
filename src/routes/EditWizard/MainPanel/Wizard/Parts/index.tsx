@@ -137,21 +137,21 @@ export function Parts() {
         <PartsList />
         <button
           onClick={() => setIsSelectInstrumentModalOpen(true)}
-          className="text-left text-fg.muted hover:text-fg.default transition-all flex gap-[4px] items-center w-fit"
+          className="text-left link flex gap-[14px]"
         >
           <Icon path={mdiPlus} size={1} />
           Add part
         </button>
         <button
           onClick={() => setIsSaveEnsembleModalOpen(true)}
-          className="text-left text-fg.muted hover:text-fg.default transition-all flex gap-[4px] items-center w-fit"
+          className="text-left link flex gap-[14px]"
         >
           <Icon path={mdiFloppy} size={1} />
           Save as template ensemble
         </button>
         <button
           onClick={() => sendLoadEnsemble("SELECT")}
-          className="text-left text-fg.muted hover:text-fg.default transition-all flex gap-[4px] items-center w-fit"
+          className="text-left link flex gap-[14px]"
         >
           <Icon path={mdiTextBoxPlusOutline} size={1} />
           Load ensemble

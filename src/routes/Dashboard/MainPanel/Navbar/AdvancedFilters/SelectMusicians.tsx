@@ -74,34 +74,28 @@ export function SelectMusicians(props: {
 
   return (
     <div className="flex flex-col gap-[8px]">
-      <label htmlFor="musicians" className="text-fg.default">
+      <label htmlFor="musicians" className="text-fg.1">
         {role.charAt(0).toUpperCase() + role.slice(1)}
       </label>
       <div ref={inputRef} className="w-full gap-[4px] flex flex-col">
         <div className="relative">
           {isFocused && (
-            <div className="absolute left-0 bottom-[14px] rounded-[4px] bg-bg.inset w-full z-10 overflow-y-auto max-h-72 scrollbar-default border border-fg.subtle">
+            <div className="dropdown top-[30px] w-full overflow-y-auto max-h-72">
               {filteredMusicians.length > 0 ? (
-                <div className="flex flex-col rounded-[4px] border-bg.inset border overflow-clip">
-                  {filteredMusicians.map((musician) => (
-                    <button
-                      key={musician.id}
-                      className="dropdown-item text-left"
-                      onClick={() => handleClickSelectMusician(musician)}
-                    >
-                      {musician.first_name} {musician.last_name}
-                      {musicians.map((i) => i.id).includes(musician.id) && (
-                        <Icon
-                          path={mdiCheck}
-                          size={1}
-                          className="float-right"
-                        />
-                      )}
-                    </button>
-                  ))}
-                </div>
+                filteredMusicians.map((musician) => (
+                  <button
+                    key={musician.id}
+                    className="dropdown-item text-left"
+                    onClick={() => handleClickSelectMusician(musician)}
+                  >
+                    {musician.first_name} {musician.last_name}
+                    {musicians.map((i) => i.id).includes(musician.id) && (
+                      <Icon path={mdiCheck} size={1} className="float-right" />
+                    )}
+                  </button>
+                ))
               ) : (
-                <div className="px-[14px] py-[8px] text-fg.subtle">
+                <div className="px-[14px] py-[8px] text-fg.2 italic">
                   No results
                 </div>
               )}
@@ -111,29 +105,25 @@ export function SelectMusicians(props: {
         <div
           className={classNames(
             "input-text flex-wrap flex gap-[14px] transition-all",
-            isFocused && "ring-1 ring-inset ring-fg.default"
+            isFocused && "ring-1 ring-inset ring-fg.0"
           )}
         >
           {musicians.map((musician) => (
             <span
               key={musician.id}
-              className="px-[14px] py-[8px] rounded-[4px] flex items-center gap-[8px] bg-bg.default w-fit shadow-float"
+              className="px-[14px] py-[8px] rounded-default flex items-center gap-[8px] bg-bg.1 w-fit"
             >
               <span>
                 {musician.first_name} {musician.last_name}
               </span>
               <button onClick={() => handleClickRemoveMusician(musician.id)}>
-                <Icon
-                  path={mdiClose}
-                  size={1}
-                  className="text-fg.muted hover:text-fg.default transition-all"
-                />
+                <Icon path={mdiClose} size={1} className="link" />
               </button>
             </span>
           ))}
           <input
             type="text"
-            className="flex-grow bg-transparent outline-none placeholder-fg.subtle"
+            className="flex-grow bg-transparent outline-none placeholder-fg.2"
             onChange={(event) => setQuery(event.currentTarget.value)}
             value={query}
             onFocus={() => setIsFocused(true)}

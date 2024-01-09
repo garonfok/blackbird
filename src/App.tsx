@@ -34,7 +34,7 @@ export function App() {
     <Provider store={store}>
       <div
         onContextMenu={handleContextMenu}
-        className="bg-bg.inset text-fg.default w-screen h-screen select-none cursor-default"
+        className="bg-bg.0 text-body-default w-screen h-screen select-none cursor-default"
       >
         <RouterProvider router={router} />
       </div>

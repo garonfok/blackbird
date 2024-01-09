@@ -17,6 +17,7 @@ export function SaveEnsembleModal(props: {
 
   useEffect(() => {
     fetchCategories();
+    console.log("Fetched categories");
   }, []);
 
   async function fetchCategories() {
@@ -56,7 +57,7 @@ export function SaveEnsembleModal(props: {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-[#000] bg-opacity-50" />
         </Transition.Child>
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex h-full items-center justify-center">
@@ -69,14 +70,14 @@ export function SaveEnsembleModal(props: {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform overflow-hidden rounded-[4px] bg-bg.default p-[14px] flex flex-col gap-[14px] shadow-float transition-all text-fg.default">
+              <Dialog.Panel className="transform rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
                 <div className="flex flex-col gap-[8px]">
-                  <Dialog.Title as="h3" className="text-[20px]">
-                    Creating template ensemble
+                  <Dialog.Title as="h3" className="text-heading-default">
+                    Creating new template ensemble
                   </Dialog.Title>
-                  <div className="flex flex-col gap-[14px]">
+                  <div className="text-fg.1 flex flex-col gap-[14px]">
                     <div className="flex flex-col gap-[8px]">
-                      <label htmlFor="name" className="text-fg.muted">
+                      <label htmlFor="name" className="text-fg.1">
                         Name
                       </label>
                       <input
@@ -86,11 +87,11 @@ export function SaveEnsembleModal(props: {
                         placeholder="Required"
                         required
                         value={name}
-                        onChange={(event) => setName(event.target.value)}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </div>
                     <div className="flex flex-col gap-[8px]">
-                      <label htmlFor="category" className="text-fg.muted">
+                      <label htmlFor="category" className="text-fg.1">
                         Category
                       </label>
                       <Combobox
@@ -104,34 +105,34 @@ export function SaveEnsembleModal(props: {
                             setSelectedCategory(event.target.value)
                           }
                         />
-                        <Combobox.Options
-                          as="ul"
-                          className="bg-bg.inset rounded-[4px] border border-bg.inset overflow-y-auto scrollbar-default max-h-60"
-                        >
-                          {categories.map((category) => (
-                            <Combobox.Option
-                              key={category}
-                              value={category}
-                              className="first:rounded-t-[4px] last:rounded-b-[4px] dropdown-item cursor-pointer w-full"
-                            >
-                              {category}
-                            </Combobox.Option>
-                          ))}
-                        </Combobox.Options>
+                        <div className="relative">
+                          <Combobox.Options
+                            as="ul"
+                            className="dropdown w-full overflow-y-auto scrollbar-default max-h-60"
+                          >
+                            {categories.map((category) => (
+                              <Combobox.Option
+                                key={category}
+                                value={category}
+                                className="dropdown-item cursor-pointer"
+                              >
+                                {category}
+                              </Combobox.Option>
+                            ))}
+                          </Combobox.Options>
+                        </div>
                       </Combobox>
                     </div>
                   </div>
                 </div>
-                <hr className="text-fg.subtle" />
+                <hr className="text-fg.2" />
                 <div className="flex gap-[14px]">
                   <button
                     disabled={name.length === 0}
                     type="button"
                     className={classNames(
-                      "border px-[14px] py-[8px] rounded-[4px]   transition-all outline-none",
-                      name.length === 0
-                        ? "text-fg.subtle border-fg.subtle"
-                        : "text-fg.muted hover:bg-fg.default hover:text-bg.inset"
+                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all",
+                      name.length === 0 ? "text-fg.2 bg-bg.2" : "button-default"
                     )}
                     onClick={handleClickSubmit}
                   >
@@ -139,7 +140,7 @@ export function SaveEnsembleModal(props: {
                   </button>
                   <button
                     type="button"
-                    className="text-fg.muted hover:text-fg.default transition-all"
+                    className="link"
                     onClick={handleClickCloseModal}
                   >
                     Cancel

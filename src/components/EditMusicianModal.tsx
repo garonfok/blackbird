@@ -62,7 +62,7 @@ export function EditMusicianModal(props: {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-[#000] bg-opacity-50" />
         </Transition.Child>
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex h-full items-center justify-center">
@@ -75,14 +75,14 @@ export function EditMusicianModal(props: {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform overflow-hidden rounded-[4px] bg-bg.default p-[14px] flex flex-col gap-[14px] shadow-float transition-all text-fg.default">
+              <Dialog.Panel className="transform overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
                 <div className="flex flex-col gap-[8px]">
-                  <Dialog.Title as="h3" className="text-[20px]">
+                  <Dialog.Title as="h3" className="text-heading-default">
                     {defaultMusician ? "Edit Musician" : "Create Musician"}
                   </Dialog.Title>
-                  <div className="text-fg.muted flex flex-col gap-[14px]">
+                  <div className="text-fg.1 flex flex-col gap-[14px]">
                     <div className="flex flex-col gap-[8px]">
-                      <label htmlFor="firstName" className="text-fg.muted">
+                      <label htmlFor="firstName" className="text-fg.1">
                         First Name
                       </label>
                       <input
@@ -96,7 +96,7 @@ export function EditMusicianModal(props: {
                       />
                     </div>
                     <div className="flex flex-col gap-[8px]">
-                      <label htmlFor="lastName" className="text-fg.muted">
+                      <label htmlFor="lastName" className="text-fg.1">
                         Last Name
                       </label>
                       <input
@@ -109,25 +109,22 @@ export function EditMusicianModal(props: {
                     </div>
                   </div>
                 </div>
-                <hr className="text-fg.subtle" />
+                <hr className="text-fg.2" />
                 <div className="flex gap-[14px]">
                   <button
                     disabled={firstName.length === 0}
                     ref={submitRef}
                     className={classNames(
-                      "border px-[14px] py-[8px] rounded-[4px]   transition-all outline-none",
+                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all",
                       firstName.length === 0
-                        ? "text-fg.subtle border-fg.subtle"
-                        : "text-fg.muted hover:bg-fg.default hover:text-bg.inset"
+                        ? "text-fg.2 bg-bg.2"
+                        : "button-default"
                     )}
                     onClick={handleClickSubmit}
                   >
                     {defaultMusician ? "Save changes" : "Create"}
                   </button>
-                  <button
-                    className="text-fg.muted hover:text-fg.default transition-all"
-                    onClick={handleClickCloseModal}
-                  >
+                  <button className="link" onClick={handleClickCloseModal}>
                     Cancel
                   </button>
                 </div>

@@ -24,16 +24,13 @@ export function Settings() {
       <div className="justify-center flex">
         <div className="w-[768px] flex flex-col gap-[14px] p-[14px]">
           <span className="flex justify-between items-center">
-            <h1 className="text-[28px]">Settings</h1>
-            <Link
-              to="/"
-              className="flex gap-[8px] items-center text-fg.muted hover:text-fg.default"
-            >
+            <h1 className="text-heading-default">Settings</h1>
+            <Link to="/" className="flex gap-[8px] items-center link">
               <Icon path={mdiHomeOutline} size={1} />
-              <span className="text-[16px]">Home</span>
+              <span>Home</span>
             </Link>
           </span>
-          <hr className="text-fg.subtle" />
+          <hr className="text-fg.2" />
           <div className="flex flex-col gap-[14px]">
             <WorkingDirectory />
             <OpenOnStartup />

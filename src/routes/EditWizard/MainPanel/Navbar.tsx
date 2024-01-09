@@ -40,22 +40,22 @@ export function Navbar(props: { stepState: StepState; sendStep: StepEvent }) {
   }, []);
 
   return (
-    <div className="bg-bg.default p-[14px] shadow-panel flex justify-between">
+    <div className="p-[14px] flex justify-between">
       {stepState.nextEvents.includes("PREVIOUS") ? (
-        <button onClick={handleClickPrevious} className="text-left">
+        <button onClick={handleClickPrevious} className="text-left link">
           Previous
         </button>
       ) : (
         <div />
       )}
-      <span className="text-fg.muted text-center"></span>
       {stepState.nextEvents.includes("NEXT") && (
         <button
           onClick={handleClickNext}
           className={classNames(
             "text-right",
-            (piece.title.length === 0 || piece.composers.length === 0) &&
-              "text-fg.subtle"
+            piece.title.length === 0 || piece.composers.length === 0
+              ? "text-fg.2"
+              : "link"
           )}
           disabled={piece.title.length === 0 || piece.composers.length === 0}
         >

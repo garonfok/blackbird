@@ -72,9 +72,7 @@ export function GeneralInformation() {
     <>
       <div className="edit-wizard-panel">
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="title" className="text-fg.muted w-fit">
-            Title
-          </label>
+          <label htmlFor="title">Title</label>
           <input
             id="title"
             type="text"
@@ -86,9 +84,7 @@ export function GeneralInformation() {
           />
         </div>
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="yearPublished" className="text-fg.muted w-fit">
-            Year Published
-          </label>
+          <label htmlFor="yearPublished">Year Published</label>
           <input
             id="yearPublished"
             type="number"
@@ -106,7 +102,7 @@ export function GeneralInformation() {
         </div>
         <SelectMusicians role="composer" />
         <div className="flex flex-col gap-[8px]">
-          <span className="text-fg.muted w-fit">Difficulty</span>
+          <span>Difficulty</span>
           <Listbox
             value={piece.difficulty}
             onChange={(value) => dispatch(setDifficulty(value))}
@@ -124,13 +120,13 @@ export function GeneralInformation() {
                     )}
                   />
                 </Listbox.Button>
-                <Listbox.Options className="absolute border border-bg.inset rounded-[4px] overflow-clip w-full mt-[8px] z-10">
+                <Listbox.Options className="dropdown">
                   <Listbox.Option
                     value={null}
                     className={({ active }) =>
                       classNames(
                         "dropdown-item italic",
-                        active && "bg-bg.default text-fg.default"
+                        active && "bg-bg.2 text-fg.0"
                       )
                     }
                   >
@@ -143,7 +139,7 @@ export function GeneralInformation() {
                       className={({ active }) =>
                         classNames(
                           "dropdown-item",
-                          active && "bg-bg.default text-fg.default"
+                          active && "bg-bg.2 text-fg.0"
                         )
                       }
                     >
@@ -156,9 +152,7 @@ export function GeneralInformation() {
           </Listbox>
         </div>
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="notes" className="text-fg.muted w-fit">
-            Notes
-          </label>
+          <label htmlFor="notes">Notes</label>
           <textarea
             id="notes"
             rows={6}
@@ -168,7 +162,7 @@ export function GeneralInformation() {
           />
         </div>
         <div className="flex flex-col gap-[8px]">
-          <span className="text-fg.muted w-fit">Tags</span>
+          <span>Tags</span>
           <Listbox
             multiple
             value={piece.tags}
@@ -185,17 +179,13 @@ export function GeneralInformation() {
                       <span
                         key={tag.id}
                         className={classNames(
-                          "px-[14px] py-[8px] rounded-[4px] flex items-center gap-[8px] bg-bg.default"
+                          "px-[14px] py-[8px] rounded-default flex items-center gap-[8px] bg-bg.1"
                         )}
                       >
                         <Icon path={mdiTag} size={1} color={tag.color} />
                         {tag.name}
                         <button onClick={() => handleClickRemoveTag(tag.id)}>
-                          <Icon
-                            path={mdiClose}
-                            size={1}
-                            className="text-fg.muted hover:text-fg.default transition-all"
-                          />
+                          <Icon path={mdiClose} size={1} className="link" />
                         </button>
                       </span>
                     ))}
@@ -209,15 +199,15 @@ export function GeneralInformation() {
                     )}
                   />
                 </Listbox.Button>
-                <Listbox.Options className="absolute border border-bg.inset rounded-[4px] overflow-clip w-full mt-[8px]">
+                <Listbox.Options className="dropdown w-full">
                   {allTags.map((tag) => (
                     <Listbox.Option
                       key={tag.id}
                       value={tag}
                       className={({ active }) =>
                         classNames(
-                          "input-text rounded-none flex items-center gap-[8px]",
-                          active && "bg-bg.default text-fg.default"
+                          "dropdown-item",
+                          active && "bg-bg.2 text-fg.0"
                         )
                       }
                     >
@@ -230,7 +220,7 @@ export function GeneralInformation() {
                   ))}
                 </Listbox.Options>
                 <button
-                  className="px-[14px] py-[8px] text-fg.muted hover:text-fg.default transition-all text-left flex items-center gap-[8px]"
+                  className="px-[14px] py-[8px] link text-left flex items-center gap-[8px]"
                   onClick={handleClickOpenEditTagModal}
                 >
                   <Icon path={mdiPlus} size={1} />

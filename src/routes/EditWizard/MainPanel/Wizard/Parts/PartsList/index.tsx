@@ -4,7 +4,7 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import { ControlledMenu, MenuDivider, MenuItem } from "@szhsin/react-menu";
+import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
 import { MouseEvent, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/app/hooks";
 import { EditPart } from "src/app/types";
@@ -41,7 +41,6 @@ export function PartsList() {
   }, [parts, selected, partsClipboard]);
 
   async function handleKeyDown(event: globalThis.KeyboardEvent) {
-    event.preventDefault();
     setIsContextMenuOpen(false);
     if ((await isWindows()) ? event.ctrlKey : event.metaKey) {
       switch (event.key) {
@@ -230,7 +229,7 @@ export function PartsList() {
         <Droppable droppableId={"droppable"} direction="vertical">
           {(provided) => (
             <div
-              className="flex-grow bg-bg.inset rounded-[4px] p-[8px] flex flex-col overflow-y-auto scrollbar-default"
+              className="flex-grow bg-bg.2 rounded-default p-[8px] flex flex-col overflow-y-auto scrollbar-default"
               ref={provided.innerRef}
               {...provided.droppableProps}
             >
@@ -270,50 +269,42 @@ export function PartsList() {
         direction="right"
         onClose={() => setIsContextMenuOpen(false)}
       >
-        <div
-          ref={menuRef}
-          className="flex flex-col w-[192px] p-[4px] rounded-[4px] absolute bg-bg.inset shadow-float"
-        >
+        <div ref={menuRef} className="dropdown">
           {selected.length === 1 && (
             <>
-              <MenuItem
-                className="context-menu-item"
-                onClick={handleClickRename}
-              >
+              <MenuItem className="dropdown-item" onClick={handleClickRename}>
                 Rename
               </MenuItem>
-              <MenuDivider className="context-menu-divider" />
             </>
           )}
           {parts
             .filter((_, index) => selected.includes(index))
             .some((part) => part.show) ? (
-            <MenuItem className="context-menu-item" onClick={handleClickHide}>
+            <MenuItem className="dropdown-item" onClick={handleClickHide}>
               Hide instruments
             </MenuItem>
           ) : (
-            <MenuItem className="context-menu-item" onClick={handleClickShow}>
+            <MenuItem className="dropdown-item" onClick={handleClickShow}>
               Show instruments
             </MenuItem>
           )}
-          <MenuItem className="context-menu-item" onClick={handleClickDelete}>
+          <MenuItem className="dropdown-item" onClick={handleClickDelete}>
             Delete
           </MenuItem>
-          <MenuDivider className="context-menu-divider" />
-          <MenuItem className="context-menu-item" onClick={handleClickMoveUp}>
+          <MenuItem className="dropdown-item" onClick={handleClickMoveUp}>
             Move up
           </MenuItem>
-          <MenuItem className="context-menu-item" onClick={handleClickMoveDown}>
+          <MenuItem className="dropdown-item" onClick={handleClickMoveDown}>
             Move down
           </MenuItem>
           <MenuItem
-            className="context-menu-item"
+            className="dropdown-item"
             onClick={handleClickDupeAbove}
           >
             Duplicate above
           </MenuItem>
           <MenuItem
-            className="context-menu-item"
+            className="dropdown-item"
             onClick={handleClickDupeBelow}
           >
             Duplicate below

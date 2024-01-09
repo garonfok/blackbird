@@ -24,7 +24,7 @@ export function Scores() {
       <ScoresList />
       <button
         onClick={handleClickAddScore}
-        className="text-left text-fg.muted hover:text-fg.default transition-all flex gap-[4px] items-center w-fit"
+        className="text-left link flex gap-[14px]"
       >
         <Icon path={mdiPlus} size={1} />
         Add score

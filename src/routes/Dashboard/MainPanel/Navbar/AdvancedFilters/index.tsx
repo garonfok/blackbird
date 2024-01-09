@@ -121,16 +121,14 @@ export function AdvancedFilters(props: { onClose: () => void }) {
   }
 
   return (
-    <div className="p-[14px] rounded-[4px] bg-bg.emphasis shadow-float flex flex-col gap-[14px]">
+    <div className="dropdown w-full p-[14px] gap-[14px]">
       <div className="flex flex-col overflow-y-auto max-h-96 scrollbar-default gap-[14px]">
         {/* Year published */}
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="yearPublished" className="text-fg.default">
-            Year published
-          </label>
+          <label htmlFor="yearPublished">Year published</label>
           <div className="grid grid-cols-2 gap-[14px]">
             <div className="w-full flex items-center gap-[4px]">
-              <span className="text-fg.muted">From:</span>
+              <span className="text-body-small-default">From:</span>
               <input
                 id="yearPublished"
                 type="number"
@@ -147,7 +145,7 @@ export function AdvancedFilters(props: { onClose: () => void }) {
               />
             </div>
             <div className="w-full flex items-center gap-[4px]">
-              <span className="text-fg.muted">To:</span>
+              <span className="text-body-small-default">To:</span>
               <input
                 id="yearPublished"
                 type="number"
@@ -167,12 +165,10 @@ export function AdvancedFilters(props: { onClose: () => void }) {
         </div>
         {/* Difficulty */}
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="difficulty" className="text-fg.default">
-            Difficulty
-          </label>
+          <label htmlFor="difficulty">Difficulty</label>
           <div className="grid grid-cols-2 gap-[14px]">
             <div className="w-full flex items-center gap-[4px]">
-              <span className="text-fg.muted">From:</span>
+              <span className="text-body-small-default">From:</span>
               <Listbox value={difficultyMin} onChange={setDifficultyMin}>
                 {({ open }) => (
                   <div className="relative w-full">
@@ -187,13 +183,13 @@ export function AdvancedFilters(props: { onClose: () => void }) {
                         )}
                       />
                     </Listbox.Button>
-                    <Listbox.Options className="absolute border border-bg.inset rounded-[4px] overflow-clip w-full mt-[8px] z-10">
+                    <Listbox.Options className="dropdown w-full">
                       <Listbox.Option
                         value={undefined}
                         className={({ active }) =>
                           classNames(
                             "dropdown-item italic",
-                            active && "bg-bg.default text-fg.default"
+                            active && "bg-bg.2 text-fg.0"
                           )
                         }
                       >
@@ -206,7 +202,7 @@ export function AdvancedFilters(props: { onClose: () => void }) {
                           className={({ active }) =>
                             classNames(
                               "dropdown-item",
-                              active && "bg-bg.default text-fg.default"
+                              active && "bg-bg.2 text-fg.0"
                             )
                           }
                         >
@@ -219,7 +215,7 @@ export function AdvancedFilters(props: { onClose: () => void }) {
               </Listbox>
             </div>
             <div className="w-full flex items-center gap-[4px]">
-              <span className="text-fg.muted">To:</span>
+              <span className="text-body-small-default">To:</span>
               <Listbox value={difficultyMax} onChange={setDifficultyMax}>
                 {({ open }) => (
                   <div className="relative w-full">
@@ -234,13 +230,13 @@ export function AdvancedFilters(props: { onClose: () => void }) {
                         )}
                       />
                     </Listbox.Button>
-                    <Listbox.Options className="absolute border border-bg.inset rounded-[4px] overflow-clip w-full mt-[8px] z-10">
+                    <Listbox.Options className="dropdown w-full">
                       <Listbox.Option
                         value={undefined}
                         className={({ active }) =>
                           classNames(
                             "dropdown-item italic",
-                            active && "bg-bg.default text-fg.default"
+                            active && "bg-bg.2 text-fg.0"
                           )
                         }
                       >
@@ -253,7 +249,7 @@ export function AdvancedFilters(props: { onClose: () => void }) {
                           className={({ active }) =>
                             classNames(
                               "dropdown-item",
-                              active && "bg-bg.default text-fg.default"
+                              active && "bg-bg.2 text-fg.0"
                             )
                           }
                         >
@@ -269,7 +265,7 @@ export function AdvancedFilters(props: { onClose: () => void }) {
         </div>
         {/* Parts */}
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="parts" className="text-fg.default">
+          <label htmlFor="parts">
             Parts
           </label>
           <input
@@ -314,23 +310,23 @@ export function AdvancedFilters(props: { onClose: () => void }) {
           role="lyricists"
         />
       </div>
-      <hr className="text-fg.subtle" />
+      <hr className="text-fg.2" />
       <div className="flex gap-[14px]">
         <button
           onClick={handleClickClearFilters}
-          className="text-fg.muted hover:text-fg.default transition-all"
+          className="link"
         >
           <Icon path={mdiEraser} size={1} className="shrink-0" />
         </button>
         <button
           onClick={handleClickApplyFilters}
-          className="text-fg.muted border px-[14px] py-[8px] rounded-[4px] hover:bg-fg.default hover:text-bg.inset transition-all outline-none"
+          className="button-primary"
         >
           Apply filters
         </button>
         <button
           onClick={onClose}
-          className="text-fg.muted hover:text-fg.default transition-all"
+          className="link"
         >
           Cancel
         </button>

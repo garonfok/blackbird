@@ -70,15 +70,15 @@ export function LoadEnsembleModal(props: {
     >
       <Tab.Group vertical onChange={setTabIndex} selectedIndex={tabIndex}>
         <div className="flex gap-[4px] h-64">
-          <Tab.List className="flex flex-col px-[14px] py-[8px] rounded-[4px] bg-bg.inset">
+          <Tab.List className="flex flex-col px-[14px] py-[8px] rounded-default bg-bg.2">
             {Object.keys(groupedEnsembles).map((category, index) => (
               <Tab
                 key={category}
                 className={classNames(
                   "text-left outline-none transition-all",
                   index === tabIndex
-                    ? "text-fg.default"
-                    : "text-fg.muted hover:text-fg.default"
+                    ? "text-fg.0"
+                    : "text-fg.1 hover:text-fg.0"
                 )}
               >
                 {category}
@@ -87,7 +87,7 @@ export function LoadEnsembleModal(props: {
             <Tab />
           </Tab.List>
           <div ref={tabPanelRef} className="w-full h-full">
-            <Tab.Panels className="flex flex-col px-[14px] py-[8px] rounded-[4px] h-full bg-bg.inset w-full">
+            <Tab.Panels className="flex flex-col px-[14px] py-[8px] rounded-default h-full bg-bg.2 w-full">
               {Object.keys(groupedEnsembles).map((category, index) => (
                 <Tab.Panel
                   key={index}
@@ -98,7 +98,7 @@ export function LoadEnsembleModal(props: {
                   {groupedEnsembles[category].map((groupedEnsemble) => (
                     <button
                       key={groupedEnsemble.id}
-                      className="text-left text-fg.muted hover:text-fg.default transition-all"
+                      className="text-left link"
                       onClick={() => handleClickSubmit(groupedEnsemble.id)}
                     >
                       {groupedEnsemble.name}

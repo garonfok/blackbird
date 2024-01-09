@@ -76,7 +76,7 @@ export function EditTagModal(props: {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-[#000] bg-opacity-50" />
         </Transition.Child>
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex h-full items-center justify-center">
@@ -89,15 +89,15 @@ export function EditTagModal(props: {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform overflow-hidden rounded-[4px] bg-bg.default p-[14px] flex flex-col gap-[14px] shadow-float transition-all text-fg.default">
+              <Dialog.Panel className="transform overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
                 <div className="flex flex-col gap-[8px]">
-                  <Dialog.Title as="h3" className="text-[20px]">
+                  <Dialog.Title as="h3" className="text-heading-default">
                     {defaultTag ? "Edit Tag" : "Create Tag"}
                   </Dialog.Title>
 
                   <div className="flex flex-col gap-[14px]">
-                    <div className="flex flex-col gap-[8px] text-fg.muted">
-                      <label htmlFor="name" className="text-fg.muted">
+                    <div className="flex flex-col gap-[8px] text-body-default">
+                      <label htmlFor="name" className="text-fg.1">
                         Name
                       </label>
                       <input
@@ -117,11 +117,11 @@ export function EditTagModal(props: {
                               key={shade}
                               className={classNames(
                                 "h-[24px] w-[24px] cursor-pointer rounded-full transition-all hover:scale-110",
-                                getContrast("#333238", shade) > 0.6 &&
+                                getContrast("#131315", shade) > 0.6 &&
                                   selectedColor !== shade &&
-                                  "ring-inset ring-1 ring-fg.subtle",
+                                  "ring-inset ring-1 ring-fg.2",
                                 selectedColor === shade &&
-                                  "scale-110 ring-2 ring-fg.default"
+                                  "scale-110 ring-2 ring-fg.0"
                               )}
                               style={{
                                 backgroundColor: shade,
@@ -134,25 +134,20 @@ export function EditTagModal(props: {
                     </div>
                   </div>
                 </div>
-                <hr className="text-fg.subtle" />
+                <hr className="text-fg.2" />
                 <div className="flex gap-[14px]">
                   <button
                     ref={submitRef}
                     disabled={!name || !selectedColor}
                     className={classNames(
-                      "border px-[14px] py-[8px] rounded-[4px]   transition-all outline-none",
-                      !name || !selectedColor
-                        ? "text-fg.subtle border-fg.subtle"
-                        : "text-fg.muted hover:bg-fg.default hover:text-bg.inset"
+                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all",
+                      !name ? "text-fg.2 bg-bg.2" : "button-default"
                     )}
                     onClick={handleClickSubmit}
                   >
                     {defaultTag ? "Save changes" : "Create"}
                   </button>
-                  <button
-                    className="text-fg.muted hover:text-fg.default transition-all"
-                    onClick={handleClickCloseModal}
-                  >
+                  <button className="link" onClick={handleClickCloseModal}>
                     Cancel
                   </button>
                 </div>

@@ -26,17 +26,16 @@ export function Card(props: {
   return (
     <div
       className={classNames(
-        "flex items-center justify-between px-[14px] py-[8px] rounded-[4px] shadow-float hover:ring-1 ring-fg.default",
-        selected ? "bg-bg.emphasis" : "bg-bg.default"
+        "flex items-center justify-between px-[14px] py-[8px] rounded-default border border-fg.2 bg-bg.1 hover:ring-1 ring-fg.0",
+        selected && "border-fg.0"
       )}
     >
       <div className="w-full flex items-start gap-[2px]">
         <Icon
           path={mdiDragVertical}
           size={1}
-          className="ml-[-10px] text-fg.muted shrink-0"
+          className="ml-[-10px] text-fg.1 shrink-0"
         />
-        <div className="flex flex-col w-full">
           <Renameable
             index={index}
             isPart={false}
@@ -44,7 +43,6 @@ export function Card(props: {
             name={score.name}
             setName={handleSetName}
           />
-        </div>
       </div>
       <button
         onClick={() => handleClickRemoveScore(index)}
@@ -53,7 +51,7 @@ export function Card(props: {
         <Icon
           path={mdiClose}
           size={1}
-          className="text-fg.muted hover:text-fg.default transition-all"
+          className="link"
         />
       </button>
     </div>

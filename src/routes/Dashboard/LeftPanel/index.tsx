@@ -145,19 +145,15 @@ export function LeftPanel() {
     <>
       <ResizableLeft width={256} minWidth={160} maxWidth={256}>
         <div className="flex flex-col h-full gap-[14px]">
-          <Link
-            to="/edit-wizard"
-            className="w-full bg-brand.default py-[8px] rounded-[4px] flex justify-center"
-          >
+          <Link to="/edit-wizard" className="w-full button-primary">
             New piece
           </Link>
-          <hr className="text-fg.subtle" />
           <div className="flex flex-col gap-[14px] overflow-y-auto max-h-[50%] scrollbar-default">
             <button
               onClick={() => dispatch(clearSetlist())}
               className={classNames(
-                "flex items-center gap-[14px] w-full hover:text-fg.default transition-all",
-                !setlist.setlist ? "text-fg.default" : "text-fg.muted"
+                "flex items-center gap-[14px] w-full hover:text-fg.0 transition-all",
+                !setlist.setlist ? "text-fg.0" : "text-fg.1"
               )}
             >
               <Icon path={mdiBookshelf} size={1} />
@@ -165,7 +161,7 @@ export function LeftPanel() {
             </button>
             <button
               onClick={() => setIsEditSetlistModalOpen(true)}
-              className="text-fg.muted flex items-center gap-[14px] w-full hover:text-fg.default"
+              className="flex items-center gap-[14px] w-full link"
             >
               <Icon path={mdiPlus} size={1} />
               <span>Create setlist</span>
@@ -174,10 +170,8 @@ export function LeftPanel() {
               <div key={sl.id} className="flex gap-[4px] w-full">
                 <button
                   className={classNames(
-                    "flex items-center gap-[14px] w-full hover:text-fg.default truncate transition-all",
-                    setlist.setlist?.id === sl.id
-                      ? "text-fg.default"
-                      : "text-fg.muted"
+                    "flex items-center gap-[14px] w-full hover:text-fg.0 truncate transition-all",
+                    setlist.setlist?.id === sl.id ? "text-fg.0" : "text-fg.1"
                   )}
                   onClick={() => dispatch(setSetlist({ setlist: sl }))}
                 >
@@ -189,21 +183,21 @@ export function LeftPanel() {
                   <span className="truncate w-full text-left">{sl.name}</span>
                 </button>
                 <Menu as="div" className="relative">
-                  <Menu.Button className="text-fg.muted hover:text-fg.default flex items-center transition-all">
+                  <Menu.Button className="flex items-center link">
                     <Icon path={mdiDotsHorizontal} size={1} />
                   </Menu.Button>
-                  <Menu.Items className="mt-[14px] fixed flex flex-col w-[192px] p-[4px] rounded-[4px] bg-bg.emphasis shadow-float outline-none z-10">
+                  <Menu.Items className="dropdown fixed">
                     <Menu.Item
                       as="button"
                       onClick={() => handleClickEditSetlist(sl)}
-                      className="context-menu-item"
+                      className="dropdown-item"
                     >
                       Edit
                     </Menu.Item>
                     <Menu.Item
                       as="button"
                       onClick={() => handleClickDeleteSetlist(sl)}
-                      className="context-menu-item"
+                      className="dropdown-item"
                     >
                       Delete
                     </Menu.Item>
@@ -212,7 +206,7 @@ export function LeftPanel() {
               </div>
             ))}
           </div>
-          <hr className="text-fg.subtle" />
+          <hr className="text-fg.2" />
           <div
             onContextMenu={handleContextMenuTags}
             className="flex flex-col gap-[14px] h-0 flex-grow"
@@ -233,11 +227,7 @@ export function LeftPanel() {
                 <span>Tags</span>
               </button>
               <button onClick={() => setIsEditTagModalOpen(true)}>
-                <Icon
-                  path={mdiPlus}
-                  size={1}
-                  className="text-fg.muted hover:text-fg.default"
-                />
+                <Icon path={mdiPlus} size={1} className="link" />
               </button>
             </span>
             {isTagsOpen && (
@@ -245,10 +235,10 @@ export function LeftPanel() {
                 {tags.map((tag) => (
                   <div
                     key={tag.id}
-                    className="flex items-center gap-[4px] w-full text-fg.muted"
+                    className="flex items-center gap-[4px] w-full text-fg.1"
                   >
                     <button
-                      className="flex gap-[14px] w-full hover:text-fg.default truncate transition-all"
+                      className="flex gap-[14px] w-full link truncate"
                       onClick={() => handleClickPushTag(tag)}
                     >
                       <Icon
@@ -266,21 +256,21 @@ export function LeftPanel() {
                         <Icon
                           path={mdiDotsHorizontal}
                           size={1}
-                          className=" hover:text-fg.default transition-all shrink-0"
+                          className="link shrink-0"
                         />
                       </Menu.Button>
-                      <Menu.Items className="mt-[14px] fixed flex flex-col w-[192px] p-[4px] rounded-[4px] bg-bg.emphasis shadow-float outline-none z-10">
+                      <Menu.Items className="dropdown fixed">
                         <Menu.Item
                           as="button"
                           onClick={() => handleClickEditTag(tag)}
-                          className="context-menu-item"
+                          className="dropdown-item"
                         >
                           Edit
                         </Menu.Item>
                         <Menu.Item
                           as="button"
                           onClick={() => handleClickDeleteTag(tag)}
-                          className="context-menu-item"
+                          className="dropdown-item"
                         >
                           Delete
                         </Menu.Item>
@@ -291,10 +281,10 @@ export function LeftPanel() {
               </div>
             )}
           </div>
-          <hr className="text-fg.subtle" />
+          <hr className="text-fg.2" />
           <Link
             to="/settings"
-            className="flex gap-[14px] items-center text-fg.muted hover:text-fg.default"
+            className="flex gap-[14px] items-center link"
           >
             <Icon path={mdiCog} size={1} />
             <span>Settings</span>

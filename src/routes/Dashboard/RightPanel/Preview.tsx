@@ -23,8 +23,8 @@ export function Preview(props: { piece: Piece }) {
         <div className="flex flex-wrap gap-[14px]">
           {piece.tags.map((tag) => {
             return (
-              <div key={tag.id} className="flex gap-[4px] items-center">
-                <Icon path={mdiTag} size={1} color={tag.color} />
+              <div key={tag.id} className="flex gap-[4px] items-center text-body-small-default rounded-default border border-fg.2 py-[4px] px-[4px]">
+                <Icon path={mdiTag} size={.8} color={tag.color} />
                 <span>{tag.name}</span>
               </div>
             );
@@ -33,11 +33,11 @@ export function Preview(props: { piece: Piece }) {
         <div className="flex flex-col gap-[14px]">
           <div className="flex flex-col gap-[4px]">
             {piece.difficulty && (
-              <span className="text-fg.muted">Grade {piece.difficulty}</span>
+              <span className="text-fg.1 text-body-small-default">Grade {piece.difficulty}</span>
             )}
-            <span className="text-[20px] font-bold">{piece.title}</span>
+            <span className="text-heading-default">{piece.title}</span>
             {piece.year_published && (
-              <span className="text-fg.muted">{piece.year_published}</span>
+              <span className="text-fg.1 text-body-small-default">{piece.year_published}</span>
             )}
           </div>
           <div>
@@ -50,7 +50,7 @@ export function Preview(props: { piece: Piece }) {
                   .join(", ")}
               </span>
               {piece.arrangers.length > 0 && (
-                <span className="flex flex-wrap text-fg.muted">
+                <span className="flex flex-wrap text-fg.1">
                   Arr.{" "}
                   {piece.arrangers
                     .map((arranger) =>
@@ -60,7 +60,7 @@ export function Preview(props: { piece: Piece }) {
                 </span>
               )}
               {piece.transcribers.length > 0 && (
-                <span className="flex flex-wrap text-fg.muted">
+                <span className="flex flex-wrap text-fg.1">
                   Trans.{" "}
                   {piece.transcribers
                     .map((transcriber) =>
@@ -70,7 +70,7 @@ export function Preview(props: { piece: Piece }) {
                 </span>
               )}
               {piece.orchestrators.length > 0 && (
-                <span className="flex flex-wrap text-fg.muted">
+                <span className="flex flex-wrap text-fg.1">
                   Orch.{" "}
                   {piece.orchestrators
                     .map((orchestrator) =>
@@ -82,7 +82,7 @@ export function Preview(props: { piece: Piece }) {
                 </span>
               )}
               {piece.lyricists.length > 0 && (
-                <span className="flex flex-wrap text-fg.muted">
+                <span className="flex flex-wrap text-fg.1">
                   Lyr.{" "}
                   {piece.lyricists
                     .map((lyricist) =>
@@ -95,7 +95,7 @@ export function Preview(props: { piece: Piece }) {
           </div>
         </div>
         <div className="flex flex-col gap-[14px]">
-          <div className="flex flex-col text-fg.muted">
+          <div className="flex flex-col text-fg.1">
             {piece.title.length > 0 &&
               piece.composers.length > 0 &&
               piece.scores.map((score) => (
@@ -105,7 +105,7 @@ export function Preview(props: { piece: Piece }) {
                     path={mdiCircle}
                     size={0.5}
                     className={classNames(
-                      score.path ? "text-fg.default" : "text-fg.subtle"
+                      score.path ? "text-fg.0" : "text-fg.2"
                     )}
                   />
                 </div>
@@ -124,7 +124,7 @@ export function Preview(props: { piece: Piece }) {
                       path={mdiCircle}
                       size={0.5}
                       className={classNames(
-                        part.path ? "text-fg.default" : "text-fg.subtle"
+                        part.path ? "text-fg.0" : "text-fg.2"
                       )}
                     />
                   </span>
@@ -138,7 +138,7 @@ export function Preview(props: { piece: Piece }) {
                   />
                 </button>
                 {open[index] && (
-                  <div className="ml-[14px] flex-wrap flex text-fg.muted">
+                  <div className="ml-[14px] flex-wrap flex text-fg.1">
                     {part.instruments
                       .map((instrument) => instrument.name)
                       .join(", ")}
@@ -150,7 +150,7 @@ export function Preview(props: { piece: Piece }) {
         </div>
 
         {piece.notes.length > 0 && (
-          <div className="break-words px-[14px] py-[8px] rounded-[4px] bg-bg.inset">
+          <div className="break-words px-[14px] py-[8px] rounded-default bg-bg.2">
             {piece.notes}
           </div>
         )}

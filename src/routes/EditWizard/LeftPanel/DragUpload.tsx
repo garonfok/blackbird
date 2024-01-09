@@ -1,4 +1,4 @@
-import { mdiCheckCircle, mdiClose, mdiLoading, mdiUpload } from "@mdi/js";
+import { mdiClose, mdiLoading, mdiUpload } from "@mdi/js";
 import Icon from "@mdi/react";
 import { open } from "@tauri-apps/api/dialog";
 import { Event, listen } from "@tauri-apps/api/event";
@@ -129,23 +129,16 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
   function toastUploadComplete() {
     toast.custom(
       (t) => (
+        // TODO: Replace this with shadcn/ui toast
         <div
           className={classNames(
-            "z-auto px-[14px] py-[8px] bg-bg.emphasis rounded-[4px] flex items-center gap-[4px] shadow-float w-[256px]"
+            "z-auto px-[14px] py-[8px] bg-bg.2 rounded-default flex items-center gap-[4px] w-[256px]"
           )}
         >
           <div className="flex w-full gap-[4px]">
-            <Icon
-              path={mdiCheckCircle}
-              size={1}
-              className="text-success.default shrink-0"
-            />
-            <span className="text-fg.default">Finished uploading.</span>
+            <span className="text-fg.0">Finished uploading.</span>
           </div>
-          <button
-            onClick={() => toast.remove(t.id)}
-            className="transition-all text-fg.muted hover:text-fg.default"
-          >
+          <button onClick={() => toast.remove(t.id)} className="link">
             <Icon path={mdiClose} size={1} className="shrink-0" />
           </button>
         </div>
@@ -172,20 +165,16 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
   return (
     <>
       {isUploading ? (
-        <div className="w-full items-center inline-flex py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted">
-          <Icon
-            path={mdiLoading}
-            size={1.5}
-            className="shrink-0 animate-spin"
-          />
+        <div className="w-full button-primary bg-opacity-10 text-fg.2">
+          <Icon path={mdiLoading} size={1} className="shrink-0 animate-spin" />
           <span>{!isPanelSmall ? "Uploading files" : "Uploading..."}</span>
         </div>
       ) : (
         <button
           onClick={handleClickUploadFiles}
-          className="w-full items-center border-dashed inline-flex border border-brand.default py-[8px] rounded-[4px] justify-center gap-[8px] bg-brand.default bg-opacity-10 text-fg.muted hover:text-fg.default transition-all"
+          className="w-full button-primary"
         >
-          <Icon path={mdiUpload} size={1.5} className="shrink-0" />
+          <Icon path={mdiUpload} size={1} className="shrink-0" />
           <span>
             {!isPanelSmall ? "Drag and drop PDFs, or browse" : "Upload PDFs"}
           </span>

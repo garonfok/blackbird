@@ -117,31 +117,22 @@ export function FileList() {
           setSelectedFile(undefined);
         }}
       >
-        <div
-          ref={menuRef}
-          className="flex flex-col w-[192px] p-[4px] rounded-[4px] absolute bg-bg.inset shadow-float"
-        >
-          {/* <MenuItem
-            onClick={() => handleClickRename()}
-            className="context-menu-item"
-          >
-            Rename
-          </MenuItem> */}
+        <div ref={menuRef} className="dropdown">
           <MenuItem
             onClick={() => handleClickOpenFile()}
-            className="context-menu-item"
+            className="dropdown-item"
           >
             Open file
           </MenuItem>
           <MenuItem
             onClick={() => handleClickOpenContainingDirectory()}
-            className="context-menu-item"
+            className="dropdown-item"
           >
             Open containing directory
           </MenuItem>
           <MenuItem
             onClick={() => handleClickRemove()}
-            className="context-menu-item text-danger.default hover:text-danger.emphasis"
+            className="dropdown-item text-error.default"
           >
             Remove
           </MenuItem>

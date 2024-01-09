@@ -60,7 +60,7 @@ export function Modal(
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-[#000] bg-opacity-50" />
         </Transition.Child>
         <div className="fixed inset-0 overflow-y-auto">
           <div className="flex h-full items-center justify-center">
@@ -73,32 +73,29 @@ export function Modal(
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[4px] bg-bg.default p-[14px] flex flex-col gap-[14px] shadow-float transition-all text-fg.default">
+              <Dialog.Panel className="transform w-full max-w-md overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
                 <div className="flex flex-col gap-[8px]">
                   {title && (
-                    <Dialog.Title as="h3" className="text-[20px]">
+                    <Dialog.Title as="h3" className="text-heading-default">
                       {title}
                     </Dialog.Title>
                   )}
-                  <div className="text-fg.muted">{children}</div>
+                  <div className="text-fg.1">{children}</div>
                 </div>
                 {(confirmText || cancelText) && (
                   <>
-                    <hr className="text-fg.subtle" />
+                    <hr className="text-fg.2" />
                     <div className="flex gap-[14px]">
                       <button
                         ref={submitRef}
                         type="button"
-                        className="text-fg.muted border px-[14px] py-[8px] rounded-[4px] hover:bg-fg.default hover:text-bg.inset transition-all outline-none"
+                        className="button-default"
                         onClick={onConfirm}
                       >
                         {confirmText}
                       </button>
                       {cancelText && (
-                        <button
-                          className="text-fg.muted hover:text-fg.default transition-all"
-                          onClick={closeModal}
-                        >
+                        <button className="link" onClick={closeModal}>
                           {cancelText}
                         </button>
                       )}

@@ -44,13 +44,13 @@ export function Files() {
                       />
                     </Listbox.Button>
                     <div className="relative">
-                      <Listbox.Options className="absolute w-full rounded-[4px] bg-bg.inset border border-bg.inset">
+                      <Listbox.Options className="dropdown w-full overflow-y-auto max-h-72 scrollbar-default">
                         <Listbox.Option
                           value={undefined}
                           className={({ active }) =>
                             classNames(
                               "dropdown-item italic",
-                              active && "bg-bg.default text-fg.default"
+                              active && "bg-bg.2 text-fg.0"
                             )
                           }
                         >
@@ -60,7 +60,7 @@ export function Files() {
                           <Listbox.Option
                             key={file.id}
                             value={file}
-                            className="dropdown-item first:rounded-t-[4px] last:rounded-b-[4px] text-fg.muted"
+                            className="dropdown-item rounded-default text-fg.1"
                           >
                             {file.name}
                           </Listbox.Option>
@@ -73,7 +73,7 @@ export function Files() {
             </div>
           ))}
         </div>
-        <hr className="text-fg.subtle" />
+        <hr className="text-fg.2" />
         <div className="flex flex-col">
           {piece.parts.map((part, index) => (
             <div key={part.id} className="flex flex-col gap-[8px]">
@@ -96,13 +96,13 @@ export function Files() {
                       />
                     </Listbox.Button>
                     <div className="relative">
-                      <Listbox.Options className="absolute w-full rounded-[4px] bg-bg.inset border border-bg.inset">
+                      <Listbox.Options className="dropdown w-full overflow-y-auto max-h-72 scrollbar-default">
                         <Listbox.Option
                           value={undefined}
                           className={({ active }) =>
                             classNames(
                               "dropdown-item italic",
-                              active && "bg-bg.default text-fg.default"
+                              active && "bg-bg.2 text-fg.0"
                             )
                           }
                         >
@@ -112,7 +112,7 @@ export function Files() {
                           <Listbox.Option
                             key={file.id}
                             value={file}
-                            className="dropdown-item first:rounded-t-[4px] last:rounded-b-[4px] text-fg.muted"
+                            className="dropdown-item rounded-default text-fg.1"
                           >
                             {file.name}
                           </Listbox.Option>
