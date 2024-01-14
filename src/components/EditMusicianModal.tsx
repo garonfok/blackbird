@@ -75,7 +75,7 @@ export function EditMusicianModal(props: {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
+              <Dialog.Panel className="transform overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-default">
                 <div className="flex flex-col gap-[8px]">
                   <Dialog.Title as="h3" className="text-heading-default">
                     {defaultMusician ? "Edit Musician" : "Create Musician"}
@@ -109,13 +109,13 @@ export function EditMusicianModal(props: {
                     </div>
                   </div>
                 </div>
-                <hr className="text-fg.2" />
+                <hr className="text-divider" />
                 <div className="flex gap-[14px]">
                   <button
                     disabled={firstName.length === 0}
                     ref={submitRef}
                     className={classNames(
-                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all",
+                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-default",
                       firstName.length === 0
                         ? "text-fg.2 bg-bg.2"
                         : "button-default"

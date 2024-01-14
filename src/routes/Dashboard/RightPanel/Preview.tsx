@@ -132,7 +132,7 @@ export function Preview(props: { piece: Piece }) {
                     path={mdiChevronDown}
                     size={1}
                     className={classNames(
-                      "transition-all",
+                      "transition-default",
                       open[index] && "rotate-180"
                     )}
                   />

@@ -30,7 +30,7 @@ export function Settings() {
               <span>Home</span>
             </Link>
           </span>
-          <hr className="text-fg.2" />
+          <hr className="text-divider" />
           <div className="flex flex-col gap-[14px]">
             <WorkingDirectory />
             <OpenOnStartup />

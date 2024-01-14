@@ -38,7 +38,7 @@ export function Files() {
                         path={mdiChevronDown}
                         size={1}
                         className={classNames(
-                          "transition-all",
+                          "transition-default",
                           open && "rotate-180"
                         )}
                       />
@@ -73,7 +73,7 @@ export function Files() {
             </div>
           ))}
         </div>
-        <hr className="text-fg.2" />
+        <hr className="text-divider" />
         <div className="flex flex-col">
           {piece.parts.map((part, index) => (
             <div key={part.id} className="flex flex-col gap-[8px]">
@@ -90,7 +90,7 @@ export function Files() {
                         path={mdiChevronDown}
                         size={1}
                         className={classNames(
-                          "transition-all",
+                          "transition-default",
                           open && "rotate-180"
                         )}
                       />

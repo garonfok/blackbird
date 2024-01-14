@@ -89,7 +89,7 @@ export function EditTagModal(props: {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
+              <Dialog.Panel className="transform overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-default">
                 <div className="flex flex-col gap-[8px]">
                   <Dialog.Title as="h3" className="text-heading-default">
                     {defaultTag ? "Edit Tag" : "Create Tag"}
@@ -116,7 +116,7 @@ export function EditTagModal(props: {
                             <div
                               key={shade}
                               className={classNames(
-                                "h-[24px] w-[24px] cursor-pointer rounded-full transition-all hover:scale-110",
+                                "h-[24px] w-[24px] cursor-pointer rounded-full transition-default hover:scale-110",
                                 getContrast("#131315", shade) > 0.6 &&
                                   selectedColor !== shade &&
                                   "ring-inset ring-1 ring-fg.2",
@@ -134,13 +134,13 @@ export function EditTagModal(props: {
                     </div>
                   </div>
                 </div>
-                <hr className="text-fg.2" />
+                <hr className="text-divider" />
                 <div className="flex gap-[14px]">
                   <button
                     ref={submitRef}
                     disabled={!name || !selectedColor}
                     className={classNames(
-                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all",
+                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-default",
                       !name ? "text-fg.2 bg-bg.2" : "button-default"
                     )}
                     onClick={handleClickSubmit}

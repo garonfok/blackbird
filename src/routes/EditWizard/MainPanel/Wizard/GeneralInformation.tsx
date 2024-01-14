@@ -115,7 +115,7 @@ export function GeneralInformation() {
                     path={mdiChevronDown}
                     size={1}
                     className={classNames(
-                      "transition-all",
+                      "transition-default",
                       open && "rotate-180"
                     )}
                   />
@@ -194,7 +194,7 @@ export function GeneralInformation() {
                     path={mdiChevronDown}
                     size={1}
                     className={classNames(
-                      "transition-all",
+                      "transition-default",
                       open && "rotate-180"
                     )}
                   />

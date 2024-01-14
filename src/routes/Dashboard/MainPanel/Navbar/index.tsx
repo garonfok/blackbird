@@ -46,7 +46,7 @@ export function Navbar() {
         <Popover className="w-full max-w-[512px] flex flex-col">
           <span
             className={classNames(
-              "bg-bg.2 gap-[14px] py-[8px] px-[14px] rounded-default flex text-fg.2 items-center transition-all",
+              "bg-bg.2 gap-[14px] py-[8px] px-[14px] rounded-default flex text-fg.2 items-center transition-default",
               isSearchFocused && "ring-1 ring-fg.0"
             )}
           >
@@ -54,7 +54,7 @@ export function Navbar() {
               path={mdiMagnify}
               size={1}
               className={classNames(
-                "shrink-0 transition-all",
+                "shrink-0 transition-default",
                 isSearchFocused && "text-fg.0"
               )}
             />

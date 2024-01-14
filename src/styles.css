@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer components {
+  .transition-default {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition-duration: 150ms;
+  }
+
   .edit-wizard-panel {
     @apply flex flex-col gap-[14px] h-full overflow-y-auto scrollbar-default flex-grow;
   }
@@ -28,7 +34,7 @@
   }
 
   .input-text {
-    @apply px-[4px] w-full py-[2px] bg-bg.2 rounded-default placeholder-fg.2 outline-none focus:ring-inset focus:ring-1 ring-fg.0 transition-all;
+    @apply px-[4px] w-full py-[2px] bg-bg.2 rounded-default placeholder-fg.2 outline-none focus:ring-inset focus:ring-1 ring-fg.0 transition-default;
   }
 
   .rounded-default {
@@ -36,19 +42,19 @@
   }
 
   .button-primary {
-    @apply bg-primary.default text-bg.0 rounded-default px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all hover:bg-primary.hover;
+    @apply bg-primary.default text-bg.0 rounded-default px-[8px] py-[8px] flex justify-center items-center gap-2 transition-default hover:bg-primary.hover;
   }
 
   .button-default {
-    @apply bg-fg.0 text-bg.0 rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all hover:bg-fg.1;
+    @apply bg-fg.0 text-bg.0 rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-default hover:bg-fg.1;
   }
 
   .link {
-    @apply text-fg.1 transition-all hover:text-fg.0;
+    @apply text-fg.1 transition-default hover:text-fg.0;
   }
 
   .dropdown {
-    @apply bg-bg.0 border border-fg.2 absolute w-[160px] mt-[8px] z-10 rounded-default flex flex-col overflow-hidden;
+    @apply bg-bg.0 border border-bg.2 absolute w-[160px] mt-[8px] z-10 rounded-default flex flex-col overflow-hidden;
   }
 
   .dropdown-item {

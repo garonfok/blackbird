@@ -69,7 +69,7 @@ export function EditSetlistModal(props: {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform w-full max-w-md overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
+              <Dialog.Panel className="transform w-full max-w-md overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-default">
                 <div className="flex flex-col gap-[8px]">
                   <Dialog.Title as="h3" className="text-heading-default">
                     {defaultName ? "Edit Setlist" : "Create Setlist"}
@@ -86,13 +86,13 @@ export function EditSetlistModal(props: {
                     />
                   </div>
                 </div>
-                <hr className="text-fg.2" />
+                <hr className="text-divider" />
                 <div className="flex gap-[14px]">
                   <button
                     disabled={!name}
                     ref={submitRef}
                     className={classNames(
-                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all",
+                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-default",
                       !name
                         ? "text-fg.2 bg-bg.2"
                         : "button-default"

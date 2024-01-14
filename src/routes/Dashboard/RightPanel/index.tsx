@@ -78,7 +78,7 @@ export function RightPanel() {
           <div className="flex flex-col gap-[14px] flex-grow">
             {preview.piece && <Preview piece={preview.piece} />}
           </div>
-          <hr className="text-fg.2" />
+          <hr className="text-divider" />
           <div className="flex flex-col gap-[8px]">
             <button
               onClick={handleClickOpenDirectory}

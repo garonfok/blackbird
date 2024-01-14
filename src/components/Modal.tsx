@@ -73,7 +73,7 @@ export function Modal(
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform w-full max-w-md overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
+              <Dialog.Panel className="transform w-full max-w-md overflow-hidden rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-default">
                 <div className="flex flex-col gap-[8px]">
                   {title && (
                     <Dialog.Title as="h3" className="text-heading-default">
@@ -84,7 +84,7 @@ export function Modal(
                 </div>
                 {(confirmText || cancelText) && (
                   <>
-                    <hr className="text-fg.2" />
+                    <hr className="text-divider" />
                     <div className="flex gap-[14px]">
                       <button
                         ref={submitRef}

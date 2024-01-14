@@ -178,7 +178,7 @@ export function AdvancedFilters(props: { onClose: () => void }) {
                         path={mdiChevronDown}
                         size={1}
                         className={classNames(
-                          "transition-all",
+                          "transition-default",
                           open && "rotate-180"
                         )}
                       />
@@ -225,7 +225,7 @@ export function AdvancedFilters(props: { onClose: () => void }) {
                         path={mdiChevronDown}
                         size={1}
                         className={classNames(
-                          "transition-all",
+                          "transition-default",
                           open && "rotate-180"
                         )}
                       />
@@ -310,7 +310,7 @@ export function AdvancedFilters(props: { onClose: () => void }) {
           role="lyricists"
         />
       </div>
-      <hr className="text-fg.2" />
+      <hr className="text-divider" />
       <div className="flex gap-[14px]">
         <button
           onClick={handleClickClearFilters}

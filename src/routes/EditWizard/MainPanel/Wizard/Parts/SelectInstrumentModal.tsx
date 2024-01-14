@@ -81,7 +81,7 @@ export function SelectInstrumentModal(props: {
               <Tab
                 key={category}
                 className={classNames(
-                  "text-left outline-none transition-all",
+                  "text-left outline-none transition-default",
                   index === tabIndex ? "text-fg.0" : "text-fg.1 hover:text-fg.0"
                 )}
               >

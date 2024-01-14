@@ -104,7 +104,7 @@ export function SelectMusicians(props: {
         </div>
         <div
           className={classNames(
-            "input-text flex-wrap flex gap-[14px] transition-all",
+            "input-text flex-wrap flex gap-[14px] transition-default",
             isFocused && "ring-1 ring-inset ring-fg.0"
           )}
         >

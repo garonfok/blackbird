@@ -55,7 +55,7 @@ export function LeftPanel() {
             <>
               <DragUpload isPanelSmall={isPanelSmall} />
               <FileList />
-              <hr className="text-fg.2" />
+              <hr className="text-divider" />
               <button
                 className="text-left outline-none link"
                 onClick={() => setConfirmingCancel(true)}

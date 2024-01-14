@@ -15,6 +15,8 @@ export default {
       "fg.0": "#F2F3F4",
       "fg.1": "#BFBFC3",
       "fg.2": "#8D8A93",
+
+      "divider": "#2E2E30",
     },
   },
   plugins: [require("tailwind-scrollbar")({ nocompatible: true })],

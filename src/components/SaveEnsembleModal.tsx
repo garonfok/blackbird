@@ -70,7 +70,7 @@ export function SaveEnsembleModal(props: {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="transform rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-all">
+              <Dialog.Panel className="transform rounded-default bg-bg.1 p-[14px] flex flex-col gap-[14px] transition-default">
                 <div className="flex flex-col gap-[8px]">
                   <Dialog.Title as="h3" className="text-heading-default">
                     Creating new template ensemble
@@ -125,13 +125,13 @@ export function SaveEnsembleModal(props: {
                     </div>
                   </div>
                 </div>
-                <hr className="text-fg.2" />
+                <hr className="text-divider" />
                 <div className="flex gap-[14px]">
                   <button
                     disabled={name.length === 0}
                     type="button"
                     className={classNames(
-                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-all",
+                      "rounded-default  px-[8px] py-[8px] flex justify-center items-center gap-2 transition-default",
                       name.length === 0 ? "text-fg.2 bg-bg.2" : "button-default"
                     )}
                     onClick={handleClickSubmit}

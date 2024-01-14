@@ -152,7 +152,7 @@ export function LeftPanel() {
             <button
               onClick={() => dispatch(clearSetlist())}
               className={classNames(
-                "flex items-center gap-[14px] w-full hover:text-fg.0 transition-all",
+                "flex items-center gap-[14px] w-full hover:text-fg.0 transition-default",
                 !setlist.setlist ? "text-fg.0" : "text-fg.1"
               )}
             >
@@ -170,7 +170,7 @@ export function LeftPanel() {
               <div key={sl.id} className="flex gap-[4px] w-full">
                 <button
                   className={classNames(
-                    "flex items-center gap-[14px] w-full hover:text-fg.0 truncate transition-all",
+                    "flex items-center gap-[14px] w-full hover:text-fg.0 truncate transition-default",
                     setlist.setlist?.id === sl.id ? "text-fg.0" : "text-fg.1"
                   )}
                   onClick={() => dispatch(setSetlist({ setlist: sl }))}
@@ -206,7 +206,7 @@ export function LeftPanel() {
               </div>
             ))}
           </div>
-          <hr className="text-fg.2" />
+          <hr className="text-divider" />
           <div
             onContextMenu={handleContextMenuTags}
             className="flex flex-col gap-[14px] h-0 flex-grow"
@@ -220,7 +220,7 @@ export function LeftPanel() {
                   path={mdiChevronDown}
                   size={1}
                   className={classNames(
-                    "transition-all",
+                    "transition-default",
                     isTagsOpen && "rotate-180"
                   )}
                 />
@@ -281,7 +281,7 @@ export function LeftPanel() {
               </div>
             )}
           </div>
-          <hr className="text-fg.2" />
+          <hr className="text-divider" />
           <Link
             to="/settings"
             className="flex gap-[14px] items-center link"
