@@ -6,6 +6,7 @@ import { RightPanel } from "./RightPanel";
 import { ActionCreators } from "redux-undo";
 import { useAppDispatch } from "@/app/hooks";
 import { listen } from "@tauri-apps/api/event";
+import { ResizablePanelGroup } from "@/components/ui/resizable";
 
 export function EditWizard() {
   const dispatch = useAppDispatch();
@@ -25,10 +26,10 @@ export function EditWizard() {
   }, []);
 
   return (
-    <div className="flex h-full w-full">
+    <ResizablePanelGroup direction="horizontal" className="flex h-full w-full">
       <LeftPanel />
       <MainPanel />
       <RightPanel />
-    </div>
+    </ResizablePanelGroup>
   );
 }

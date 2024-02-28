@@ -4,6 +4,7 @@ import { useAppSelector } from "@/app/hooks";
 import { Navbar } from "./Navbar";
 import { Wizard } from "./Wizard";
 import { stepsMachine } from "./stepMachine";
+import { ResizablePanel } from "@/components/ui/resizable";
 
 export function MainPanel() {
   const [stepState, sendStep] = useMachine(stepsMachine);
@@ -11,7 +12,7 @@ export function MainPanel() {
   const piece = useAppSelector((state) => state.piece.present);
 
   return (
-    <div className="w-full flex flex-col overflow-hidden">
+    <ResizablePanel className="w-full flex flex-col overflow-hidden">
       {loading ? (
         <div className="h-full w-full flex justify-center items-center flex-col">
           {/* TODO: Replace this with shadcn/ui component */}
@@ -26,6 +27,6 @@ export function MainPanel() {
           <Navbar stepState={stepState} sendStep={sendStep} />
         </>
       )}
-    </div>
+    </ResizablePanel>
   );
 }

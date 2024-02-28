@@ -6,6 +6,7 @@ import { isWindows } from "@/app/utils";
 import { LeftPanel } from "./LeftPanel";
 import { MainPanel } from "./MainPanel";
 import { RightPanel } from "./RightPanel";
+import { ResizablePanelGroup } from "@/components/ui/resizable";
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -34,9 +35,11 @@ export function Dashboard() {
 
   return (
     <div className="flex h-full w-full">
-      <LeftPanel />
-      <MainPanel />
-      {preview.piece && <RightPanel />}
+      <ResizablePanelGroup direction="horizontal">
+        <LeftPanel />
+        <MainPanel />
+        {preview.piece && <RightPanel />}
+      </ResizablePanelGroup>
     </div>
   );
 }

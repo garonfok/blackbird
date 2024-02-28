@@ -1,3 +1,8 @@
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Setlist, Tag } from "@/app/types";
+import { EditTagModal } from "@/components/EditTagModal";
+import { Modal } from "@/components/Modal";
+import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { Menu } from "@headlessui/react";
 import {
   mdiBookOpenOutline,
@@ -13,11 +18,6 @@ import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { Setlist, Tag } from "@/app/types";
-import { EditTagModal } from "@/components/EditTagModal";
-import { Modal } from "@/components/Modal";
-import { ResizableLeft } from "@/components/ResizeableLeft";
 import { pushTag, removeTag } from "../reducers/filterSlice";
 import { clearSetlist, setSetlist } from "../reducers/setlistSlice";
 import { setSetlists } from "../reducers/setlistsSlice";
@@ -143,8 +143,8 @@ export function LeftPanel() {
 
   return (
     <>
-      <ResizableLeft width={256} minWidth={160} maxWidth={256}>
-        <div className="flex flex-col h-full gap-[14px]">
+      <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+        <div className="p-[14px] flex flex-col h-full gap-[14px]">
           <Link to="/edit-wizard" className="w-full button-primary">
             New piece
           </Link>
@@ -290,7 +290,8 @@ export function LeftPanel() {
             <span>Settings</span>
           </Link>
         </div>
-      </ResizableLeft>
+      </ResizablePanel>
+      <ResizableHandle withHandle />
       <EditSetlistModal
         defaultName={selectedSetlist?.name}
         closeModal={handleCloseEditSetlistModal}

@@ -1,38 +1,23 @@
-import { mdiClose } from "@mdi/js";
-import Icon from "@mdi/react";
-import { invoke } from "@tauri-apps/api";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Piece } from "@/app/types";
 import { Modal } from "@/components/Modal";
-import { ResizableRight } from "@/components/ResizeableRight";
+import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
+import { mdiClose } from "@mdi/js";
+import Icon from "@mdi/react";
+import { invoke } from "@tauri-apps/api";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece } from "../reducers/previewSlice";
 import { Preview } from "./Preview";
 
 export function RightPanel() {
-  const [maxWidth, setMaxWidth] = useState<number>(384);
   const [isConfirmDeletePieceModalOpen, setIsConfirmDeletePieceModalOpen] =
     useState(false);
 
   const preview = useAppSelector((state) => state.preview);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    window.addEventListener("resize", () => {
-      if (window.innerWidth < 1024) {
-        setMaxWidth(256);
-      } else {
-        setMaxWidth(384);
-      }
-    });
-
-    return () => {
-      window.removeEventListener("resize", () => {});
-    };
-  }, []);
 
   function handleClickClearPreview() {
     dispatch(clearPiece());
@@ -68,8 +53,9 @@ export function RightPanel() {
 
   return (
     <>
-      <ResizableRight width={256} minWidth={192} maxWidth={maxWidth}>
-        <div className="flex flex-col h-full gap-[14px]">
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
+        <div className="p-[14px] flex flex-col h-full gap-[14px]">
           <span className="flex justify-end items-center py-[8px]">
             <button onClick={handleClickClearPreview} className="link">
               <Icon path={mdiClose} size={1} />
@@ -98,7 +84,7 @@ export function RightPanel() {
             </button>
           </div>
         </div>
-      </ResizableRight>
+      </ResizablePanel>
       <Modal
         closeModal={handleCancelDeletePiece}
         isOpen={isConfirmDeletePieceModalOpen}
