@@ -1,7 +1,8 @@
-import { DragHandleDots2Icon } from "@radix-ui/react-icons"
+import { mdiDragVerticalVariant } from "@mdi/js"
 import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@/lib/utils"
+import Icon from "@mdi/react"
 
 const ResizablePanelGroup = ({
   className,
@@ -33,11 +34,12 @@ const ResizableHandle = ({
     {...props}
   >
     {withHandle && (
-      <div className="z-10 flex h-4 w-3 items-center justify-center rounded-sm border bg-bg.0">
-        <DragHandleDots2Icon className="h-2.5 w-2.5" />
+      <div className="z-10 flex w-4 h-7 items-center justify-center rounded-default border bg-bg.0">
+        <Icon path={mdiDragVerticalVariant} size={1} className="shrink-0" />
       </div>
     )}
   </ResizablePrimitive.PanelResizeHandle>
 )
 
-export { ResizablePanelGroup, ResizablePanel, ResizableHandle }
+export { ResizableHandle, ResizablePanel, ResizablePanelGroup }
+
