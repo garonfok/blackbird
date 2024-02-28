@@ -1,6 +1,6 @@
 import { mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { pushScore } from "../../../pieceSlice";
 import { ScoresList } from "./ScoresList";
 

@@ -3,7 +3,7 @@ import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Musician } from "src/app/types";
+import { Musician } from "@/app/types";
 
 export function SelectMusicians(props: {
   musicians: Musician[];

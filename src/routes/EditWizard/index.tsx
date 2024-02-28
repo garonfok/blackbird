@@ -4,7 +4,7 @@ import { MainPanel } from "./MainPanel";
 import { RightPanel } from "./RightPanel";
 
 import { ActionCreators } from "redux-undo";
-import { useAppDispatch } from "src/app/hooks";
+import { useAppDispatch } from "@/app/hooks";
 import { listen } from "@tauri-apps/api/event";
 
 export function EditWizard() {

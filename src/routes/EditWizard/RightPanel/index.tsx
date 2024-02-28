@@ -2,8 +2,8 @@ import { mdiChevronDown, mdiCircle, mdiTag } from "@mdi/js";
 import Icon from "@mdi/react";
 import classNames from "classnames";
 import { useEffect, useState } from "react";
-import { useAppSelector } from "src/app/hooks";
-import { ResizableRight } from "src/components/ResizeableRight";
+import { useAppSelector } from "@/app/hooks";
+import { ResizableRight } from "@/components/ResizeableRight";
 
 export function RightPanel() {
   const piece = useAppSelector((state) => state.piece.present);

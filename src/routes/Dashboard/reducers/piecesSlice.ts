@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Piece } from "src/app/types";
+import { Piece } from "@/app/types";
 
 const initialState: Piece[] = [];
 

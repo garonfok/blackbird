@@ -2,7 +2,7 @@ import { mdiChevronDown, mdiCircle, mdiTag } from "@mdi/js";
 import Icon from "@mdi/react";
 import classNames from "classnames";
 import { useState } from "react";
-import { Piece } from "src/app/types";
+import { Piece } from "@/app/types";
 
 export function Preview(props: { piece: Piece }) {
   const { piece } = props;

@@ -3,7 +3,7 @@ import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Instrument } from "src/app/types";
+import { Instrument } from "@/app/types";
 
 export function SelectInstruments(props: {
   instruments: Instrument[];

@@ -1,6 +1,6 @@
 import { useMachine } from "@xstate/react";
 import { ScaleLoader } from "react-spinners";
-import { useAppSelector } from "src/app/hooks";
+import { useAppSelector } from "@/app/hooks";
 import { Navbar } from "./Navbar";
 import { Wizard } from "./Wizard";
 import { stepsMachine } from "./stepMachine";

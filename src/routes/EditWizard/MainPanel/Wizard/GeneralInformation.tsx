@@ -4,9 +4,9 @@ import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api/tauri";
 import classNames from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "src/app/hooks";
-import { Tag } from "src/app/types";
-import { EditTagModal } from "src/components/EditTagModal";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Tag } from "@/app/types";
+import { EditTagModal } from "@/components/EditTagModal";
 import {
   setDifficulty,
   setNotes,

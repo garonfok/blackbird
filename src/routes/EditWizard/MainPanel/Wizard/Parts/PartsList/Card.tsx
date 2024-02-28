@@ -9,9 +9,9 @@ import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useState } from "react";
-import { useAppDispatch } from "src/app/hooks";
-import { EditPart, Instrument } from "src/app/types";
-import { Renameable } from "src/components/Renameable";
+import { useAppDispatch } from "@/app/hooks";
+import { EditPart, Instrument } from "@/app/types";
+import { Renameable } from "@/components/Renameable";
 import {
   formatPartNumbers,
   pushPartInstrument,

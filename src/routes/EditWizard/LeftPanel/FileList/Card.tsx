@@ -1,8 +1,8 @@
 import { mdiClose, mdiFileOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useAppDispatch } from "src/app/hooks";
+import { useAppDispatch } from "@/app/hooks";
 import { deleteFile } from "../../filesSlice";
-import { ByteFile } from "src/app/types";
+import { ByteFile } from "@/app/types";
 import { cleanPiece } from "../../pieceSlice";
 import { invoke } from "@tauri-apps/api";
 

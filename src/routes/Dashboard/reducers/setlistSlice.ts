@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Setlist } from "src/app/types";
+import { Setlist } from "@/app/types";
 
 const initialState: { setlist: Setlist | null } = {
   setlist: null,

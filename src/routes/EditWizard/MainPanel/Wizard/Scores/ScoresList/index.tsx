@@ -6,9 +6,9 @@ import {
 } from "@hello-pangea/dnd";
 import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
 import { MouseEvent, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "src/app/hooks";
-import { EditScore } from "src/app/types";
-import { isWindows } from "src/app/utils";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { EditScore } from "@/app/types";
+import { isWindows } from "@/app/utils";
 import { setScoreRenaming, setScores } from "../../../../pieceSlice";
 import { Card } from "./Card";
 

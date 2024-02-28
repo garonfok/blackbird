@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "src/app/hooks";
-import { Modal } from "src/components/Modal";
-import { ResizableLeft } from "src/components/ResizeableLeft";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Modal } from "@/components/Modal";
+import { ResizableLeft } from "@/components/ResizeableLeft";
 import { clearFiles } from "../filesSlice";
 import { clearPiece } from "../pieceSlice";
 import { DragUpload } from "./DragUpload";

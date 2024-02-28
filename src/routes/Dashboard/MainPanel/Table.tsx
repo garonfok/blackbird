@@ -40,10 +40,10 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "src/app/hooks";
-import { Piece } from "src/app/types";
-import { isWindows } from "src/app/utils";
-import { Modal } from "src/components/Modal";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Piece } from "@/app/types";
+import { isWindows } from "@/app/utils";
+import { Modal } from "@/components/Modal";
 import {
   clearDifficulty,
   clearInstruments,

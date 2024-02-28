@@ -1,8 +1,8 @@
 import { Event, listen } from "@tauri-apps/api/event";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "src/app/hooks";
-import { isWindows } from "src/app/utils";
+import { useAppSelector } from "@/app/hooks";
+import { isWindows } from "@/app/utils";
 import { LeftPanel } from "./LeftPanel";
 import { MainPanel } from "./MainPanel";
 import { RightPanel } from "./RightPanel";

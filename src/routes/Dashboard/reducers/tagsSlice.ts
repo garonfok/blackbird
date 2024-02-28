@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Tag } from "src/app/types";
+import { Tag } from "@/app/types";
 
 const initialState: Tag[] = [];
 

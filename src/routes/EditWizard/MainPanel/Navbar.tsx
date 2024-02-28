@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { clearFiles } from "../filesSlice";
 import { setLoading } from "../loadingSlice";
 import { clearPiece } from "../pieceSlice";

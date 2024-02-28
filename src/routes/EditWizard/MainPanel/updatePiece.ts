@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api";
 import { createDir, writeBinaryFile } from "@tauri-apps/api/fs";
-import { EditPiece } from "src/app/types";
+import { EditPiece } from "@/app/types";
 
 export async function updatePiece(piece: EditPiece, path: string) {
   await invoke("delete_dir", { path });

@@ -3,8 +3,8 @@ import { mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import classNames from "classnames";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "src/app/hooks";
-import { debounce, isWindows } from "src/app/utils";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { debounce, isWindows } from "@/app/utils";
 import { setQuery } from "../querySlice";
 import { AdvancedFilters } from "./AdvancedFilters";
 

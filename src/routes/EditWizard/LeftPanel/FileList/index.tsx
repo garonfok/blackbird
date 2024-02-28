@@ -4,12 +4,12 @@ import {
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import { useAppDispatch, useAppSelector } from "src/app/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { deleteFile, setFiles } from "../../filesSlice";
 import { Card } from "./Card";
 import { MouseEvent, useRef, useState } from "react";
 import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
-import { ByteFile } from "src/app/types";
+import { ByteFile } from "@/app/types";
 import { cleanPiece } from "../../pieceSlice";
 import { invoke } from "@tauri-apps/api";
 

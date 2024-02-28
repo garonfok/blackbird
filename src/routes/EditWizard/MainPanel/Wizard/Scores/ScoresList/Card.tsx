@@ -1,9 +1,9 @@
 import { mdiClose, mdiDragVertical } from "@mdi/js";
 import Icon from "@mdi/react";
 import classNames from "classnames";
-import { useAppDispatch } from "src/app/hooks";
-import { EditScore } from "src/app/types";
-import { Renameable } from "src/components/Renameable";
+import { useAppDispatch } from "@/app/hooks";
+import { EditScore } from "@/app/types";
+import { Renameable } from "@/components/Renameable";
 import { removeScore, updateScoreName } from "../../../../pieceSlice";
 
 export function Card(props: {
