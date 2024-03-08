@@ -1,21 +1,17 @@
-import { Menu } from "@headlessui/react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Piece } from "@/app/types";
+import { isWindows } from "@/app/utils";
+import { Modal } from "@/components/Modal";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {
   mdiChevronDown,
-  mdiChevronRight,
   mdiChevronUp,
   mdiClose,
   mdiDotsHorizontal,
   mdiEraser,
-  mdiTag,
+  mdiTag
 } from "@mdi/js";
 import { Icon } from "@mdi/react";
-import {
-  ClickEvent,
-  Menu as ContextMenu,
-  MenuButton,
-  MenuItem,
-  SubMenu,
-} from "@szhsin/react-menu";
 import {
   Column,
   ColumnDef,
@@ -40,10 +36,6 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { Piece } from "@/app/types";
-import { isWindows } from "@/app/utils";
-import { Modal } from "@/components/Modal";
 import {
   clearDifficulty,
   clearInstruments,
@@ -283,43 +275,35 @@ export function Table() {
                   ))}
                 </ol>
               </div>
-              <div className="relative">
-                <ContextMenu
-                  menuButton={
-                    <MenuButton onClick={(event) => event.stopPropagation()}>
-                      <Icon
-                        path={mdiDotsHorizontal}
-                        size={1}
-                        className="shrink-0 link"
-                      />
-                    </MenuButton>
-                  }
-                >
-                  <div className="dropdown">
-                    {isPieceInCurrentSetlist(info.row.original) && (
-                      <MenuItem
-                        onClick={(event) =>
-                          handleClickRemoveFromSetlist(
-                            event,
-                            info.row.original.id,
-                            setlist.setlist!.id
-                          )
-                        }
-                        className="dropdown-item outline-none"
-                      >
-                        Remove from setlist
-                      </MenuItem>
-                    )}
-                    {isAvailableToAddToSetlist(info.row.original) && (
-                      <SubMenu
-                        label={
-                          <span className="dropdown-item outline-none">
-                            Add to setlist
-                            <Icon path={mdiChevronRight} size={1} />
-                          </span>
-                        }
-                      >
-                        <div className="dropdown">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="link">
+                    <Icon
+                      path={mdiDotsHorizontal}
+                      size={1}
+                      className="shrink-0"
+                    />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>{isPieceInCurrentSetlist(info.row.original) && (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handleClickRemoveFromSetlist(
+                        info.row.original.id,
+                        setlist.setlist!.id
+                      )
+                    }
+                  >
+                    Remove from setlist
+                  </DropdownMenuItem>
+                )}
+                  {isAvailableToAddToSetlist(info.row.original) && (
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger>
+                        Add to setlist
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
                           {setlists
                             .filter(
                               (sl) =>
@@ -328,58 +312,53 @@ export function Table() {
                                 )
                             )
                             .map((sl) => (
-                              <MenuItem
-                                onClick={(event) =>
+                              <DropdownMenuItem
+                                onClick={() =>
                                   handleClickAddToSetlist(
-                                    event,
                                     info.row.original.id,
                                     sl.id
                                   )
                                 }
-                                className="dropdown-item outline-none"
                               >
                                 {sl.name}
-                              </MenuItem>
+                              </DropdownMenuItem>
                             ))}
-                        </div>
-                      </SubMenu>
-                    )}
-                    <MenuItem
-                      onClick={async (event) =>
-                        handleClickOpenFolder(event, info.row.original.path)
-                      }
-                      className="dropdown-item outline-none"
-                    >
-                      Open folder
-                    </MenuItem>
-                    <MenuItem
-                      onClick={(event) =>
-                        handleClickEditPiece(event, info.row.original)
-                      }
-                      className="dropdown-item outline-none"
-                    >
-                      Edit data
-                    </MenuItem>
-                    <MenuItem
-                      onClick={(event) =>
-                        handleClickPrintParts(event, info.row.original.path)
-                      }
-                      className="dropdown-item outline-none"
-                    >
-                      Print parts
-                    </MenuItem>
-                    <MenuItem
-                      onClick={(event) =>
-                        handleClickDeletePiece(event, info.row.original.id)
-                      }
-                      className="dropdown-item outline-none text-error.default hover:text-error.default"
-                    >
-                      Delete
-                    </MenuItem>
-                  </div>
-                </ContextMenu>
-              </div>
-            </div>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                  )}
+                  <DropdownMenuItem
+                    onClick={async () =>
+                      handleClickOpenFolder(info.row.original.path)
+                    }
+                  >
+                    Open folder
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handleClickEditPiece(info.row.original)
+                    }
+                  >
+                    Edit data
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handleClickPrintParts(info.row.original.path)
+                    }
+                  >
+                    Print parts
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handleClickDeletePiece(info.row.original.id)
+                    }
+                    className="text-error.default focus:text-error.default"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div >
           );
         },
       },
@@ -579,23 +558,19 @@ export function Table() {
     dispatch(resetFilter());
   }
 
-  async function handleClickOpenFolder(event: ClickEvent, path: string) {
-    event.syntheticEvent?.stopPropagation();
+  async function handleClickOpenFolder(path: string) {
     await invoke("open", { path });
   }
 
-  function handleClickEditPiece(event: ClickEvent, piece: Piece) {
-    event.syntheticEvent?.stopPropagation();
+  function handleClickEditPiece(piece: Piece) {
     navigate("/edit-wizard", { state: { piece } });
   }
 
-  function handleClickPrintParts(event: ClickEvent, path: string) {
-    event.syntheticEvent?.stopPropagation();
+  function handleClickPrintParts(path: string) {
     void path;
   }
 
-  function handleClickDeletePiece(event: ClickEvent, pieceId: number) {
-    event.syntheticEvent?.stopPropagation();
+  function handleClickDeletePiece(pieceId: number) {
     setPieceIdToDelete(pieceId);
     setIsConfirmDeletePieceModalOpen(true);
   }
@@ -616,21 +591,17 @@ export function Table() {
   }
 
   async function handleClickAddToSetlist(
-    event: ClickEvent,
     pieceId: number,
     setlistId: number
   ) {
-    event.syntheticEvent?.stopPropagation();
     await invoke("setlists_add_piece", { pieceId, setlistId });
     await fetchPieces();
   }
 
   async function handleClickRemoveFromSetlist(
-    event: ClickEvent,
     pieceId: number,
     setlistId: number
   ) {
-    event.syntheticEvent?.stopPropagation();
     await invoke("setlists_remove_piece", { pieceId, setlistId });
     await fetchPieces();
   }
@@ -688,37 +659,37 @@ export function Table() {
     <>
       <div className="p-[14px] flex flex-col gap-[14px] flex-grow">
         <div className="flex gap-[14px] items-center text-fg.1 flex-wrap">
-          <Menu as="div" className="relative">
-            <Menu.Button className="link flex items-center gap-2">
-              {sortOptions.find((option) => option.id === sorting[0].id)?.label}
-              {sorting[0].desc ? (
-                <Icon path={mdiChevronDown} size={1} className="shrink-0" />
-              ) : (
-                <Icon path={mdiChevronUp} size={1} className="shrink-0" />
-              )}
-            </Menu.Button>
-            <Menu.Items as="div" className="dropdown">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="link flex items-center gap-2">
+                {sortOptions.find((option) => option.id === sorting[0].id)?.label}
+                {sorting[0].desc ? (
+                  <Icon path={mdiChevronDown} size={1} className="shrink-0" />
+                ) : (
+                  <Icon path={mdiChevronUp} size={1} className="shrink-0" />
+                )}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
               {sortOptions.map((option) => (
-                <Menu.Item key={option.id}>
-                  <button
-                    className="dropdown-item outline-none gap-2"
-                    onClick={() => handleClickDropdownSelect(option.id)}
-                  >
-                    {option.label}
-                    {sorting[0].id === option.id ? (
-                      <Icon
-                        path={sorting[0].desc ? mdiChevronDown : mdiChevronUp}
-                        size={1}
-                        className=""
-                      />
-                    ) : (
-                      <span className="w-[14px]" />
-                    )}
-                  </button>
-                </Menu.Item>
+                <DropdownMenuItem key={option.id}
+                  className="dropdown-item outline-none gap-2"
+                  onClick={() => handleClickDropdownSelect(option.id)}
+                >
+                  {option.label}
+                  {sorting[0].id === option.id ? (
+                    <Icon
+                      path={sorting[0].desc ? mdiChevronDown : mdiChevronUp}
+                      size={1}
+                      className=""
+                    />
+                  ) : (
+                    <span className="w-[14px]" />
+                  )}
+                </DropdownMenuItem>
               ))}
-            </Menu.Items>
-          </Menu>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {filter.tags.length > 0 &&
             filter.tags.map((tag) => (
               <div
@@ -737,41 +708,41 @@ export function Table() {
             ))}
           {(filter.yearPublishedMin !== 0 ||
             filter.yearPublishedMax !== Infinity) && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
-              <span className="flex gap-[4px]">
-                <span className="text-fg.1">Published:</span>
-                <span className="text-fg.0">
-                  {parseNumberRange(
-                    filter.yearPublishedMin,
-                    filter.yearPublishedMax
-                  )}
+              <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+                <span className="flex gap-[4px]">
+                  <span className="text-fg.1">Published:</span>
+                  <span className="text-fg.0">
+                    {parseNumberRange(
+                      filter.yearPublishedMin,
+                      filter.yearPublishedMax
+                    )}
+                  </span>
                 </span>
-              </span>
-              <button
-                onClick={() => dispatch(clearYearPublished())}
-                className="link"
-              >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={() => dispatch(clearYearPublished())}
+                  className="link"
+                >
+                  <Icon path={mdiClose} size={1} />
+                </button>
+              </div>
+            )}
           {(filter.difficultyMin !== 0 ||
             filter.difficultyMax !== Infinity) && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
-              <span className="flex gap-[4px]">
-                <span className="text-fg.1">Difficulty:</span>
-                <span className="text-fg.0">
-                  {parseNumberRange(filter.difficultyMin, filter.difficultyMax)}
+              <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+                <span className="flex gap-[4px]">
+                  <span className="text-fg.1">Difficulty:</span>
+                  <span className="text-fg.0">
+                    {parseNumberRange(filter.difficultyMin, filter.difficultyMax)}
+                  </span>
                 </span>
-              </span>
-              <button
-                onClick={() => dispatch(clearDifficulty())}
-                className="link"
-              >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={() => dispatch(clearDifficulty())}
+                  className="link"
+                >
+                  <Icon path={mdiClose} size={1} />
+                </button>
+              </div>
+            )}
           {filter.parts.length > 0 && (
             <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
@@ -939,9 +910,9 @@ export function Table() {
                     >
                       {header.id !== "main" || isMainTitle
                         ? flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )
                         : "Composers"}
 
                       {
@@ -961,11 +932,11 @@ export function Table() {
                             />
                           ),
                         }[
-                          header.id !== "main" || isMainTitle
-                            ? (header.column.getIsSorted() as string)
-                            : (table
-                                .getColumn("composers")
-                                ?.getIsSorted() as string)
+                        header.id !== "main" || isMainTitle
+                          ? (header.column.getIsSorted() as string)
+                          : (table
+                            .getColumn("composers")
+                            ?.getIsSorted() as string)
                         ]
                       }
                     </button>
@@ -1002,7 +973,7 @@ export function Table() {
             ))}
           </tbody>
         </table>
-      </div>
+      </div >
       <Modal
         closeModal={handleCancelDeletePiece}
         isOpen={isConfirmDeletePieceModalOpen}

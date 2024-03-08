@@ -53,14 +53,6 @@
     @apply text-fg.1 transition-default hover:text-fg.0;
   }
 
-  .dropdown {
-    @apply bg-bg.0 border border-bg.2 absolute w-[160px] mt-[8px] z-10 rounded-default flex flex-col overflow-hidden;
-  }
-
-  .dropdown-item {
-    @apply px-[8px] py-[4px] flex items-center hover:bg-bg.2 link;
-  }
-
   .scrollbar-default {
     @apply scrollbar-thin scrollbar-thumb-fg.2;
   }

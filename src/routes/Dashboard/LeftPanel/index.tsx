@@ -2,8 +2,8 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Setlist, Tag } from "@/app/types";
 import { EditTagModal } from "@/components/EditTagModal";
 import { Modal } from "@/components/Modal";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
-import { Menu } from "@headlessui/react";
 import {
   mdiBookOpenOutline,
   mdiBookshelf,
@@ -182,27 +182,21 @@ export function LeftPanel() {
                   />
                   <span className="truncate w-full text-left">{sl.name}</span>
                 </button>
-                <Menu as="div" className="relative">
-                  <Menu.Button className="flex items-center link">
-                    <Icon path={mdiDotsHorizontal} size={1} />
-                  </Menu.Button>
-                  <Menu.Items className="dropdown fixed">
-                    <Menu.Item
-                      as="button"
-                      onClick={() => handleClickEditSetlist(sl)}
-                      className="dropdown-item"
-                    >
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="link">
+                      <Icon path={mdiDotsHorizontal} size={1} className="link" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem onClick={() => handleClickEditSetlist(sl)}>
                       Edit
-                    </Menu.Item>
-                    <Menu.Item
-                      as="button"
-                      onClick={() => handleClickDeleteSetlist(sl)}
-                      className="dropdown-item"
-                    >
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleClickDeleteSetlist(sl)}>
                       Delete
-                    </Menu.Item>
-                  </Menu.Items>
-                </Menu>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             ))}
           </div>
@@ -251,31 +245,21 @@ export function LeftPanel() {
                         {tag.name}
                       </div>
                     </button>
-                    <Menu as="div" className="relative">
-                      <Menu.Button className="outline-none flex items-center">
-                        <Icon
-                          path={mdiDotsHorizontal}
-                          size={1}
-                          className="link shrink-0"
-                        />
-                      </Menu.Button>
-                      <Menu.Items className="dropdown fixed">
-                        <Menu.Item
-                          as="button"
-                          onClick={() => handleClickEditTag(tag)}
-                          className="dropdown-item"
-                        >
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="link">
+                          <Icon path={mdiDotsHorizontal} size={1} className="link" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onClick={() => handleClickEditTag(tag)}>
                           Edit
-                        </Menu.Item>
-                        <Menu.Item
-                          as="button"
-                          onClick={() => handleClickDeleteTag(tag)}
-                          className="dropdown-item"
-                        >
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleClickDeleteTag(tag)}>
                           Delete
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Menu>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 ))}
               </div>
