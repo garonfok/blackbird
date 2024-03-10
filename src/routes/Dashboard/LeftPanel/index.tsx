@@ -23,6 +23,8 @@ import { clearSetlist, setSetlist } from "../reducers/setlistSlice";
 import { setSetlists } from "../reducers/setlistsSlice";
 import { setTags } from "../reducers/tagsSlice";
 import { EditSetlistModal } from "./EditSetlistModal";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 export function LeftPanel() {
   const [isEditSetlistModalOpen, setIsEditSetlistModalOpen] = useState(false);
@@ -145,9 +147,11 @@ export function LeftPanel() {
     <>
       <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
         <div className="p-[14px] flex flex-col h-full gap-[14px]">
-          <Link to="/edit-wizard" className="w-full button-primary">
-            New piece
-          </Link>
+          <Button variant="primary" size="default" asChild>
+            <Link to="/edit-wizard">
+              New piece
+            </Link>
+          </Button>
           <div className="flex flex-col gap-[14px] overflow-y-auto max-h-[50%] scrollbar-default">
             <button
               onClick={() => dispatch(clearSetlist())}
@@ -200,7 +204,7 @@ export function LeftPanel() {
               </div>
             ))}
           </div>
-          <hr className="text-divider" />
+          <Separator />
           <div
             onContextMenu={handleContextMenuTags}
             className="flex flex-col gap-[14px] h-0 flex-grow"
@@ -265,7 +269,7 @@ export function LeftPanel() {
               </div>
             )}
           </div>
-          <hr className="text-divider" />
+          <Separator />
           <Link
             to="/settings"
             className="flex gap-[14px] items-center link"
