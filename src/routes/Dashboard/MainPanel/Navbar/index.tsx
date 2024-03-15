@@ -1,4 +1,3 @@
-import { Popover } from "@headlessui/react";
 import { mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import classNames from "classnames";
@@ -7,9 +6,12 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { debounce, isWindows } from "@/app/utils";
 import { setQuery } from "../querySlice";
 import { AdvancedFilters } from "./AdvancedFilters";
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export function Navbar() {
   const [isSearchFocused, setSearchFocused] = useState(false);
+  const [isMacOS, setIsMacOS] = useState(false);
+  const [isFiltersOpen, setFiltersOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -18,16 +20,21 @@ export function Navbar() {
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
+    setOS();
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
+  async function setOS() {
+    setIsMacOS(!(await isWindows()));
+  }
+
   async function handleKeyDown(event: KeyboardEvent) {
     if (
       event.key === "k" &&
-      ((await isWindows()) ? event.ctrlKey : event.metaKey)
+      (isMacOS ? event.metaKey : event.ctrlKey)
     ) {
       event.preventDefault();
       inputRef.current?.focus();
@@ -43,47 +50,49 @@ export function Navbar() {
   return (
     <div className="p-[14px]">
       <div className="flex flex-wrap gap-[14px] items-center">
-        <Popover className="w-full max-w-[512px] flex flex-col">
-          <span
-            className={classNames(
-              "bg-bg.2 gap-[14px] py-[8px] px-[14px] rounded-default flex text-fg.2 items-center transition-default",
-              isSearchFocused && "ring-1 ring-fg.0"
-            )}
-          >
-            <Icon
-              path={mdiMagnify}
-              size={1}
-              className={classNames(
-                "shrink-0 transition-default",
-                isSearchFocused && "text-fg.0"
-              )}
-            />
-            <input
-              ref={inputRef}
-              className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
-              type="text"
-              placeholder="Type Ctrl + K to search"
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-              onChange={handleChangeDebounced}
-            />
-            <Popover.Button>
-              <Icon
-                path={mdiTune}
-                size={1}
-                className="shrink-0 link"
-              />
-            </Popover.Button>
-          </span>
-          <div className="relative">
-            <Popover.Panel className="absolute z-10 w-full top-[14px]">
-              {({ close }) => <AdvancedFilters onClose={close} />}
-            </Popover.Panel>
-          </div>
+        <Popover open={isFiltersOpen} onOpenChange={setFiltersOpen}>
+          <PopoverAnchor asChild>
+            <div className="w-full max-w-[512px] flex flex-col">
+              <span
+                className={classNames(
+                  "bg-bg.2 gap-[14px] py-[8px] px-[14px] rounded-default flex text-fg.2 items-center transition-default",
+                  isSearchFocused && "ring-1 ring-fg.0"
+                )}
+              >
+                <Icon
+                  path={mdiMagnify}
+                  size={1}
+                  className={classNames(
+                    "shrink-0 transition-default",
+                    isSearchFocused && "text-fg.0"
+                  )}
+                />
+                <input
+                  ref={inputRef}
+                  className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
+                  type="text"
+                  placeholder={`Type ${isMacOS ? "Cmd" : "Ctrl"} + K to search`}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                  onChange={handleChangeDebounced}
+                />
+                <PopoverTrigger>
+                  <Icon
+                    path={mdiTune}
+                    size={1}
+                    className="shrink-0 link"
+                  />
+                </PopoverTrigger>
+              </span>
+            </div>
+          </PopoverAnchor>
+          {setlist.setlist && (
+            <span className="text-heading-default">{setlist.setlist.name}</span>
+          )}
+          <PopoverContent className="w-full max-w-lg">
+            <AdvancedFilters onOpenChange={setFiltersOpen} />
+          </PopoverContent>
         </Popover>
-        {setlist.setlist && (
-          <span className="text-heading-default">{setlist.setlist.name}</span>
-        )}
       </div>
     </div>
   );

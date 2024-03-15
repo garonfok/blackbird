@@ -3,11 +3,10 @@ import { Instrument, Musician, Tag } from "@/app/types";
 
 interface Filter {
   tags: Tag[];
-  yearPublishedMin: number;
-  yearPublishedMax: number;
-  difficultyMin: number;
-  difficultyMax: number;
-  parts: string[];
+  yearPublishedMin?: number;
+  yearPublishedMax?: number;
+  difficultyMin?: number;
+  difficultyMax?: number;
   instruments: Instrument[];
   composers: Musician[];
   arrangers: Musician[];
@@ -17,11 +16,10 @@ interface Filter {
 }
 
 interface FilterExclTag {
-  yearPublishedMin: number;
-  yearPublishedMax: number;
-  difficultyMin: number;
-  difficultyMax: number;
-  parts: string[];
+  yearPublishedMin?: number;
+  yearPublishedMax?: number;
+  difficultyMin?: number;
+  difficultyMax?: number;
   instruments: Instrument[];
   composers: Musician[];
   arrangers: Musician[];
@@ -32,11 +30,10 @@ interface FilterExclTag {
 
 const initialState: Filter = {
   tags: [],
-  yearPublishedMin: 0,
-  yearPublishedMax: Infinity,
-  difficultyMin: 0,
-  difficultyMax: Infinity,
-  parts: [],
+  yearPublishedMin: undefined,
+  yearPublishedMax: undefined,
+  difficultyMin: undefined,
+  difficultyMax: undefined,
   instruments: [],
   composers: [],
   arrangers: [],
@@ -76,15 +73,15 @@ export const filterSlice = createSlice({
     clearYearPublished: (state) => {
       return {
         ...state,
-        yearPublishedMin: 0,
-        yearPublishedMax: Infinity,
+        yearPublishedMin: undefined,
+        yearPublishedMax: undefined,
       };
     },
     clearDifficulty: (state) => {
       return {
         ...state,
-        difficultyMin: 0,
-        difficultyMax: Infinity,
+        difficultyMin: undefined,
+        difficultyMax: undefined,
       };
     },
     clearParts: (state) => {

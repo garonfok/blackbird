@@ -2,7 +2,9 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Piece } from "@/app/types";
 import { isWindows } from "@/app/utils";
 import { Modal } from "@/components/Modal";
+import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import {
   mdiChevronDown,
   mdiChevronUp,
@@ -39,11 +41,10 @@ import { useNavigate } from "react-router-dom";
 import {
   clearDifficulty,
   clearInstruments,
-  clearParts,
   clearRole,
   clearYearPublished,
   removeTag,
-  resetFilter,
+  resetFilter
 } from "../reducers/filterSlice";
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece, setPiece } from "../reducers/previewSlice";
@@ -135,33 +136,23 @@ export function Table() {
       });
     }
 
-    if (filter.yearPublishedMin !== 0 || filter.yearPublishedMax !== Infinity) {
+    if (filter.yearPublishedMin !== undefined || filter.yearPublishedMax !== undefined) {
       filteringPieces = filteringPieces.filter((piece) => {
         return (
           piece.year_published &&
-          piece.year_published >= filter.yearPublishedMin &&
-          piece.year_published <= filter.yearPublishedMax
+          piece.year_published >= (filter.yearPublishedMin ?? 0) &&
+          piece.year_published <= (filter.yearPublishedMax ?? Infinity)
         );
       });
     }
 
-    if (filter.yearPublishedMin !== 0 || filter.yearPublishedMax !== Infinity) {
+    if (filter.yearPublishedMin !== undefined || filter.yearPublishedMax !== undefined) {
       filteringPieces = filteringPieces.filter((piece) => {
         return (
           piece.difficulty &&
-          piece.difficulty >= filter.difficultyMin &&
-          piece.difficulty <= filter.difficultyMax
+          piece.difficulty >= (filter.difficultyMin ?? 0) &&
+          piece.difficulty <= (filter.difficultyMax ?? Infinity)
         );
-      });
-    }
-
-    if (filter.parts.length > 0) {
-      filteringPieces = filteringPieces.filter((piece) => {
-        return filter.parts.every((part) => {
-          return piece.parts.some(
-            (piecePart) => piecePart.name.toLowerCase() === part.toLowerCase()
-          );
-        });
       });
     }
 
@@ -606,10 +597,10 @@ export function Table() {
     await fetchPieces();
   }
 
-  function parseNumberRange(num1: number, num2: number) {
-    if (num1 === 0) {
+  function parseNumberRange(num1?: number, num2?: number) {
+    if (num1 === undefined) {
       return `...${num2}`;
-    } else if (num2 === Infinity) {
+    } else if (num2 === undefined) {
       return `${num1}...`;
     } else {
       return `${num1} - ${num2}`;
@@ -706,8 +697,8 @@ export function Table() {
                 </button>
               </div>
             ))}
-          {(filter.yearPublishedMin !== 0 ||
-            filter.yearPublishedMax !== Infinity) && (
+          {(filter.yearPublishedMin !== undefined ||
+            filter.yearPublishedMax !== undefined) && (
               <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
                 <span className="flex gap-[4px]">
                   <span className="text-fg.1">Published:</span>
@@ -726,8 +717,8 @@ export function Table() {
                 </button>
               </div>
             )}
-          {(filter.difficultyMin !== 0 ||
-            filter.difficultyMax !== Infinity) && (
+          {(filter.difficultyMin !== undefined ||
+            filter.difficultyMax !== undefined) && (
               <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
                 <span className="flex gap-[4px]">
                   <span className="text-fg.1">Difficulty:</span>
@@ -743,17 +734,6 @@ export function Table() {
                 </button>
               </div>
             )}
-          {filter.parts.length > 0 && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
-              <span className="flex gap-[4px]">
-                <span className="text-fg.1">Parts:</span>
-                <span className="text-fg.0">{filter.parts.join(", ")}</span>
-              </span>
-              <button onClick={() => dispatch(clearParts())} className="link">
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
-          )}
           {filter.instruments.length > 0 && (
             <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
               <span className="flex gap-[4px]">
@@ -882,16 +862,16 @@ export function Table() {
               </button>
             </div>
           )}
-          <button className="button-default" onClick={handleClickResetFilters}>
+          <Button onClick={handleClickResetFilters} className='gap-2'>
             <Icon path={mdiEraser} size={1} className="shrink-0" />
             <span>Reset filters</span>
-          </button>
+          </Button>
         </div>
         <table
           ref={tableRef}
           className="flex flex-col gap-[14px] flex-grow h-0 overflow-y-auto scrollbar-default"
         >
-          <thead className="pb-[14px] border-b-fg.2 border-b px-[14px]">
+          <thead className="p-[14px]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="flex gap-[14px]">
                 {headerGroup.headers.map((header) => (
@@ -945,6 +925,7 @@ export function Table() {
               </tr>
             ))}
           </thead>
+          <Separator />
           <tbody>
             {table.getRowModel().rows.map((row, index) => (
               <tr
