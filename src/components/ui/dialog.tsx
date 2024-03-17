@@ -1,8 +1,9 @@
-import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { Cross2Icon } from "@radix-ui/react-icons"
+import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { mdiClose } from "@mdi/js"
+import Icon from "@mdi/react"
 
 const Dialog = DialogPrimitive.Root
 
@@ -42,8 +43,8 @@ const DialogContent = React.forwardRef<
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-default opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-1 data-[state=open]:text-fg.1">
-        <Cross2Icon className="h-4 w-4" />
+      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-default opacity-70 ring-offset-fg.2 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-fg.0 focus:ring-offset-2 disabled:pointer-events-none text-fg.1">
+        <Icon path={mdiClose} size={1} />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
@@ -107,14 +108,7 @@ const DialogDescription = React.forwardRef<
 DialogDescription.displayName = DialogPrimitive.Description.displayName
 
 export {
-  Dialog,
-  DialogPortal,
-  DialogOverlay,
-  DialogTrigger,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
+  Dialog, DialogClose,
+  DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger
 }
+
