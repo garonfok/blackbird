@@ -247,12 +247,12 @@ export function SelectMusicians(props: {
                       {getRoleMusicians()
                         .map((c) => c.id)
                         .includes(musician.id) && (
-                        <Icon
-                          path={mdiCheck}
-                          size={1}
-                          className="float-right"
-                        />
-                      )}
+                          <Icon
+                            path={mdiCheck}
+                            size={1}
+                            className="float-right"
+                          />
+                        )}
                     </button>
                   ))
                 ) : (

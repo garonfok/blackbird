@@ -1,12 +1,16 @@
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Tag } from "@/app/types";
+import { EditTagModal } from "@/components/EditTagModal";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Listbox } from "@headlessui/react";
 import { mdiCheck, mdiChevronDown, mdiClose, mdiPlus, mdiTag } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api/tauri";
 import classNames from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { Tag } from "@/app/types";
-import { EditTagModal } from "@/components/EditTagModal";
 import {
   setDifficulty,
   setNotes,
@@ -15,8 +19,6 @@ import {
   setYearPublished,
 } from "../../pieceSlice";
 import { SelectMusicians } from "./components/SelectMusician";
-
-const MAX_DIFFICULTY = 6;
 
 export function GeneralInformation() {
   const [allTags, setAllTags] = useState<Tag[]>([]);
@@ -72,8 +74,8 @@ export function GeneralInformation() {
     <>
       <div className="edit-wizard-panel">
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="title">Title</label>
-          <input
+          <Label htmlFor="title">Title</Label>
+          <Input
             id="title"
             type="text"
             className="input-text"
@@ -84,76 +86,42 @@ export function GeneralInformation() {
           />
         </div>
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="yearPublished">Year Published</label>
-          <input
+          <Label htmlFor="yearPublished">Year Published</Label>
+          <Input
             id="yearPublished"
             type="number"
             className="input-text [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             max={9999}
             value={piece.yearPublished}
             onInput={(event) =>
-              (event.currentTarget.value = event.currentTarget.value.slice(
-                0,
-                4
-              ))
+            (event.currentTarget.value = event.currentTarget.value.slice(
+              0,
+              4
+            ))
             }
             onChange={handleChangeYearPublished}
           />
         </div>
         <SelectMusicians role="composer" />
         <div className="flex flex-col gap-[8px]">
-          <span>Difficulty</span>
-          <Listbox
-            value={piece.difficulty}
-            onChange={(value) => dispatch(setDifficulty(value))}
-          >
-            {({ open }) => (
-              <div className="relative w-full">
-                <Listbox.Button className="input-text flex justify-between w-full">
-                  <span>{piece.difficulty}</span>
-                  <Icon
-                    path={mdiChevronDown}
-                    size={1}
-                    className={classNames(
-                      "transition-default",
-                      open && "rotate-180"
-                    )}
-                  />
-                </Listbox.Button>
-                <Listbox.Options className="dropdown">
-                  <Listbox.Option
-                    value={null}
-                    className={({ active }) =>
-                      classNames(
-                        "dropdown-item italic",
-                        active && "bg-bg.2 text-fg.0"
-                      )
-                    }
-                  >
-                    None
-                  </Listbox.Option>
-                  {Array.from({ length: MAX_DIFFICULTY }, (_, i) => (
-                    <Listbox.Option
-                      key={i}
-                      value={i + 1}
-                      className={({ active }) =>
-                        classNames(
-                          "dropdown-item",
-                          active && "bg-bg.2 text-fg.0"
-                        )
-                      }
-                    >
-                      {i + 1}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-              </div>
-            )}
-          </Listbox>
+          <Label htmlFor="difficulty">Difficulty</Label>
+          <Select value={piece.difficulty?.toString()} onValueChange={(value) => dispatch(setDifficulty(value === "None" ? undefined : Number(value)))}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={"None"}>None</SelectItem>
+              {Array.from({ length: 6 }, (_, i) => (
+                <SelectItem key={i} value={(i + 1).toString()}>
+                  {i + 1}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex flex-col gap-[8px]">
-          <label htmlFor="notes">Notes</label>
-          <textarea
+          <Label htmlFor="notes">Notes</Label>
+          <Textarea
             id="notes"
             rows={6}
             className="input-text resize-none"
@@ -162,7 +130,7 @@ export function GeneralInformation() {
           />
         </div>
         <div className="flex flex-col gap-[8px]">
-          <span>Tags</span>
+          <Label>Tags</Label>
           <Listbox
             multiple
             value={piece.tags}

@@ -6,6 +6,8 @@ import { Wizard } from "./Wizard";
 import { stepsMachine } from "./stepMachine";
 import { ResizablePanel } from "@/components/ui/resizable";
 
+
+
 export function MainPanel() {
   const [stepState, sendStep] = useMachine(stepsMachine);
   const loading = useAppSelector((state) => state.loading);

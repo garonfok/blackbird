@@ -56,7 +56,6 @@ const MultiSelect = ({ options, selected, onChange, className, selectPlaceholder
           <div className="flex gap-1 flex-wrap">
             {selected.length > 0 ? selected.map((item) => (
               <Badge
-                variant="secondary"
                 key={item}
                 className="mr-1 mb-1"
                 onClick={() => handleUnselect(item)}
@@ -75,7 +74,7 @@ const MultiSelect = ({ options, selected, onChange, className, selectPlaceholder
                   }}
                   onClick={() => handleUnselect(item)}
                 >
-                  <Icon path={mdiClose} size={0.75} className="text-bg.0 hover:text-bg.1" />
+                  <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />
                 </button>
               </Badge>
             )) : <span className="text-fg.2">{selectPlaceholder ?? "Select options"}</span>}
