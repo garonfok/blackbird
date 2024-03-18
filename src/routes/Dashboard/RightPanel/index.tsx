@@ -1,20 +1,17 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Piece } from "@/app/types";
-import { Modal } from "@/components/Modal";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { mdiClose } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece } from "../reducers/previewSlice";
 import { Preview } from "./Preview";
 
 export function RightPanel() {
-  const [isConfirmDeletePieceModalOpen, setIsConfirmDeletePieceModalOpen] =
-    useState(false);
-
   const preview = useAppSelector((state) => state.preview);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -31,16 +28,7 @@ export function RightPanel() {
     navigate("/edit-wizard", { state: { piece: preview.piece } });
   }
 
-  function handleClickDelete() {
-    setIsConfirmDeletePieceModalOpen(true);
-  }
-
-  function handleCancelDeletePiece() {
-    setIsConfirmDeletePieceModalOpen(false);
-  }
-
   async function handleConfirmDeletePiece() {
-    setIsConfirmDeletePieceModalOpen(false);
     dispatch(clearPiece());
     await invoke("pieces_delete", { id: preview.piece!.id });
     await fetchPieces();
@@ -76,25 +64,30 @@ export function RightPanel() {
               Edit data
             </button>
             <button className="text-left link">Print parts</button>
-            <button
-              onClick={handleClickDelete}
-              className="text-left text-error.default hover:text-error.default link"
-            >
-              Delete
-            </button>
+            <Dialog>
+              <DialogTrigger className="text-error.default hover:text-error.default text-left">
+                Delete
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Are you sure you want to delete this piece?</DialogTitle>
+                  <DialogDescription>
+                    This action cannot be undone!
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose>
+                    <Button variant="link">Cancel</Button>
+                  </DialogClose>
+                  <DialogClose>
+                    <Button onClick={handleConfirmDeletePiece}>Delete</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </ResizablePanel>
-      <Modal
-        closeModal={handleCancelDeletePiece}
-        isOpen={isConfirmDeletePieceModalOpen}
-        onConfirm={handleConfirmDeletePiece}
-        cancelText="Cancel"
-        title="Are you sure you want to delete this piece?"
-        confirmText="Delete"
-      >
-        This cannot be undone!
-      </Modal>
     </>
   );
 }
