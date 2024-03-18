@@ -24,10 +24,6 @@ export function Preview(props: { piece: Piece }) {
         <div className="flex flex-wrap gap-[14px]">
           {piece.tags.map((tag) => {
             return (
-              // <div key={tag.id} className="flex gap-[4px] items-center text-body-small-default rounded-default border border-fg.2 py-[4px] px-[4px]">
-              //   <Icon path={mdiTag} size={.8} color={tag.color} />
-              //   <span>{tag.name}</span>
-              // </div>
               <Badge variant="outline" key={tag.id}>
                 <Icon path={mdiTag} size={.8} color={tag.color} />
                 <span>{tag.name}</span>
