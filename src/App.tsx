@@ -1,11 +1,12 @@
+import store from "@/app/store";
+import { Toaster } from "@/components/ui/toaster";
+import { Dashboard } from "@/routes/Dashboard";
+import { EditWizard } from "@/routes/EditWizard";
+import { Settings } from "@/routes/Settings";
 import React, { useCallback } from "react";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import store from "./app/store";
-import { Dashboard } from "./routes/Dashboard";
-import { EditWizard } from "./routes/EditWizard";
-import { Settings } from "./routes/Settings";
-import "./styles.css";
+import "@/styles.css";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +39,7 @@ export function App() {
       >
         <RouterProvider router={router} />
       </div>
+      <Toaster />
     </Provider>
   );
 }

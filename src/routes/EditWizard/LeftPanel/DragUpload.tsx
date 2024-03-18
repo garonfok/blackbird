@@ -1,21 +1,22 @@
-import { mdiClose, mdiLoading, mdiUpload } from "@mdi/js";
-import Icon from "@mdi/react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { ByteFile, Piece } from "@/app/types";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { toast } from "@/components/ui/use-toast";
 import { open } from "@tauri-apps/api/dialog";
 import { Event, listen } from "@tauri-apps/api/event";
 import { readBinaryFile } from "@tauri-apps/api/fs";
-import classNames from "classnames";
 import { useCallback, useEffect, useState } from "react";
-import { Toaster, toast } from "react-hot-toast";
 import { useLocation } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { ByteFile, Piece } from "@/app/types";
+import { ActionCreators } from "redux-undo";
 import { pushFiles } from "../filesSlice";
 import { setPiece } from "../pieceSlice";
-import { ActionCreators } from "redux-undo";
 
-export function DragUpload(props: { isPanelSmall: boolean }) {
-  const { isPanelSmall } = props;
+export function DragUpload() {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadCount, setUploadCount] = useState(0);
+  const [totalFiles, setTotalFiles] = useState(0);
+  const [isFinishedUploading, setIsFinishedUploading] = useState(false);
 
   const { state } = useLocation();
 
@@ -65,19 +66,19 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
             orchestrators,
             parts: parts
               ? parts.map((part) => ({
-                  ...part,
-                  show: false,
-                  renaming: false,
-                  file: null,
-                }))
+                ...part,
+                show: false,
+                renaming: false,
+                file: null,
+              }))
               : [],
             scores: scores
               ? scores.map((score) => ({
-                  ...score,
-                  show: false,
-                  renaming: false,
-                  file: null,
-                }))
+                ...score,
+                show: false,
+                renaming: false,
+                file: null,
+              }))
               : [],
             tags,
             title,
@@ -105,8 +106,13 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
     };
   }, []);
 
+
+
   async function uploadFiles(selectedFiles: string[]) {
+    setTotalFiles(selectedFiles.length);
+    setUploadCount(0);
     setIsUploading(true);
+    setIsFinishedUploading(false);
 
     const uploadPromises = selectedFiles.map(async (selectedFile, index) => {
       if (files.some((file) => file.name === selectedFile)) return;
@@ -119,32 +125,24 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
         bytearray: buffer,
       };
 
+      setUploadCount((count) => count + 1);
+
       dispatch(pushFiles({ files: [data] }));
     });
+
     await Promise.all(uploadPromises);
-    setIsUploading(false);
     toastUploadComplete();
+
+    setIsFinishedUploading(true);
+    setTimeout(() => {
+      setIsUploading(false);
+    }, 5000);
   }
 
   function toastUploadComplete() {
-    toast.custom(
-      (t) => (
-        // TODO: Replace this with shadcn/ui toast
-        <div
-          className={classNames(
-            "z-auto px-[14px] py-[8px] bg-bg.2 rounded-default flex items-center gap-[4px] w-[256px]"
-          )}
-        >
-          <div className="flex w-full gap-[4px]">
-            <span className="text-fg.0">Finished uploading.</span>
-          </div>
-          <button onClick={() => toast.remove(t.id)} className="link">
-            <Icon path={mdiClose} size={1} className="shrink-0" />
-          </button>
-        </div>
-      ),
-      { id: "uploadConfirm", duration: 3000, position: "bottom-center" }
-    );
+    toast({
+      title: "Finished uploading."
+    });
   }
 
   const handleClickUploadFiles = useCallback(async () => {
@@ -164,23 +162,16 @@ export function DragUpload(props: { isPanelSmall: boolean }) {
 
   return (
     <>
-      {isUploading ? (
-        <div className="w-full button-primary bg-opacity-10 text-fg.2">
-          <Icon path={mdiLoading} size={1} className="shrink-0 animate-spin" />
-          <span>{!isPanelSmall ? "Uploading files" : "Uploading..."}</span>
-        </div>
-      ) : (
-        <button
-          onClick={handleClickUploadFiles}
-          className="w-full button-primary"
-        >
-          <Icon path={mdiUpload} size={1} className="shrink-0" />
-          <span>
-            {!isPanelSmall ? "Drag and drop PDFs, or browse" : "Upload PDFs"}
-          </span>
-        </button>
+      <div className="flex items-center gap-[14px]">
+        <Button variant="secondary" onClick={handleClickUploadFiles}>Browse files</Button>
+        <span>Drop files here</span>
+      </div>
+      {isUploading && (
+        <>
+          <Progress value={uploadCount / totalFiles * 100} />
+          {isFinishedUploading ? <span>Finished uploading</span> : <span>Uploaded {uploadCount} of {totalFiles}</span>}
+        </>
       )}
-      <Toaster />
     </>
   );
 }
