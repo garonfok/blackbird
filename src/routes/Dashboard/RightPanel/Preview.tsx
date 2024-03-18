@@ -101,7 +101,6 @@ export function Preview(props: { piece: Piece }) {
               piece.composers.length > 0 &&
               piece.scores.map((score) => (
                 <div key={score.id} className="flex gap-[4px] items-center">
-                  <span>{score.name}</span>
                   <Icon
                     path={mdiCircle}
                     size={0.5}
@@ -109,6 +108,7 @@ export function Preview(props: { piece: Piece }) {
                       score.path ? "text-fg.0" : "text-fg.2"
                     )}
                   />
+                  <span>{score.name}</span>
                 </div>
               ))}
           </div>
@@ -120,7 +120,6 @@ export function Preview(props: { piece: Piece }) {
                   onClick={() => handleClickToggleOpen(index)}
                 >
                   <span className="flex items-center gap-[4px]">
-                    <span className="truncate">{part.name}</span>
                     <Icon
                       path={mdiCircle}
                       size={0.5}
@@ -128,6 +127,7 @@ export function Preview(props: { piece: Piece }) {
                         part.path ? "text-fg.0" : "text-fg.2"
                       )}
                     />
+                    <span className="truncate">{part.name}</span>
                   </span>
                   <Icon
                     path={mdiChevronDown}
