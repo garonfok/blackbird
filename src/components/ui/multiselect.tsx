@@ -100,6 +100,7 @@ const MultiSelect = ({ options, selected, onChange, className, selectPlaceholder
                         )
                         setOpen(true)
                       }}
+                      className="text-fg.1"
                     >
                       <Icon
                         path={mdiCheck}

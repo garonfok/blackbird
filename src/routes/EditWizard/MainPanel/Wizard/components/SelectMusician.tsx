@@ -221,6 +221,7 @@ export function SelectMusicians(props: {
                             handleClickSelectMusician(musician);
                             setPopoverOpen(true);
                           }}
+                          className="text-fg.1"
                         >
                           <Icon
                             path={mdiCheck}
