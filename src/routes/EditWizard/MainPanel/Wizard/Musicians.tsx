@@ -1,4 +1,4 @@
-import { SelectMusicians } from "./components/SelectMusician";
+import { SelectMusicians } from "./components/SelectMusicians";
 
 export function Musicians() {
   return (

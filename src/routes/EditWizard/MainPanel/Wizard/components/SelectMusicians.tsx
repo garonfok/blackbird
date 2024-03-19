@@ -19,7 +19,7 @@ import { mdiCheck, mdiChevronDown, mdiClose, mdiDragVertical, mdiPlus } from "@m
 import Icon from "@mdi/react";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { invoke } from "@tauri-apps/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   setArrangers,
   setComposers,
@@ -41,6 +41,10 @@ export function SelectMusicians(props: {
 
   const dispatch = useAppDispatch();
   const musicians = useAppSelector((state) => state.musicians);
+
+  useEffect(() => {
+    fetchMusicians();
+  }, [])
 
   function getRoleMusicians() {
     switch (role) {

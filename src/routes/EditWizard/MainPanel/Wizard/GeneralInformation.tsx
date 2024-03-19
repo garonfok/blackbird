@@ -1,16 +1,16 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Tag } from "@/app/types";
-import { EditTagModal } from "@/components/EditTagModal";
+import { EditTagDialog } from "@/components/EditTagDialog";
+import { SelectTags } from "@/components/SelectTags";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Listbox } from "@headlessui/react";
-import { mdiCheck, mdiChevronDown, mdiClose, mdiPlus, mdiTag } from "@mdi/js";
+import { mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api/tauri";
-import classNames from "classnames";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   setDifficulty,
   setNotes,
@@ -18,16 +18,14 @@ import {
   setTitle,
   setYearPublished,
 } from "../../pieceSlice";
-import { SelectMusicians } from "./components/SelectMusician";
+import { SelectMusicians } from "./components/SelectMusicians";
 
 export function GeneralInformation() {
+  const [createTagOpen, setCreateTagOpen] = useState(false);
   const [allTags, setAllTags] = useState<Tag[]>([]);
-  const [isEditTagModalOpen, setIsEditTagModalOpen] = useState(false);
 
   const piece = useAppSelector((state) => state.piece.present);
   const dispatch = useAppDispatch();
-
-  const tagDropdownRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     fetchTags();
@@ -38,19 +36,11 @@ export function GeneralInformation() {
     setAllTags(tags);
   }
 
-  function handleClickRemoveTag(tagId: number) {
-    const filtered = piece.tags.filter((tag) => tag.id !== tagId);
-    dispatch(setTags(filtered));
-  }
-
   async function handleConfirmCreateTag(name: string, color: string) {
     const tagId = await invoke("tags_add", { name, color });
     await fetchTags();
     const tag = (await invoke("tags_get_by_id", { id: tagId })) as Tag;
     dispatch(setTags([...piece.tags, tag]));
-
-    tagDropdownRef.current?.blur();
-    setIsEditTagModalOpen(false);
   }
 
   const handleChangeYearPublished = useCallback(
@@ -65,10 +55,6 @@ export function GeneralInformation() {
     },
     []
   );
-
-  const handleClickOpenEditTagModal = useCallback(() => {
-    setIsEditTagModalOpen(true);
-  }, []);
 
   return (
     <>
@@ -131,79 +117,18 @@ export function GeneralInformation() {
         </div>
         <div className="flex flex-col gap-[8px]">
           <Label>Tags</Label>
-          <Listbox
-            multiple
-            value={piece.tags}
-            onChange={(tags) => dispatch(setTags(tags))}
-          >
-            {({ open }) => (
-              <div className="relative w-full">
-                <Listbox.Button
-                  ref={tagDropdownRef}
-                  className="input-text flex gap-[14px] w-full"
-                >
-                  <div className="flex-wrap gap-[8px] w-full flex">
-                    {piece.tags.map((tag) => (
-                      <span
-                        key={tag.id}
-                        className={classNames(
-                          "px-[14px] py-[8px] rounded-default flex items-center gap-[8px] bg-bg.1"
-                        )}
-                      >
-                        <Icon path={mdiTag} size={1} color={tag.color} />
-                        {tag.name}
-                        <button onClick={() => handleClickRemoveTag(tag.id)}>
-                          <Icon path={mdiClose} size={1} className="link" />
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                  <Icon
-                    path={mdiChevronDown}
-                    size={1}
-                    className={classNames(
-                      "transition-default",
-                      open && "rotate-180"
-                    )}
-                  />
-                </Listbox.Button>
-                <Listbox.Options className="dropdown w-full">
-                  {allTags.map((tag) => (
-                    <Listbox.Option
-                      key={tag.id}
-                      value={tag}
-                      className={({ active }) =>
-                        classNames(
-                          "dropdown-item",
-                          active && "bg-bg.2 text-fg.0"
-                        )
-                      }
-                    >
-                      <Icon path={mdiTag} size={1} color={tag.color} />
-                      <span className="w-full">{tag.name}</span>
-                      {piece.tags.map((t) => t.id).includes(tag.id) && (
-                        <Icon path={mdiCheck} size={1} />
-                      )}
-                    </Listbox.Option>
-                  ))}
-                </Listbox.Options>
-                <button
-                  className="px-[14px] py-[8px] link text-left flex items-center gap-[8px]"
-                  onClick={handleClickOpenEditTagModal}
-                >
-                  <Icon path={mdiPlus} size={1} />
-                  <span>Create tag</span>
-                </button>
-              </div>
-            )}
-          </Listbox>
+          <SelectTags allTags={allTags} selected={piece.tags} onChange={(tags) => dispatch(setTags(tags))} />
+          <Dialog open={createTagOpen} onOpenChange={setCreateTagOpen}>
+            <DialogTrigger className="flex items-center gap-[8px] hover:text-fg.0 transitio-default">
+              <Icon path={mdiPlus} size={1} />
+              <span>Create Tag</span>
+            </DialogTrigger>
+            <DialogContent>
+              <EditTagDialog onConfirm={handleConfirmCreateTag} onClose={setCreateTagOpen} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
-      <EditTagModal
-        isOpen={isEditTagModalOpen}
-        closeModal={() => setIsEditTagModalOpen(false)}
-        onConfirm={handleConfirmCreateTag}
-      />
     </>
   );
 }

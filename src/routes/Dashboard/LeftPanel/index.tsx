@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Setlist, Tag } from "@/app/types";
+import { EditTagDialog } from "@/components/EditTagDialog";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -29,15 +30,9 @@ import { pushTag, removeTag } from "../reducers/filterSlice";
 import { clearSetlist, setSetlist } from "../reducers/setlistSlice";
 import { setSetlists } from "../reducers/setlistsSlice";
 import { setTags } from "../reducers/tagsSlice";
-import { TagForm } from "./Tag";
 
 const setlistFormSchema = z.object({
   name: z.string()
-});
-
-const tagFormSchema = z.object({
-  name: z.string(),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid color")
 });
 
 export function LeftPanel() {
@@ -49,15 +44,8 @@ export function LeftPanel() {
     }
   });
 
-  const tagForm = useForm<z.infer<typeof tagFormSchema>>({
-    resolver: zodResolver(tagFormSchema),
-    defaultValues: {
-      name: "",
-      color: "#000000"
-    }
-  });
-
   const [isTagsOpen, setIsTagsOpen] = useState(false);
+  const [isTagDialogOpen, setIsTagDialogOpen] = useState(false);
 
   const dispatch = useAppDispatch();
   const tags = useAppSelector((state) => state.tags);
@@ -104,11 +92,11 @@ export function LeftPanel() {
     await fetchSetlists();
   }
 
-  async function onSubmitTagForm(data: z.infer<typeof tagFormSchema>, tagId?: number) {
+  async function onSubmitTagForm(name?: string, color?: string, tagId?: number) {
     if (tagId) {
-      await invoke("tags_update", { id: tagId, name: data.name, color: data.color });
+      await invoke("tags_update", { id: tagId, name, color });
     } else {
-      await invoke("tags_add", { name: data.name, color: data.color });
+      await invoke("tags_add", { name, color });
     }
     await fetchTags();
   }
@@ -300,33 +288,12 @@ export function LeftPanel() {
                 />
                 <span>Tags</span>
               </CollapsibleTrigger>
-              <Dialog onOpenChange={() => tagForm.reset({ name: "", color: "#000000" })}>
+              <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
                 <DialogTrigger className="hover:text-fg.0 transition-default">
                   <Icon path={mdiPlus} size={1} />
                 </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create a new tag</DialogTitle>
-                  </DialogHeader>
-                  <Form {...tagForm}>
-                    <form onSubmit={tagForm.handleSubmit(() => onSubmitTagForm(tagForm.getValues()))} className="space-y-[14px] text-fg.1">
-                      <TagForm tagForm={tagForm} />
-                      <DialogFooter>
-                        <DialogClose>
-                          <Button
-                            variant="link"
-                          >
-                            Cancel
-                          </Button>
-                        </DialogClose>
-                        <DialogClose>
-                          <Button type="submit" onClick={() => onSubmitTagForm(tagForm.getValues())}>
-                            Create
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </form>
-                  </Form>
+                  <EditTagDialog onConfirm={() => onSubmitTagForm} onClose={setIsTagDialogOpen} />
                 </DialogContent>
               </Dialog>
             </span>
@@ -356,41 +323,16 @@ export function LeftPanel() {
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
-                        <Form {...tagForm}>
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <DropdownMenuItem onSelect={(e) => {
-                                e.preventDefault()
-                                tagForm.reset({ name: tag.name, color: tag.color })
-                              }}>
-                                Edit
-                              </DropdownMenuItem>
-                            </DialogTrigger>
-                            <DialogContent>
-                              <DialogHeader>
-                                <DialogTitle>Edit tag</DialogTitle>
-                              </DialogHeader>
-                              <form onSubmit={tagForm.handleSubmit(() => onSubmitTagForm(tagForm.getValues(), tag.id))} className="space-y-[14px] text-fg.1">
-                                <TagForm tagForm={tagForm} />
-                                <DialogFooter>
-                                  <DialogClose asChild>
-                                    <Button
-                                      variant="link"
-                                      type="reset"
-                                    >
-                                      Cancel
-                                    </Button>
-                                  </DialogClose>
-                                  <DialogClose asChild>
-                                    <Button type="submit" onClick={() => onSubmitTagForm(tagForm.getValues(), tag.id)}>
-                                      Save
-                                    </Button>
-                                  </DialogClose>
-                                </DialogFooter>
-                              </form>
-                            </DialogContent>
-                          </Dialog>
-                        </Form>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              Edit
+                            </DropdownMenuItem>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <EditTagDialog defaultTag={tag} onConfirm={onSubmitTagForm} onClose={setIsTagDialogOpen} />
+                          </DialogContent>
+                        </Dialog>
                         <Dialog>
                           <DialogTrigger asChild>
                             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-error.default focus:text-error.default">
@@ -439,7 +381,7 @@ export function LeftPanel() {
             <span>Settings</span>
           </Link>
         </div>
-      </ResizablePanel>
+      </ResizablePanel >
       <ResizableHandle withHandle />
     </>
   );
