@@ -100,6 +100,7 @@ export function SelectTags(props: { allTags: Tag[], selected: Tag[], onChange: (
                             "opacity-100" : "opacity-0"
                         )}
                       />
+                      <Icon path={mdiTag} size={0.75} color={tag.color} className="mr-1" />
                       {tag.name}
                     </CommandItem>
                   ))}
