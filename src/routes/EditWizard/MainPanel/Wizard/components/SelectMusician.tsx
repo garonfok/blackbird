@@ -1,18 +1,25 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Musician } from "@/app/types";
 import { EditMusicianDialog } from "@/components/EditMusicianDialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import {
   DragDropContext,
   Draggable,
   DropResult,
   Droppable,
 } from "@hello-pangea/dnd";
-import { mdiCheck, mdiClose, mdiDragVertical, mdiPlus } from "@mdi/js";
+import { mdiCheck, mdiChevronDown, mdiClose, mdiDragVertical, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
+import { PopoverTrigger } from "@radix-ui/react-popover";
 import { invoke } from "@tauri-apps/api";
-import classNames from "classnames";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   setArrangers,
   setComposers,
@@ -27,25 +34,13 @@ export function SelectMusicians(props: {
 }) {
   const { role } = props;
 
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
 
-  const [isFocused, setIsFocused] = useState(false);
-
-  const [query, setQuery] = useState("");
   const piece = useAppSelector((state) => state.piece.present);
 
   const dispatch = useAppDispatch();
   const musicians = useAppSelector((state) => state.musicians);
-
-  const inputRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    fetchMusicians();
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   function getRoleMusicians() {
     switch (role) {
@@ -99,14 +94,7 @@ export function SelectMusicians(props: {
       id: musicianId,
     })) as Musician;
     setRoleMusicians([...getRoleMusicians(), musician]);
-    inputRef.current?.blur();
   }
-
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
-      setIsFocused(false);
-    }
-  }, []);
 
   function handleDragEnd(result: DropResult) {
     const { destination, source } = result;
@@ -148,126 +136,121 @@ export function SelectMusicians(props: {
     } else {
       setRoleMusicians([...getRoleMusicians(), musician]);
     }
-    setIsFocused(false);
   }
-
-  const filteredMusicians = musicians.filter((musician) => {
-    const fullName = [musician.first_name, musician.last_name].join(" ");
-    return fullName.toLowerCase().includes(query.toLowerCase());
-  });
-
   return (
     <>
       <div className="flex flex-col gap-[8px]">
-        <label htmlFor="title">
+        <Label htmlFor={role}>
           {role.charAt(0).toUpperCase() + role.slice(1)}s
-        </label>
-        <div ref={inputRef} className="w-full gap-[4px] flex flex-col">
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId={"droppable"} direction="horizontal">
-              {(provided) => (
-                <div
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  className={classNames(
-                    "input-text flex-wrap flex gap-[14px] transition-default",
-                    isFocused && "ring-1 ring-inset ring-fg.0"
-                  )}
-                >
-                  {getRoleMusicians().map((musician, index) => (
-                    <Draggable
-                      key={musician.id}
-                      draggableId={musician.id.toString()}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
+        </Label>
+        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={popoverOpen}
+              onClick={() => setPopoverOpen(!open)}
+              className={cn("w-full justify-between border-fg.2 bg-bg.2", getRoleMusicians().length > 1 ? "h-full" : "h-10")}
+            >
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId={"droppable"} direction="horizontal">
+                  {provided => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="flex gap-1 flex-wrap">
+                      {getRoleMusicians().length > 0 ? getRoleMusicians().map((musician, index) => (
+                        <Draggable
+                          key={musician.id}
+                          draggableId={musician.id.toString()}
+                          index={index}
                         >
-                          <span
-                            key={musician.id}
-                            className="px-[14px] py-[8px] rounded-default flex items-center gap-[8px] bg-bg.1"
-                          >
-                            <span className="flex gap-[2px]">
-                              <Icon
-                                path={mdiDragVertical}
-                                size={1}
-                                className="ml-[-10px]"
-                              />
-                              {musician.first_name} {musician.last_name}
-                            </span>
-                            <button
-                              onClick={() =>
-                                handleClickRemoveMusician(musician.id)
-                              }
-                            >
-                              <Icon path={mdiClose} size={1} className="link" />
-                            </button>
-                          </span>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                  <input
-                    type="text"
-                    className="flex-grow bg-transparent outline-none placeholder-fg.2"
-                    onChange={(event) => setQuery(event.currentTarget.value)}
-                    value={query}
-                    placeholder={
-                      role === "composer" && piece.composers.length === 0
-                        ? "Required"
-                        : ""
-                    }
-                    onFocus={() => setIsFocused(true)}
-                  />
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-          <div className="relative">
-            {isFocused && (
-              <div className="dropdown w-full">
-                {filteredMusicians.length > 0 ? (
-                  filteredMusicians.map((musician) => (
-                    <button
-                      key={musician.id}
-                      className="dropdown-item justify-between"
-                      onClick={() => handleClickSelectMusician(musician)}
-                    >
-                      {musician.first_name} {musician.last_name}
-                      {getRoleMusicians()
-                        .map((c) => c.id)
-                        .includes(musician.id) && (
+                          {provided => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}>
+                              <Badge
+                                className="mr-1 mb-1"
+                              >
+                                <Icon
+                                  path={mdiDragVertical}
+                                  size={1}
+                                  className="ml-[-10px]"
+                                />
+                                {musician.first_name} {musician.last_name}
+                                <button
+                                  className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-fg.0 focus:ring-offset-2"
+                                  onKeyDown={e => {
+                                    if (e.key === "Enter") {
+                                      handleClickRemoveMusician(musician.id);
+                                    }
+                                  }}
+                                  onMouseDown={e => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                  onClick={() => handleClickRemoveMusician(musician.id)}
+                                >
+                                  <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />
+                                </button>
+                              </Badge>
+                            </div>
+                          )}
+                        </Draggable>
+                      )) : <span className="text-fg.2">Required</span>}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+              <Icon path={mdiChevronDown} size={1} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", popoverOpen && "rotate-180")} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0">
+            <Command>
+              <CommandInput placeholder="Search for a musician" />
+              <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandGroup>
+                  <ScrollArea>
+                    <div className="max-h-60">
+                      {musicians.map((musician) => (
+                        <CommandItem
+                          key={musician.id}
+                          onSelect={() => {
+                            handleClickSelectMusician(musician);
+                            setPopoverOpen(true);
+                          }}
+                        >
                           <Icon
                             path={mdiCheck}
                             size={1}
-                            className="float-right"
+                            className={cn(
+                              "mr-2",
+                              getRoleMusicians().includes(musician) ?
+                                "opacity-100" : "opacity-0"
+                            )}
                           />
-                        )}
-                    </button>
-                  ))
-                ) : (
-                  <div className="px-[14px] py-[8px] text-fg.2">
-                    No results
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-            <DialogTrigger className="flex items-center gap-[8px] hover:text-fg.0 transitio-default">
-              <Icon path={mdiPlus} size={1} />
-              <span>Create musician</span>
-            </DialogTrigger>
-            <DialogContent>
-              <EditMusicianDialog onConfirm={onCreateMusician} onClose={setCreateOpen} />
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+                          {musician.first_name} {musician.last_name}
+                        </CommandItem>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+          <DialogTrigger className="flex items-center gap-[8px] hover:text-fg.0 transitio-default">
+            <Icon path={mdiPlus} size={1} />
+            <span>Create musician</span>
+          </DialogTrigger>
+          <DialogContent>
+            <EditMusicianDialog onConfirm={onCreateMusician} onClose={setCreateOpen} />
+          </DialogContent>
+        </Dialog>
+      </div >
     </>
   );
 }
