@@ -58,11 +58,10 @@ const MultiSelect = ({ options, selected, onChange, className, selectPlaceholder
               <Badge
                 key={item}
                 className="mr-1 mb-1"
-                onClick={() => handleUnselect(item)}
               >
                 {options.find((option) => option.value === item)?.label}
                 <button
-                  className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-fg.0 focus:ring-offset-2"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleUnselect(item);
