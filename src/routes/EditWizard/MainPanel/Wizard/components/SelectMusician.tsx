@@ -198,7 +198,7 @@ export function SelectMusicians(props: {
                             </div>
                           )}
                         </Draggable>
-                      )) : <span className="text-fg.2">Required</span>}
+                      )) : <span className="text-fg.1">Required</span>}
                     </div>
                   )}
                 </Droppable>

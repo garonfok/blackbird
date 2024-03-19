@@ -76,7 +76,7 @@ const MultiSelect = ({ options, selected, onChange, className, selectPlaceholder
                   <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />
                 </button>
               </Badge>
-            )) : <span className="text-fg.2">{selectPlaceholder ?? "Select options"}</span>}
+            )) : <span className="text-fg.1">{selectPlaceholder ?? "Select options"}</span>}
           </div>
           <Icon path={mdiChevronDown} size={1} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", open && "rotate-180")} />
         </Button>
