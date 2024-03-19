@@ -1,3 +1,7 @@
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Musician } from "@/app/types";
+import { EditMusicianDialog } from "@/components/EditMusicianDialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   DragDropContext,
   Draggable,
@@ -9,9 +13,6 @@ import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import classNames from "classnames";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { Musician } from "@/app/types";
-import { EditMusicianModal } from "@/components/EditMusicianModal";
 import {
   setArrangers,
   setComposers,
@@ -26,8 +27,9 @@ export function SelectMusicians(props: {
 }) {
   const { role } = props;
 
+  const [createOpen, setCreateOpen] = useState(false);
+
   const [isFocused, setIsFocused] = useState(false);
-  const [isEditMusicianModalOpen, setIsEditMusicianModalOpen] = useState(false);
 
   const [query, setQuery] = useState("");
   const piece = useAppSelector((state) => state.piece.present);
@@ -90,10 +92,7 @@ export function SelectMusicians(props: {
     dispatch(setMusicians({ musicians: fetchedMusicians }));
   }
 
-  async function handleConfirmCreateMusician(
-    firstName: string,
-    lastName?: string
-  ) {
+  async function onCreateMusician(firstName: string, lastName?: string) {
     const musicianId = await invoke("musicians_add", { firstName, lastName });
     await fetchMusicians();
     const musician = (await invoke("musicians_get_by_id", {
@@ -101,17 +100,12 @@ export function SelectMusicians(props: {
     })) as Musician;
     setRoleMusicians([...getRoleMusicians(), musician]);
     inputRef.current?.blur();
-    setIsEditMusicianModalOpen(false);
   }
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
       setIsFocused(false);
     }
-  }, []);
-
-  const handleClickOpenEditMusicianModal = useCallback(() => {
-    setIsEditMusicianModalOpen(true);
   }, []);
 
   function handleDragEnd(result: DropResult) {
@@ -263,20 +257,17 @@ export function SelectMusicians(props: {
               </div>
             )}
           </div>
-          <button
-            className="link flex items-center gap-[8px]"
-            onClick={handleClickOpenEditMusicianModal}
-          >
-            <Icon path={mdiPlus} size={1} />
-            <span>Create musician</span>
-          </button>
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <DialogTrigger className="flex items-center gap-[8px] hover:text-fg.0 transitio-default">
+              <Icon path={mdiPlus} size={1} />
+              <span>Create musician</span>
+            </DialogTrigger>
+            <DialogContent>
+              <EditMusicianDialog onConfirm={onCreateMusician} onClose={setCreateOpen} />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
-      <EditMusicianModal
-        isOpen={isEditMusicianModalOpen}
-        closeModal={() => setIsEditMusicianModalOpen(false)}
-        onConfirm={handleConfirmCreateMusician}
-      />
     </>
   );
 }
