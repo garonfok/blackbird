@@ -1,5 +1,6 @@
 import { useAppSelector } from "@/app/hooks";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
+import { cn } from "@/lib/utils";
 import { mdiChevronDown, mdiCircle, mdiTag } from "@mdi/js";
 import Icon from "@mdi/react";
 import classNames from "classnames";
@@ -99,14 +100,12 @@ export function RightPanel() {
                 piece.composers.length > 0 &&
                 piece.scores.map((score) => (
                   <div key={score.id} className="flex gap-[4px] items-center">
-                    <span>{score.name}</span>
                     <Icon
                       path={mdiCircle}
                       size={0.5}
-                      className={classNames(
-                        score.file ? "text-fg.0" : "text-fg.2"
-                      )}
+                      className={cn("text-fg.0", !score.file && "opacity-0")}
                     />
+                    <span>{score.name}</span>
                   </div>
                 ))}
             </div>
@@ -118,14 +117,12 @@ export function RightPanel() {
                     onClick={() => handleClickToggleOpen(index)}
                   >
                     <span className="flex items-center gap-[4px]">
-                      <span className="truncate">{part.name}</span>
                       <Icon
                         path={mdiCircle}
                         size={0.5}
-                        className={classNames(
-                          part.file ? "text-fg.0" : "text-fg.2"
-                        )}
+                        className={cn("text-fg.0", !part.file && "opacity-0")}
                       />
+                      <span className="truncate">{part.name}</span>
                     </span>
                     <Icon
                       path={mdiChevronDown}

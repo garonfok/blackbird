@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { useState } from "react";
 import { Piece } from "@/app/types";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export function Preview(props: { piece: Piece }) {
   const { piece } = props;
@@ -104,9 +105,7 @@ export function Preview(props: { piece: Piece }) {
                   <Icon
                     path={mdiCircle}
                     size={0.5}
-                    className={classNames(
-                      score.path ? "text-fg.0" : "text-fg.2"
-                    )}
+                    className={cn("text-fg.0", !score.path && "opacity-0")}
                   />
                   <span>{score.name}</span>
                 </div>
@@ -123,9 +122,7 @@ export function Preview(props: { piece: Piece }) {
                     <Icon
                       path={mdiCircle}
                       size={0.5}
-                      className={classNames(
-                        part.path ? "text-fg.0" : "text-fg.2"
-                      )}
+                      className={cn("text-fg.0", !part.path && "opacity-0")}
                     />
                     <span className="truncate">{part.name}</span>
                   </span>
