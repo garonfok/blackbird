@@ -119,7 +119,7 @@ export function GeneralInformation() {
           <Label>Tags</Label>
           <SelectTags allTags={allTags} selected={piece.tags} onChange={(tags) => dispatch(setTags(tags))} />
           <Dialog open={createTagOpen} onOpenChange={setCreateTagOpen}>
-            <DialogTrigger className="flex items-center gap-[8px] hover:text-fg.0 transitio-default">
+            <DialogTrigger className="flex items-center gap-[8px] hover:text-fg.0 transition-default">
               <Icon path={mdiPlus} size={1} />
               <span>Create Tag</span>
             </DialogTrigger>
