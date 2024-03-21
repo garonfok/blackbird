@@ -1,12 +1,13 @@
 import store from "@/app/store";
 import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Dashboard } from "@/routes/Dashboard";
 import { EditWizard } from "@/routes/EditWizard";
 import { Settings } from "@/routes/Settings";
+import "@/styles.css";
 import React, { useCallback } from "react";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "@/styles.css";
 
 const router = createBrowserRouter([
   {
@@ -33,13 +34,15 @@ export function App() {
 
   return (
     <Provider store={store}>
-      <div
-        onContextMenu={handleContextMenu}
-        className="bg-bg.0 text-body-default w-screen h-screen select-none cursor-default"
-      >
-        <RouterProvider router={router} />
-      </div>
-      <Toaster />
+      <TooltipProvider>
+        <div
+          onContextMenu={handleContextMenu}
+          className="bg-bg.0 text-body-default w-screen h-screen select-none cursor-default"
+        >
+          <RouterProvider router={router} />
+        </div>
+        <Toaster />
+      </TooltipProvider>
     </Provider>
   );
 }

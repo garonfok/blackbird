@@ -88,7 +88,7 @@ export function GeneralInformation() {
             onChange={handleChangeYearPublished}
           />
         </div>
-        <SelectMusicians role="composer" />
+        <SelectMusicians role="composer" required />
         <div className="flex flex-col gap-[8px]">
           <Label htmlFor="difficulty">Difficulty</Label>
           <Select value={piece.difficulty?.toString()} onValueChange={(value) => dispatch(setDifficulty(value === "None" ? undefined : Number(value)))}>

@@ -1,48 +1,14 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { EditPart, Ensemble, Instrument } from "@/app/types";
-import { Modal } from "@/components/Modal";
-import { SaveEnsembleModal } from "@/components/SaveEnsembleModal";
-import { mdiFloppy, mdiTextBoxPlusOutline } from "@mdi/js";
-import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
-import { useMachine } from "@xstate/react";
-import { useCallback, useState } from "react";
-import { createMachine } from "xstate";
+import { useCallback } from "react";
 import { formatPartNumbers, pushPart, setParts } from "../../../pieceSlice";
-import { LoadEnsembleModal } from "./LoadEnsembleModal";
 import { PartsList } from "./PartsList";
+import { SaveEnsemble } from "./SaveEnsembleDialog";
+import { SelectEnsemble } from "./SelectEnsembleDialog";
 import { SelectInstrument } from "./SelectInstrumentDialog";
 
-const loadEnsembleMachine = createMachine({
-  id: "loadEnsemble",
-  predictableActionArguments: true,
-  initial: "idle",
-  states: {
-    idle: {
-      on: {
-        SELECT: "selecting",
-      },
-    },
-    selecting: {
-      on: {
-        CONFIRM: "confirming",
-        CANCEL: "idle",
-      },
-    },
-    confirming: {
-      on: {
-        FINISH: "idle",
-      },
-    },
-  },
-});
-
 export function Parts() {
-  const [isSaveEnsembleModalOpen, setIsSaveEnsembleModalOpen] = useState(false);
-  const [ensembleIdToLoad, setEnsembleIdToLoad] = useState<number | null>(null);
-
-  const [loadEnsembleState, sendLoadEnsemble] = useMachine(loadEnsembleMachine);
-
   const dispatch = useAppDispatch();
   const piece = useAppSelector((state) => state.piece.present);
 
@@ -69,11 +35,11 @@ export function Parts() {
     [piece.parts]
   );
 
-  const handleConfirmSaveEnsemble = useCallback(
-    async (name: string, category: string) => {
+  const onSubmitSaveEnsemble = useCallback(
+    async (name: string, category?: string) => {
       const ensembleId = (await invoke("ensembles_add", {
         name,
-        category: category === "" ? null : category,
+        category: category === undefined ? null : category,
       })) as number;
 
       for (let i = 0; i < piece.parts.length; i++) {
@@ -93,9 +59,9 @@ export function Parts() {
     [piece.parts]
   );
 
-  const handleConfirmConfirmEnsemble = useCallback(async () => {
+  async function onEnsembleSelect(ensembleId: number) {
     const ensemble = (await invoke("ensembles_get_by_id", {
-      id: ensembleIdToLoad,
+      id: ensembleId,
     })) as Ensemble;
 
     const { parts } = ensemble;
@@ -112,63 +78,16 @@ export function Parts() {
       });
     }
     dispatch(setParts(partsToAdd));
-    setEnsembleIdToLoad(null);
-    sendLoadEnsemble("FINISH");
-  }, [ensembleIdToLoad]);
-
-  const handleConfirmLoadEnsemble = useCallback(
-    async (ensembleId: number) => {
-      setEnsembleIdToLoad(ensembleId);
-      sendLoadEnsemble("CONFIRM");
-    },
-    [ensembleIdToLoad]
-  );
-
-  const handleCloseConfirmEnsemble = useCallback(() => {
-    setEnsembleIdToLoad(null);
-    sendLoadEnsemble("CANCEL");
-  }, []);
+  }
 
   return (
     <>
       <div className="edit-wizard-panel overflow-hidden">
         <PartsList />
         <SelectInstrument onInstrumentSelect={onInstrumentSelect} />
-        <button
-          onClick={() => setIsSaveEnsembleModalOpen(true)}
-          className="text-left link flex gap-1"
-        >
-          <Icon path={mdiFloppy} size={1} />
-          Save current parts as ensemble template
-        </button>
-        <button
-          onClick={() => sendLoadEnsemble("SELECT")}
-          className="text-left link flex gap-1"
-        >
-          <Icon path={mdiTextBoxPlusOutline} size={1} />
-          Load ensemble
-        </button>
+        <SaveEnsemble onSubmit={onSubmitSaveEnsemble} />
+        <SelectEnsemble onEnsembleSelect={onEnsembleSelect} />
       </div>
-      <SaveEnsembleModal
-        closeModal={() => setIsSaveEnsembleModalOpen(false)}
-        isOpen={isSaveEnsembleModalOpen}
-        onConfirm={handleConfirmSaveEnsemble}
-      />
-      <LoadEnsembleModal
-        closeModal={() => sendLoadEnsemble("CANCEL")}
-        isOpen={loadEnsembleState.matches("selecting")}
-        onConfirm={handleConfirmLoadEnsemble}
-      />
-      <Modal
-        isOpen={loadEnsembleState.matches("confirming")}
-        closeModal={handleCloseConfirmEnsemble}
-        title="Override ensemble?"
-        onConfirm={handleConfirmConfirmEnsemble}
-        confirmText="Yes"
-        cancelText="Cancel"
-      >
-        This will overwrite all currently entered parts.
-      </Modal>
     </>
   );
 }

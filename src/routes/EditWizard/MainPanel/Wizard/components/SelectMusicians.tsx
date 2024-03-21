@@ -31,8 +31,9 @@ import { setMusicians } from "../musiciansSlice";
 
 export function SelectMusicians(props: {
   role: "composer" | "arranger" | "transcriber" | "orchestrator" | "lyricist";
+  required?: boolean;
 }) {
-  const { role } = props;
+  const { role, required } = props;
 
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -202,7 +203,7 @@ export function SelectMusicians(props: {
                             </div>
                           )}
                         </Draggable>
-                      )) : <span className="text-fg.1">Required</span>}
+                      )) : <span className="text-fg.1">{required && "Required"}</span>}
                     </div>
                   )}
                 </Droppable>

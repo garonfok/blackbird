@@ -20,15 +20,12 @@ import {
   setPartInstruments,
   updatePartName,
 } from "../../../../pieceSlice";
-import { SelectInstrumentModal } from "../SelectInstrumentModal";
 
 export function Card(props: {
   index: number;
   part: EditPart;
   selected: boolean;
 }) {
-  const [isSelectInstrumentModalOpen, setIsSelectInstrumentModalOpen] =
-    useState(false);
 
   const { index, part, selected } = props;
   const dispatch = useAppDispatch();
@@ -150,7 +147,6 @@ export function Card(props: {
                 </DragDropContext>
                 <button
                   className="flex gap-[4px] link"
-                  onClick={() => setIsSelectInstrumentModalOpen(true)}
                 >
                   <Icon path={mdiPlus} size={1} />
                   Add instrument
@@ -170,11 +166,6 @@ export function Card(props: {
           />
         </button>
       </div>
-      <SelectInstrumentModal
-        closeModal={() => setIsSelectInstrumentModalOpen(false)}
-        isOpen={isSelectInstrumentModalOpen}
-        onConfirm={handleConfirmSelectInstrument}
-      />
     </>
   );
 }
