@@ -1,17 +1,17 @@
-import { mdiFloppy, mdiPlus, mdiTextBoxPlusOutline } from "@mdi/js";
-import Icon from "@mdi/react";
-import { invoke } from "@tauri-apps/api";
-import { useMachine } from "@xstate/react";
-import { useCallback, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { EditPart, Ensemble, Instrument } from "@/app/types";
 import { Modal } from "@/components/Modal";
 import { SaveEnsembleModal } from "@/components/SaveEnsembleModal";
+import { mdiFloppy, mdiTextBoxPlusOutline } from "@mdi/js";
+import Icon from "@mdi/react";
+import { invoke } from "@tauri-apps/api";
+import { useMachine } from "@xstate/react";
+import { useCallback, useState } from "react";
 import { createMachine } from "xstate";
 import { formatPartNumbers, pushPart, setParts } from "../../../pieceSlice";
 import { LoadEnsembleModal } from "./LoadEnsembleModal";
 import { PartsList } from "./PartsList";
-import { SelectInstrumentModal } from "./SelectInstrumentModal";
+import { SelectInstrument } from "./SelectInstrumentDialog";
 
 const loadEnsembleMachine = createMachine({
   id: "loadEnsemble",
@@ -38,8 +38,6 @@ const loadEnsembleMachine = createMachine({
 });
 
 export function Parts() {
-  const [isSelectInstrumentModalOpen, setIsSelectInstrumentModalOpen] =
-    useState(false);
   const [isSaveEnsembleModalOpen, setIsSaveEnsembleModalOpen] = useState(false);
   const [ensembleIdToLoad, setEnsembleIdToLoad] = useState<number | null>(null);
 
@@ -48,7 +46,7 @@ export function Parts() {
   const dispatch = useAppDispatch();
   const piece = useAppSelector((state) => state.piece.present);
 
-  const handleConfirmSelectInstrument = useCallback(
+  const onInstrumentSelect = useCallback(
     async (instrumentId: number) => {
       const instrument = (await invoke("instruments_get_by_id", {
         id: instrumentId,
@@ -135,33 +133,22 @@ export function Parts() {
     <>
       <div className="edit-wizard-panel overflow-hidden">
         <PartsList />
-        <button
-          onClick={() => setIsSelectInstrumentModalOpen(true)}
-          className="text-left link flex gap-[14px]"
-        >
-          <Icon path={mdiPlus} size={1} />
-          Add part
-        </button>
+        <SelectInstrument onInstrumentSelect={onInstrumentSelect} />
         <button
           onClick={() => setIsSaveEnsembleModalOpen(true)}
-          className="text-left link flex gap-[14px]"
+          className="text-left link flex gap-1"
         >
           <Icon path={mdiFloppy} size={1} />
-          Save as template ensemble
+          Save current parts as ensemble template
         </button>
         <button
           onClick={() => sendLoadEnsemble("SELECT")}
-          className="text-left link flex gap-[14px]"
+          className="text-left link flex gap-1"
         >
           <Icon path={mdiTextBoxPlusOutline} size={1} />
           Load ensemble
         </button>
       </div>
-      <SelectInstrumentModal
-        closeModal={() => setIsSelectInstrumentModalOpen(false)}
-        isOpen={isSelectInstrumentModalOpen}
-        onConfirm={handleConfirmSelectInstrument}
-      />
       <SaveEnsembleModal
         closeModal={() => setIsSaveEnsembleModalOpen(false)}
         isOpen={isSaveEnsembleModalOpen}
