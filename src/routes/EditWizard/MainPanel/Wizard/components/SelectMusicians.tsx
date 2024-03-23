@@ -186,6 +186,16 @@ export function SelectMusicians(props: {
                                 {musician.first_name} {musician.last_name}
                                 <button
                                   className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-fg.0 focus:ring-offset-2"
+                                  onKeyDown={e => {
+                                    if (e.key === "Enter") {
+                                      handleClickRemoveMusician(musician.id);
+                                    }
+                                  }}
+                                  onMouseDown={e => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                  }}
+                                  onClick={() => handleClickRemoveMusician(musician.id)}
                                   onSelect={() => handleClickRemoveMusician(musician.id)}
                                 >
                                   <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />

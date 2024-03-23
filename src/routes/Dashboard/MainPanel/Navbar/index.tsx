@@ -1,12 +1,13 @@
-import { mdiMagnify, mdiTune } from "@mdi/js";
-import { Icon } from "@mdi/react";
-import classNames from "classnames";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { debounce, isWindows } from "@/app/utils";
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { mdiMagnify, mdiTune } from "@mdi/js";
+import { Icon } from "@mdi/react";
+import { register } from "@tauri-apps/api/globalShortcut";
+import classNames from "classnames";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { setQuery } from "../querySlice";
 import { AdvancedFilters } from "./AdvancedFilters";
-import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export function Navbar() {
   const [isSearchFocused, setSearchFocused] = useState(false);
@@ -19,26 +20,17 @@ export function Navbar() {
   const setlist = useAppSelector((state) => state.setlist);
 
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
     setOS();
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
+    reigsterShortcuts();
   }, []);
 
   async function setOS() {
     setIsMacOS(!(await isWindows()));
   }
 
-  async function handleKeyDown(event: KeyboardEvent) {
-    if (
-      event.key === "k" &&
-      (isMacOS ? event.metaKey : event.ctrlKey)
-    ) {
-      event.preventDefault();
-      inputRef.current?.focus();
-    }
+  async function reigsterShortcuts() {
+    await register("CommandOrControl+K", () =>
+      inputRef.current?.focus());
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {

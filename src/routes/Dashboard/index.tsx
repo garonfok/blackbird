@@ -1,12 +1,12 @@
+import { useAppSelector } from "@/app/hooks";
+import { ResizablePanelGroup } from "@/components/ui/resizable";
 import { Event, listen } from "@tauri-apps/api/event";
+import { register } from "@tauri-apps/api/globalShortcut";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "@/app/hooks";
-import { isWindows } from "@/app/utils";
 import { LeftPanel } from "./LeftPanel";
 import { MainPanel } from "./MainPanel";
 import { RightPanel } from "./RightPanel";
-import { ResizablePanelGroup } from "@/components/ui/resizable";
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -14,17 +14,14 @@ export function Dashboard() {
 
   useEffect(() => {
     const unlisten = listen("tauri://file-drop", handleDrop);
-    document.addEventListener("keydown", handleKeyDown);
+    reigsterShortcuts();
     return () => {
       unlisten;
     };
   }, []);
 
-  async function handleKeyDown(e: KeyboardEvent) {
-    if (e.key === "n" && ((await isWindows()) ? e.ctrlKey : e.metaKey)) {
-      e.preventDefault();
-      navigate("/edit-wizard");
-    }
+  async function reigsterShortcuts() {
+    await register("CommandOrControl+N", () => navigate("/edit-wizard"));
   }
 
   function handleDrop(event: Event<string[]>): void {

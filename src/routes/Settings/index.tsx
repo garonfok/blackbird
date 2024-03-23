@@ -4,19 +4,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { OpenOnStartup } from "./OpenOnStartup";
 import { WorkingDirectory } from "./WorkingDirectory";
 import { useEffect } from "react";
+import { register } from "@tauri-apps/api/globalShortcut";
 export function Settings() {
   const navigate = useNavigate();
   useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
+    reigsterShortcuts();
   }, []);
 
-  function handleKeyDown(e: KeyboardEvent) {
-    if (e.key === "Escape") {
-      navigate("/");
-    }
+  async function reigsterShortcuts() {
+    await register("Escape", () => navigate("/"));
   }
 
   return (
