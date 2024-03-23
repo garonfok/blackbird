@@ -51,16 +51,7 @@ export function SelectTags(props: { allTags: Tag[], selected: Tag[], onChange: (
                 {tag.name}
                 <button
                   className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-fg.0 focus:ring-offset-2"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleUnselect(tag);
-                    }
-                  }}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  onClick={() => handleUnselect(tag)}
+                  onSelect={() => handleUnselect(tag)}
                 >
                   <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />
                 </button>
