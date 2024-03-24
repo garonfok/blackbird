@@ -1,19 +1,12 @@
+import { useHotkey } from "@/hooks/useHotkey";
 import { mdiHomeOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link, useNavigate } from "react-router-dom";
 import { OpenOnStartup } from "./OpenOnStartup";
 import { WorkingDirectory } from "./WorkingDirectory";
-import { useEffect } from "react";
-import { register } from "@tauri-apps/api/globalShortcut";
 export function Settings() {
   const navigate = useNavigate();
-  useEffect(() => {
-    reigsterShortcuts();
-  }, []);
-
-  async function reigsterShortcuts() {
-    await register("Escape", () => navigate("/"));
-  }
+  useHotkey("Escape", () => navigate("/"));
 
   return (
     <>

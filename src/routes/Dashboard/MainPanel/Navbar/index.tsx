@@ -1,9 +1,9 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { debounce, isWindows } from "@/app/utils";
 import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useHotkey } from "@/hooks/useHotkey";
 import { mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
-import { register } from "@tauri-apps/api/globalShortcut";
 import classNames from "classnames";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { setQuery } from "../querySlice";
@@ -19,18 +19,16 @@ export function Navbar() {
   const dispatch = useAppDispatch();
   const setlist = useAppSelector((state) => state.setlist);
 
+  useHotkey("k", () => {
+    inputRef.current?.focus();
+  })
+
   useEffect(() => {
     setOS();
-    reigsterShortcuts();
   }, []);
 
   async function setOS() {
     setIsMacOS(!(await isWindows()));
-  }
-
-  async function reigsterShortcuts() {
-    await register("CommandOrControl+K", () =>
-      inputRef.current?.focus());
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {

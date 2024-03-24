@@ -35,9 +35,6 @@
         "all": false,
         "exit": false,
         "relaunch": true
-      },
-      "globalShortcut": {
-        "all": true
       }
     },
     "bundle": {
