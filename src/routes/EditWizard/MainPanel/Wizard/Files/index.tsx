@@ -73,7 +73,7 @@ export function Files() {
             </div>
           ))}
         </div>
-        <hr className="text-divider" />
+        <hr className="text-divider.default" />
         <div className="flex flex-col">
           {piece.parts.map((part, index) => (
             <div key={part.id} className="flex flex-col gap-[8px]">

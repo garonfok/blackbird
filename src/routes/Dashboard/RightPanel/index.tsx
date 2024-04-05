@@ -41,7 +41,7 @@ export function RightPanel() {
 
   return (
     <>
-      <ResizableHandle withHandle />
+      <ResizableHandle />
       <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
         <div className="p-[14px] flex flex-col h-full gap-[14px]">
           <span className="flex justify-end items-center py-[8px]">
@@ -52,7 +52,7 @@ export function RightPanel() {
           <div className="flex flex-col gap-[14px] flex-grow">
             {preview.piece && <Preview piece={preview.piece} />}
           </div>
-          <hr className="text-divider" />
+          <hr className="text-divider.default" />
           <div className="flex flex-col gap-[8px]">
             <button
               onClick={handleClickOpenDirectory}

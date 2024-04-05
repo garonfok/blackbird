@@ -8,20 +8,21 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
-import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   mdiBookOpenOutline,
   mdiBookshelf,
-  mdiChevronDown,
+  mdiCircle,
   mdiCog,
   mdiDotsHorizontal,
+  mdiMenuDown,
   mdiPlus,
-  mdiTag
+  mdiTextBoxPlusOutline
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
-import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -44,7 +45,9 @@ export function LeftPanel() {
     }
   });
 
-  const [isTagsOpen, setIsTagsOpen] = useState(false);
+  const [setlistCollapsibleOpen, setSetlistCollapsibleOpen] = useState(false);
+  const [tagsCollapsibleOpen, setTagsCollapsibleOpen] = useState(false);
+
   const [isTagDialogOpen, setIsTagDialogOpen] = useState(false);
 
   const dispatch = useAppDispatch();
@@ -104,285 +107,285 @@ export function LeftPanel() {
   return (
     <>
       <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-        <div className="p-[14px] flex flex-col h-full gap-[14px]">
-          <Button variant="primary" size="default" asChild>
-            <Link to="/edit-wizard">
-              New piece
-            </Link>
-          </Button>
-          <div className="flex flex-col gap-[14px] overflow-y-auto max-h-[50%] scrollbar-default">
-            <button
-              onClick={() => dispatch(clearSetlist())}
-              className={classNames(
-                "flex items-center gap-[14px] w-full hover:text-fg.0 transition-default",
-                !setlist.setlist ? "text-fg.0" : "text-fg.1"
-              )}
-            >
-              <Icon path={mdiBookshelf} size={1} />
-              <span>All pieces</span>
-            </button>
-            <Form {...setlistForm}>
-              <Dialog onOpenChange={() => setlistForm.reset({ name: "" })}>
-                <DialogTrigger className="flex gap-[14px] hover:text-fg.0 transition-default">
-                  <Icon path={mdiPlus} size={1} />
-                  <span>Create setlist</span>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Create a new setlist</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={setlistForm.handleSubmit(() => onSubmitSetlistForm(setlistForm.getValues()))} className="space-y-[14px] text-fg.1">
-                    <FormField
-                      control={setlistForm.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <DialogFooter>
-                      <DialogClose>
-                        <Button
-                          variant="link"
-                        >
-                          Cancel
+        <ScrollArea>
+          <div className="h-screen">
+            <div className="bg-sidebar-bg.default p-[14px] flex flex-col gap-[8px] h-full justify-between">
+              <div className="flex flex-col gap-[14px]">
+                <Button variant="sidebar" asChild>
+                  <Link to="/edit-wizard" className="flex items-center gap-[8px]">
+                    <Icon path={mdiTextBoxPlusOutline} size={0.667} />
+                    <span>New piece</span>
+                  </Link>
+                </Button>
+                <div className="flex flex-col gap-[2px]">
+                  <Button
+                    variant="sidebar"
+                    onClick={() => dispatch(clearSetlist())}
+                    className={cn(!setlist.setlist && "bg-sidebar-bg.focus")}
+                  >
+                    <Icon path={mdiBookshelf} size={0.667} />
+                    <span>All pieces</span>
+                  </Button>
+                  <Collapsible open={setlistCollapsibleOpen} onOpenChange={setSetlistCollapsibleOpen}>
+                    <CollapsibleTrigger asChild className="w-full">
+                      <span className="w-full flex items-center">
+                        <Button variant="sidebarCollapisble" className="w-full">
+                          <span>Setlists</span>
+                          <Icon path={mdiMenuDown} size={0.667} className={cn(setlistCollapsibleOpen && "rotate-180")} />
                         </Button>
-                      </DialogClose>
-                      <DialogClose>
-                        <Button type="submit" onClick={() => onSubmitSetlistForm(setlistForm.getValues())}>
-                          Create
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </Form>
-            {setlists.map((sl) => (
-              <div key={sl.id} className="flex gap-[4px] w-full">
-                <button
-                  className={classNames(
-                    "flex items-center gap-[14px] w-full hover:text-fg.0 truncate transition-default",
-                    setlist.setlist?.id === sl.id ? "text-fg.0" : "text-fg.1"
-                  )}
-                  onClick={() => dispatch(setSetlist({ setlist: sl }))}
-                >
-                  <Icon
-                    path={mdiBookOpenOutline}
-                    size={1}
-                    className="shrink-0"
-                  />
-                  <span className="truncate w-full text-left">{sl.name}</span>
-                </button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="link">
-                      <Icon path={mdiDotsHorizontal} size={1} className="link" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <Form {...setlistForm}>
-                      <Dialog onOpenChange={() => setlistForm.reset({ name: sl.name })}>
-                        <DialogTrigger asChild>
-                          <DropdownMenuItem onSelect={(e) => {
-                            e.preventDefault()
-                            setlistForm.reset({ name: sl.name })
-                          }}>
-                            Edit
-                          </DropdownMenuItem>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Edit setlist</DialogTitle>
-                          </DialogHeader>
-                          <form onSubmit={setlistForm.handleSubmit(() => onSubmitSetlistForm(setlistForm.getValues(), sl.id))} className="space-y-[14px] text-fg.1">
-                            <FormField
-                              control={setlistForm.control}
-                              name="name"
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>Name</FormLabel>
-                                  <FormControl>
-                                    <Input {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                            <DialogFooter>
-                              <DialogClose asChild>
-                                <Button
-                                  variant="link"
-                                  type="reset"
-                                >
-                                  Cancel
-                                </Button>
-                              </DialogClose>
-                              <DialogClose asChild>
-                                <Button type="submit" onClick={() => onSubmitSetlistForm(setlistForm.getValues(), sl.id)}>
-                                  Save
-                                </Button>
-                              </DialogClose>
-                            </DialogFooter>
-                          </form>
-                        </DialogContent>
-                      </Dialog>
-                    </Form>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-error.default focus:text-error.default">
-                          Delete
-                        </DropdownMenuItem>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Are you sure you want to delete this setlist?</DialogTitle>
-                          <DialogDescription>
-                            Pieces in this setlist will not be deleted.
-                          </DialogDescription>
-                          <DialogFooter>
-                            <DialogClose asChild>
-                              <Button
-                                variant="link"
-                                type="reset"
-                              >
-                                Cancel
-                              </Button>
-                            </DialogClose>
-                            <DialogClose asChild>
-                              <Button
-                                onClick={() => handleConfirmDeleteSetlist(sl.id)}
-                              >
-                                Delete
-                              </Button>
-                            </DialogClose>
-                          </DialogFooter>
-                        </DialogHeader>
-                      </DialogContent>
-                    </Dialog>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            ))}
-          </div>
-          <Separator />
-          <Collapsible
-            open={isTagsOpen}
-            onOpenChange={setIsTagsOpen}
-            className="flex flex-col gap-[14px] h-0 flex-grow"
-          >
-            <span className="flex gap-[14px] justify-between">
-              <CollapsibleTrigger className="flex gap-[14px]">
-                <Icon
-                  path={mdiChevronDown}
-                  size={1}
-                  className={classNames(
-                    "transition-default",
-                    isTagsOpen && "rotate-180"
-                  )}
-                />
-                <span>Tags</span>
-              </CollapsibleTrigger>
-              <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
-                <DialogTrigger className="hover:text-fg.0 transition-default">
-                  <Icon path={mdiPlus} size={1} />
-                </DialogTrigger>
-                <DialogContent>
-                  <EditTagDialog onConfirm={() => onSubmitTagForm} onClose={setIsTagDialogOpen} />
-                </DialogContent>
-              </Dialog>
-            </span>
-            <CollapsibleContent asChild>
-              <ul className="ml-[14px] overflow-y-auto flex flex-col gap-[8px] scrollbar-default">
-                {tags.map((tag) => (
-                  <li
-                    key={tag.id}
-                    className="flex items-center gap-[4px] w-full text-fg.1">
-                    <button
-                      className="flex gap-[14px] w-full link truncate"
-                      onClick={() => handleClickPushTag(tag)}
-                    >
-                      <Icon
-                        path={mdiTag}
-                        className="shrink-0"
-                        size={1}
-                        color={tag.color}
-                      />
-                      <div className="w-full truncate text-left">
-                        {tag.name}
-                      </div>
-                    </button><DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="link">
-                          <Icon path={mdiDotsHorizontal} size={1} className="link" />
-                        </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <Dialog>
+                        <Dialog onOpenChange={() => setlistForm.reset({ name: "" })}>
                           <DialogTrigger asChild>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                              Edit
-                            </DropdownMenuItem>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <EditTagDialog defaultTag={tag} onConfirm={onSubmitTagForm} onClose={setIsTagDialogOpen} />
-                          </DialogContent>
-                        </Dialog>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-error.default focus:text-error.default">
-                              Delete
-                            </DropdownMenuItem>
+                            <Button variant="sidebar" className="h-8 w-8 justify-center">
+                              <Icon path={mdiPlus} size={0.667} />
+                            </Button>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
-                              <DialogTitle>Are you sure you want to delete this tag?</DialogTitle>
-                              <DialogDescription>
-                                Pieces with this tag will not be deleted.
-                              </DialogDescription>
-                              <DialogFooter>
-                                <DialogClose asChild>
-                                  <Button
-                                    variant="link"
-                                    type="reset"
-                                  >
-                                    Cancel
-                                  </Button>
-                                </DialogClose>
-                                <DialogClose asChild>
-                                  <Button
-                                    onClick={() => handleConfirmDeleteTag(tag.id)}
-                                  >
-                                    Delete
-                                  </Button>
-                                </DialogClose>
-                              </DialogFooter>
+                              <DialogTitle>Create a new setlist</DialogTitle>
                             </DialogHeader>
+                            <Form {...setlistForm}>
+                              <form onSubmit={setlistForm.handleSubmit(() => onSubmitSetlistForm(setlistForm.getValues()))} className="space-y-[14px] text-fg.1">
+                                <FormField
+                                  control={setlistForm.control}
+                                  name="name"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel>Name</FormLabel>
+                                      <FormControl>
+                                        <Input {...field} />
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                <DialogFooter>
+                                  <DialogClose>
+                                    <Button
+                                      variant="link"
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </DialogClose>
+                                  <DialogClose>
+                                    <Button type="submit" onClick={() => onSubmitSetlistForm(setlistForm.getValues())}>
+                                      Create
+                                    </Button>
+                                  </DialogClose>
+                                </DialogFooter>
+                              </form>
+                            </Form>
                           </DialogContent>
                         </Dialog>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </li>
-                ))}
-              </ul>
-            </CollapsibleContent>
-          </Collapsible>
-          <Separator />
-          <Link
-            to="/settings"
-            className="flex gap-[14px] items-center link"
-          >
-            <Icon path={mdiCog} size={1} />
-            <span>Settings</span>
-          </Link>
-        </div>
+                      </span>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="flex flex-col gap-[2px]">
+                      {setlists.map((sl) => (<div key={sl.id} className="flex gap-[4px] w-full">
+                        <Button
+                          variant="sidebar"
+                          className={cn("w-full", sl.id === setlist.setlist?.id && "bg-sidebar-bg.focus")}
+                          onClick={() => dispatch(setSetlist({ setlist: sl }))}>
+                          <span className="flex gap-[8px] w-full items-center">
+                            <Icon path={mdiBookOpenOutline} size={0.667} />
+                            <span>{sl.name}</span>
+                          </span>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="link">
+                                <Icon path={mdiDotsHorizontal} size={0.667} />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                              <Form {...setlistForm}>
+                                <Dialog onOpenChange={() => setlistForm.reset({ name: sl.name })}>
+                                  <DialogTrigger asChild>
+                                    <DropdownMenuItem onSelect={(e) => {
+                                      e.preventDefault()
+                                      setlistForm.reset({ name: sl.name })
+                                    }}>
+                                      Edit
+                                    </DropdownMenuItem>
+                                  </DialogTrigger>
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>Edit setlist</DialogTitle>
+                                    </DialogHeader>
+                                    <form onSubmit={setlistForm.handleSubmit(() => onSubmitSetlistForm(setlistForm.getValues(), sl.id))} className="space-y-[14px] text-fg.1">
+                                      <FormField
+                                        control={setlistForm.control}
+                                        name="name"
+                                        render={({ field }) => (
+                                          <FormItem>
+                                            <FormLabel>Name</FormLabel>
+                                            <FormControl>
+                                              <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                          </FormItem>
+                                        )}
+                                      />
+                                      <DialogFooter>
+                                        <DialogClose asChild>
+                                          <Button
+                                            variant="link"
+                                            type="reset"
+                                          >
+                                            Cancel
+                                          </Button>
+                                        </DialogClose>
+                                        <DialogClose asChild>
+                                          <Button type="submit" onClick={() => onSubmitSetlistForm(setlistForm.getValues(), sl.id)}>
+                                            Save
+                                          </Button>
+                                        </DialogClose>
+                                      </DialogFooter>
+                                    </form>
+                                  </DialogContent>
+                                </Dialog>
+                              </Form>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-error.default focus:text-error.focus">
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Are you sure you want to delete this setlist?</DialogTitle>
+                                    <DialogDescription>
+                                      Pieces in this setlist will not be deleted.
+                                    </DialogDescription>
+                                    <DialogFooter>
+                                      <DialogClose asChild>
+                                        <Button
+                                          variant="link"
+                                          type="reset"
+                                        >
+                                          Cancel
+                                        </Button>
+                                      </DialogClose>
+                                      <DialogClose asChild>
+                                        <Button
+                                          onClick={() => handleConfirmDeleteSetlist(sl.id)}
+                                        >
+                                          Delete
+                                        </Button>
+                                      </DialogClose>
+                                    </DialogFooter>
+                                  </DialogHeader>
+                                </DialogContent>
+                              </Dialog>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </Button>
+                      </div>
+                      ))}
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+                <Collapsible open={tagsCollapsibleOpen} onOpenChange={setTagsCollapsibleOpen}>
+                  <CollapsibleTrigger asChild className="w-full">
+                    <span className="w-full flex items-center">
+                      <Button variant="sidebarCollapisble" className="w-full">
+                        <span>Tags</span>
+                        <Icon path={mdiMenuDown} size={0.667} className={cn(tagsCollapsibleOpen && "rotate-180")} />
+                      </Button>
+                      <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button variant="sidebar" className="h-8 w-8 justify-center">
+                            <Icon path={mdiPlus} size={0.667} />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <EditTagDialog onConfirm={() => onSubmitTagForm} onClose={setIsTagDialogOpen} />
+                        </DialogContent>
+                      </Dialog>
+                    </span>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="flex flex-col gap-[2px]">
+                    {tags.map((tag) => (
+                      <Button
+                        key={tag.id}
+                        variant="sidebar"
+                        className="w-full"
+                        onClick={() => handleClickPushTag(tag)}>
+                        <span className="flex gap-[8px] w-full items-center">
+                          <Icon
+                            path={mdiCircle}
+                            className="shrink-0"
+                            size={.667}
+                            color={tag.color}
+                          />
+                          <span>{tag.name}</span>
+                        </span>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="link">
+                              <Icon path={mdiDotsHorizontal} size={0.667} />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                  Edit
+                                </DropdownMenuItem>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <EditTagDialog defaultTag={tag} onConfirm={onSubmitTagForm} onClose={setIsTagDialogOpen} />
+                              </DialogContent>
+                            </Dialog>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-error.default focus:text-error.focus">
+                                  Delete
+                                </DropdownMenuItem>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Are you sure you want to delete this tag?</DialogTitle>
+                                  <DialogDescription>
+                                    Pieces with this tag will not be deleted.
+                                  </DialogDescription>
+                                  <DialogFooter>
+                                    <DialogClose asChild>
+                                      <Button
+                                        variant="link"
+                                        type="reset"
+                                      >
+                                        Cancel
+                                      </Button>
+                                    </DialogClose>
+                                    <DialogClose asChild>
+                                      <Button
+                                        onClick={() => handleConfirmDeleteTag(tag.id)}
+                                      >
+                                        Delete
+                                      </Button>
+                                    </DialogClose>
+                                  </DialogFooter>
+                                </DialogHeader>
+                              </DialogContent>
+                            </Dialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </Button>
+                    ))}
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+              <Button variant="sidebar" asChild>
+                <Link
+                  to="/settings" className="flex items-center gap-[8px]"
+                >
+                  <Icon path={mdiCog} size={0.667} />
+                  <span>Settings</span>
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </ScrollArea>
       </ResizablePanel >
-      <ResizableHandle withHandle />
+      <ResizableHandle />
     </>
   );
 }

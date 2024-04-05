@@ -60,7 +60,7 @@ export function LeftPanel() {
           )}
         </div>
       </ResizablePanel>
-      <ResizableHandle withHandle />
+      <ResizableHandle />
     </>
   );
 }

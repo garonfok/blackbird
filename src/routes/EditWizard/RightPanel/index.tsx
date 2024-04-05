@@ -21,7 +21,7 @@ export function RightPanel() {
 
   return (
     <>
-      <ResizableHandle withHandle />
+      <ResizableHandle />
       <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
         <div className="p-[14px] flex flex-col h-full gap-[14px]">
           <div className="flex flex-wrap gap-[14px]">

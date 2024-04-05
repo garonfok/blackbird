@@ -8,15 +8,24 @@ export default {
       "primary.default": "#FFBB33",
       "primary.hover": "#FFAD0A",
       "error.default": "#E4004A",
+      "error.focus": "#FF4782",
 
       "bg.0": "#0A0A0B",
       "bg.1": "#131315",
       "bg.2": "#1D1D20",
+
       "fg.0": "#F2F3F4",
       "fg.1": "#BFBFC3",
       "fg.2": "#8D8A93",
 
-      "divider": "#2E2E30",
+      "divider.default": "#2E2E30",
+      "divider.focus": "#3C3C3E",
+
+      "sidebar-bg.default": "#0A0A0B",
+      "sidebar-bg.focus": "#1D1D20",
+
+      "float-bg.default": "#1D1D20",
+      "float-bg.focus": "#303036",
     },
   },
   plugins: [require("tailwind-scrollbar")({ nocompatible: true })],

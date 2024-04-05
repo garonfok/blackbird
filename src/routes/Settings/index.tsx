@@ -19,7 +19,7 @@ export function Settings() {
               <span>Home</span>
             </Link>
           </span>
-          <hr className="text-divider" />
+          <hr className="text-divider.default" />
           <div className="flex flex-col gap-[14px]">
             <WorkingDirectory />
             <OpenOnStartup />
