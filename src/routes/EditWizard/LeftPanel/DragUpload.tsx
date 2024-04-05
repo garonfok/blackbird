@@ -11,6 +11,7 @@ import { useLocation } from "react-router-dom";
 import { ActionCreators } from "redux-undo";
 import { pushFiles } from "../filesSlice";
 import { setPiece } from "../pieceSlice";
+import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
 
 export function DragUpload() {
   const [isUploading, setIsUploading] = useState(false);
@@ -106,8 +107,6 @@ export function DragUpload() {
     };
   }, []);
 
-
-
   async function uploadFiles(selectedFiles: string[]) {
     setTotalFiles(selectedFiles.length);
     setUploadCount(0);
@@ -159,6 +158,8 @@ export function DragUpload() {
     if (!selectedFiles) return;
     await uploadFiles(selectedFiles as string[]);
   }, []);
+
+  useCmdOrCtrlHotkey("o", handleClickUploadFiles);
 
   return (
     <>

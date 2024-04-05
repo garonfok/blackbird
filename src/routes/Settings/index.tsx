@@ -1,4 +1,4 @@
-import { useHotkey } from "@/hooks/useHotkey";
+import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
 import { mdiHomeOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,7 +6,7 @@ import { OpenOnStartup } from "./OpenOnStartup";
 import { WorkingDirectory } from "./WorkingDirectory";
 export function Settings() {
   const navigate = useNavigate();
-  useHotkey("Escape", () => navigate("/"));
+  useCmdOrCtrlHotkey("Escape", () => navigate("/"));
 
   return (
     <>
