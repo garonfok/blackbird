@@ -888,7 +888,7 @@ export function Table() {
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="text-body-default"
+                    className="text-body-small-default"
                     style={
                       header.id === "main"
                         ? { flexGrow: 1 }
