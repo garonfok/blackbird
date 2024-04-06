@@ -21,12 +21,12 @@ const buttonVariants = cva(
           "bg-bg.0 text-fg.0 hover:bg-bg.1 border border-fg.2",
         sidebar:
           cn(
-            "justify-start gap-[8px] text-fg.1 py-1",
+            "justify-start gap-[8px] text-fg.1 py-1 text-md",
             "hover:bg-sidebar-bg.focus hover:text-fg.0",
           ),
         sidebarCollapisble:
           cn(
-            "text-xs justify-start gap-[4px] text-fg.2 py-1",
+            "text-sm justify-start gap-[4px] text-fg.2 py-1",
             "hover:bg-sidebar-bg.focus",
           ),
         link: cn(

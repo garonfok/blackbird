@@ -113,7 +113,7 @@ export function LeftPanel() {
               <div className="flex flex-col gap-[14px]">
                 <Button variant="sidebar" asChild>
                   <Link to="/edit-wizard" className="flex items-center gap-[8px]">
-                    <Icon path={mdiTextBoxPlusOutline} size={0.667} />
+                    <Icon path={mdiTextBoxPlusOutline} size={1} />
                     <span>New piece</span>
                   </Link>
                 </Button>
@@ -123,7 +123,7 @@ export function LeftPanel() {
                     onClick={() => dispatch(clearSetlist())}
                     className={cn(!setlist.setlist && "bg-sidebar-bg.focus")}
                   >
-                    <Icon path={mdiBookshelf} size={0.667} />
+                    <Icon path={mdiBookshelf} size={1} />
                     <span>All pieces</span>
                   </Button>
                   <Collapsible open={setlistCollapsibleOpen} onOpenChange={setSetlistCollapsibleOpen}>
@@ -131,12 +131,12 @@ export function LeftPanel() {
                       <span className="w-full flex items-center">
                         <Button variant="sidebarCollapisble" className="w-full">
                           <span>Setlists</span>
-                          <Icon path={mdiMenuDown} size={0.667} className={cn(setlistCollapsibleOpen && "rotate-180")} />
+                          <Icon path={mdiMenuDown} size={1} className={cn(setlistCollapsibleOpen && "rotate-180")} />
                         </Button>
                         <Dialog onOpenChange={() => setlistForm.reset({ name: "" })}>
                           <DialogTrigger asChild>
                             <Button variant="sidebar" className="p-1 justify-center">
-                              <Icon path={mdiPlus} size={0.667} />
+                              <Icon path={mdiPlus} size={1} />
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
@@ -186,13 +186,13 @@ export function LeftPanel() {
                             className={cn("w-full", sl.id === setlist.setlist?.id && "bg-sidebar-bg.focus")}
                             onClick={() => dispatch(setSetlist({ setlist: sl }))}>
                             <span className="flex gap-[8px] w-full items-center">
-                              <Icon path={mdiBookOpenOutline} size={0.667} />
+                              <Icon path={mdiBookOpenOutline} size={1} />
                               <span>{sl.name}</span>
                             </span>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="link">
-                                  <Icon path={mdiDotsHorizontal} size={0.667} />
+                                  <Icon path={mdiDotsHorizontal} size={1} />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent>
@@ -288,12 +288,12 @@ export function LeftPanel() {
                     <span className="w-full flex items-center">
                       <Button variant="sidebarCollapisble" className="w-full">
                         <span>Tags</span>
-                        <Icon path={mdiMenuDown} size={0.667} className={cn(tagsCollapsibleOpen && "rotate-180")} />
+                        <Icon path={mdiMenuDown} size={1} className={cn(tagsCollapsibleOpen && "rotate-180")} />
                       </Button>
                       <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
                         <DialogTrigger asChild>
                           <Button variant="sidebar" className="p-1 justify-center">
-                            <Icon path={mdiPlus} size={0.667} />
+                            <Icon path={mdiPlus} size={1} />
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
@@ -321,7 +321,7 @@ export function LeftPanel() {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="link">
-                              <Icon path={mdiDotsHorizontal} size={0.667} />
+                              <Icon path={mdiDotsHorizontal} size={1} />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent>
@@ -378,7 +378,7 @@ export function LeftPanel() {
                 <Link
                   to="/settings" className="flex items-center gap-[8px]"
                 >
-                  <Icon path={mdiCog} size={0.667} />
+                  <Icon path={mdiCog} size={1} />
                   <span>Settings</span>
                 </Link>
               </Button>
