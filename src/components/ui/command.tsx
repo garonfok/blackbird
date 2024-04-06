@@ -1,10 +1,11 @@
 import { type DialogProps } from "@radix-ui/react-dialog"
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons"
 import { Command as CommandPrimitive } from "cmdk"
 import * as React from "react"
 
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
+import { mdiMagnify } from "@mdi/js"
+import Icon from "@mdi/react"
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -13,7 +14,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      "flex h-full w-full flex-col overflow-hidden rounded-default bg-bg.0 text-fg.1",
+      "flex h-full w-full flex-col overflow-hidden rounded-default bg-float-bg.default shadow-float text-fg.1",
       className
     )}
     {...props}
@@ -40,7 +41,8 @@ const CommandInput = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
   <div className="flex items-center border-b border-fg.2 px-3" cmdk-input-wrapper="">
-    <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+    {/* <MagnifyingGlassIcon className="mr-2 h-4 w-4 shrink-0 opacity-50" /> */}
+    <Icon path={mdiMagnify} size={1} className="mr-2 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(

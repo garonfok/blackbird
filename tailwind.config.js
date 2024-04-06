@@ -26,7 +26,7 @@ export default {
 
       "main-bg.default": "#131315",
 
-      "float-bg.default": "#1D1D20",
+      "float-bg.default": "#131315",
       "float-bg.focus": "#303036",
     },
   },

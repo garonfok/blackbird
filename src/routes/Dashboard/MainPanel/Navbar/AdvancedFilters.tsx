@@ -148,7 +148,7 @@ export function AdvancedFilters(props: { onOpenChange: Dispatch<SetStateAction<b
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-[14px]">
         <ScrollArea>
-          <div className="max-h-72">
+          <div className="max-h-72 p-[14px] flex flex-col gap-[8px]">
             <div className="flex gap-[14px]">
               <FormField
                 control={form.control}
@@ -272,7 +272,7 @@ export function AdvancedFilters(props: { onOpenChange: Dispatch<SetStateAction<b
           </div>
         </ScrollArea>
         <Separator />
-        <div className="flex gap-[14px]">
+        <div className="flex gap-[14px] flex-row-reverse p-[14px] pt-0">
           <Button type="submit">
             Apply filters
           </Button>

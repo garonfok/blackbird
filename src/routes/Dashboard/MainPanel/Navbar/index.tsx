@@ -1,13 +1,15 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { debounce, isWindows } from "@/app/utils";
-import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
-import { mdiMagnify, mdiTune } from "@mdi/js";
+import { mdiChevronRight, mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import classNames from "classnames";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { setQuery } from "../querySlice";
 import { AdvancedFilters } from "./AdvancedFilters";
+import { Separator } from "@/components/ui/separator";
 
 export function Navbar() {
   const [isSearchFocused, setSearchFocused] = useState(false);
@@ -38,52 +40,58 @@ export function Navbar() {
   const handleChangeDebounced = useCallback(debounce(handleChange), []);
 
   return (
-    <div className="p-[14px]">
-      <div className="flex flex-wrap gap-[14px] items-center">
+    <div className="py-[14px] flex flex-wrap gap-[14px] items-center">
+      <div className="px-[14px] w-full flex gap-[14px] items-center">
         <Popover open={isFiltersOpen} onOpenChange={setFiltersOpen}>
-          <PopoverAnchor asChild>
-            <div className="w-full max-w-[512px] flex flex-col">
-              <span
-                className={classNames(
-                  "bg-bg.2 gap-[14px] py-[8px] px-[14px] rounded-default flex text-fg.2 items-center transition-default",
-                  isSearchFocused && "ring-1 ring-fg.0"
-                )}
-              >
-                <Icon
-                  path={mdiMagnify}
-                  size={1}
-                  className={classNames(
-                    "shrink-0 transition-default",
-                    isSearchFocused && "text-fg.0"
-                  )}
-                />
-                <input
-                  ref={inputRef}
-                  className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
-                  type="text"
-                  placeholder={`Type ${isMacOS ? "Cmd" : "Ctrl"} + K to search`}
-                  onFocus={() => setSearchFocused(true)}
-                  onBlur={() => setSearchFocused(false)}
-                  onChange={handleChangeDebounced}
-                />
-                <PopoverTrigger>
-                  <Icon
-                    path={mdiTune}
-                    size={1}
-                    className="shrink-0 link"
-                  />
-                </PopoverTrigger>
-              </span>
-            </div>
-          </PopoverAnchor>
-          {setlist.setlist && (
-            <span className="text-heading-default">{setlist.setlist.name}</span>
-          )}
-          <PopoverContent className="w-full max-w-lg">
+          <PopoverTrigger asChild>
+            <Button variant="link">
+              <Icon
+                path={mdiTune}
+                size={1}
+                className="shrink-0 link"
+              />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full max-w-lg p-0" align="start">
             <AdvancedFilters onOpenChange={setFiltersOpen} />
           </PopoverContent>
         </Popover>
+        <span
+          className={classNames(
+            "bg-bg.2 gap-[14px] py-1 px-2 rounded-default flex w-full text-fg.2 items-center transition-default",
+            isSearchFocused && "ring-1 ring-fg.0"
+          )}
+        >
+          <Icon
+            path={mdiMagnify}
+            size={1}
+            className={classNames(
+              "shrink-0 transition-default",
+              isSearchFocused && "text-fg.0"
+            )}
+          />
+          <input
+            ref={inputRef}
+            className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
+            type="text"
+            placeholder={`Type ${isMacOS ? "Cmd" : "Ctrl"} + K to search`}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            onChange={handleChangeDebounced}
+          />
+        </span>
       </div>
+      <Separator />
+      <span className="px-[14px] text-lg font-bold leading-8">
+        {setlist.setlist ? (
+          <span className="flex gap-[8px] items-center">
+            <Icon path={mdiChevronRight} size={1.25} />
+            <span>{setlist.setlist.name}</span>
+          </span>
+        ) :
+          <span>All Pieces</span>
+        }
+      </span>
     </div>
   );
 }
