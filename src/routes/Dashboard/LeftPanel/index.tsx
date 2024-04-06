@@ -135,7 +135,7 @@ export function LeftPanel() {
                         </Button>
                         <Dialog onOpenChange={() => setlistForm.reset({ name: "" })}>
                           <DialogTrigger asChild>
-                            <Button variant="sidebar" className="h-8 w-8 justify-center">
+                            <Button variant="sidebar" className="p-1 justify-center">
                               <Icon path={mdiPlus} size={0.667} />
                             </Button>
                           </DialogTrigger>
@@ -292,7 +292,7 @@ export function LeftPanel() {
                       </Button>
                       <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
                         <DialogTrigger asChild>
-                          <Button variant="sidebar" className="h-8 w-8 justify-center">
+                          <Button variant="sidebar" className="p-1 justify-center">
                             <Icon path={mdiPlus} size={0.667} />
                           </Button>
                         </DialogTrigger>
