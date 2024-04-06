@@ -62,7 +62,10 @@ const MultiSelect = ({ options, selected, onChange, className, selectPlaceholder
                 {options.find((option) => option.value === item)?.label}
                 <button
                   className="ml-1 ring-offset-fg.0 rounded-default outline-none focus:ring-1 focus:ring-fg.0"
-                  onSelect={() => handleUnselect(item)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleUnselect(item)
+                  }}
                 >
                   <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />
                 </button>
