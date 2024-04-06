@@ -2,14 +2,14 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { debounce, isWindows } from "@/app/utils";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
 import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
-import { mdiChevronRight, mdiMagnify, mdiTune } from "@mdi/js";
+import { mdiBookOpenOutline, mdiBookshelf, mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import classNames from "classnames";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { setQuery } from "../querySlice";
 import { AdvancedFilters } from "./AdvancedFilters";
-import { Separator } from "@/components/ui/separator";
 
 export function Navbar() {
   const [isSearchFocused, setSearchFocused] = useState(false);
@@ -85,11 +85,14 @@ export function Navbar() {
       <span className="px-[14px] text-lg font-bold leading-8">
         {setlist.setlist ? (
           <span className="flex gap-[8px] items-center">
-            <Icon path={mdiChevronRight} size={1.25} />
+            <Icon path={mdiBookOpenOutline} size={1.25} />
             <span>{setlist.setlist.name}</span>
           </span>
         ) :
-          <span>All Pieces</span>
+          <span className="flex gap-[8px] items-center">
+            <Icon path={mdiBookshelf} size={1.25} />
+            <span>All Pieces</span>
+          </span>
         }
       </span>
     </div>
