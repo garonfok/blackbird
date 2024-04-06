@@ -1,4 +1,4 @@
-import { mdiChevronDown, mdiCircle, mdiTag } from "@mdi/js";
+import { mdiChevronDown, mdiCircle, mdiCircleOutline, mdiTag } from "@mdi/js";
 import Icon from "@mdi/react";
 import classNames from "classnames";
 import { useState } from "react";
@@ -103,9 +103,9 @@ export function Preview(props: { piece: Piece }) {
               piece.scores.map((score) => (
                 <div key={score.id} className="flex gap-[4px] items-center">
                   <Icon
-                    path={mdiCircle}
-                    size={0.5}
-                    className={cn("text-fg.0", !score.path && "opacity-0")}
+                    path={!score.path ? mdiCircleOutline : mdiCircle}
+                    size={0.667}
+                    className={cn("text-fg.0")}
                   />
                   <span>{score.name}</span>
                 </div>
@@ -120,9 +120,9 @@ export function Preview(props: { piece: Piece }) {
                 >
                   <span className="flex items-center gap-[4px]">
                     <Icon
-                      path={mdiCircle}
-                      size={0.5}
-                      className={cn("text-fg.0", !part.path && "opacity-0")}
+                      path={!part.path ? mdiCircleOutline : mdiCircle}
+                      size={0.667}
+                      className={cn("text-fg.0")}
                     />
                     <span className="truncate">{part.name}</span>
                   </span>
