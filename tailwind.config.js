@@ -26,7 +26,7 @@ export default {
 
       "main-bg.default": "#131315",
       "main-bg.hover": "#1D1D20",
-      "main-bg.focus": "#303036",
+      "main-bg.focus": "#27272B",
 
       "float-bg.default": "#131315",
       "float-bg.focus": "#303036",

@@ -378,7 +378,7 @@ export function Table() {
         accessorFn: (row) => row.year_published,
         header: () => <span className="">Year</span>,
         cell: (info) => {
-          return <span className="text-fg.0">{info.getValue() as number}</span>;
+          return <span className="text-fg.1">{info.getValue() as number}</span>;
         },
         size: 64,
       },
