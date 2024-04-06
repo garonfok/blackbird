@@ -45,8 +45,8 @@ export function LeftPanel() {
     }
   });
 
-  const [setlistCollapsibleOpen, setSetlistCollapsibleOpen] = useState(false);
-  const [tagsCollapsibleOpen, setTagsCollapsibleOpen] = useState(false);
+  const [setlistCollapsibleOpen, setSetlistCollapsibleOpen] = useState(true);
+  const [tagsCollapsibleOpen, setTagsCollapsibleOpen] = useState(true);
 
   const [isTagDialogOpen, setIsTagDialogOpen] = useState(false);
 
