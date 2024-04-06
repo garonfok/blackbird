@@ -275,13 +275,13 @@ export function Table() {
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="link">
+                  <Button variant="link">
                     <Icon
                       path={mdiDotsHorizontal}
                       size={1}
                       className="shrink-0"
                     />
-                  </button>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>{isPieceInCurrentSetlist(info.row.original) && (
                   <DropdownMenuItem
@@ -350,7 +350,7 @@ export function Table() {
                     onClick={() =>
                       handleClickDeletePiece(info.row.original.id)
                     }
-                    className="text-error.default focus:text-error.default"
+                    className="text-error.default focus:text-error.focus"
                   >
                     Delete
                   </DropdownMenuItem>
