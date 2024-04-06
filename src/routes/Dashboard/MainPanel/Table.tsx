@@ -264,7 +264,6 @@ export function Table() {
                     <Badge
                       variant="outline"
                       className="gap-[4px] hover:text-fg.0 hover:border-divider.focus"
-                      // onClick add tag to filter
                       onClick={() => handleClickPushTag(tag)}
                     >
                       <Icon path={mdiCircle} size={0.667} style={{ color: tag.color }} />
