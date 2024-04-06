@@ -24,6 +24,8 @@ export default {
       "sidebar-bg.default": "#0A0A0B",
       "sidebar-bg.focus": "#1D1D20",
 
+      "main-bg.default": "#131315",
+
       "float-bg.default": "#1D1D20",
       "float-bg.focus": "#303036",
     },
