@@ -40,8 +40,8 @@ export function Navbar() {
   const handleChangeDebounced = useCallback(debounce(handleChange), []);
 
   return (
-    <div className="py-[14px] flex flex-wrap gap-[14px] items-center">
-      <div className="px-[14px] w-full flex gap-[14px] items-center">
+    <div className="flex flex-col">
+      <div className="px-[14px] py-[8px] w-full flex gap-[14px] items-center">
         <Popover open={isFiltersOpen} onOpenChange={setFiltersOpen}>
           <PopoverTrigger asChild>
             <Button variant="link">
@@ -82,7 +82,7 @@ export function Navbar() {
         </span>
       </div>
       <Separator />
-      <span className="px-[14px] text-lg font-bold leading-8">
+      <span className="px-[14px] py-[8px] text-lg font-bold leading-8">
         {setlist.setlist ? (
           <span className="flex gap-[8px] items-center">
             <Icon path={mdiBookOpenOutline} size={1.25} />

@@ -25,6 +25,8 @@ export default {
       "sidebar-bg.focus": "#1D1D20",
 
       "main-bg.default": "#131315",
+      "main-bg.hover": "#1D1D20",
+      "main-bg.focus": "#303036",
 
       "float-bg.default": "#131315",
       "float-bg.focus": "#303036",

@@ -20,7 +20,7 @@
   }
 
   .text-body-small-default {
-    @apply text-fg.1 font-normal text-[12px];
+    @apply text-fg.1 font-normal text-xs;
   }
 
   .text-body-small-bold {

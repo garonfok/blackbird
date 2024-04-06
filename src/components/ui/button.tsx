@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-fg.0 text-bg.0 hover:bg-fg.0/90",
+          "bg-fg.0 text-bg.0 hover:bg-fg.0/90 py-1 border border-divider.default",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
@@ -32,8 +32,11 @@ const buttonVariants = cva(
         link: cn(
           "text-fg.1 p-0",
           "hover:text-fg.0"
-
         ),
+        main: cn(
+          "justify-start gap-[8px] text-fg.1 py-1 text-sm",
+          "hover:bg-main-bg.focus hover:text-fg.0",
+        )
       },
     },
     defaultVariants: {

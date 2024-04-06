@@ -1,17 +1,18 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { Piece } from "@/app/types";
+import { Piece, Tag } from "@/app/types";
 import { isWindows } from "@/app/utils";
 import { Modal } from "@/components/Modal";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import {
-  mdiChevronDown,
-  mdiChevronUp,
+  mdiArrowDown,
+  mdiArrowUp,
+  mdiCircle,
   mdiClose,
   mdiDotsHorizontal,
-  mdiEraser,
-  mdiTag
+  mdiEraser
 } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import {
@@ -43,6 +44,7 @@ import {
   clearInstruments,
   clearRole,
   clearYearPublished,
+  pushTag,
   removeTag,
   resetFilter
 } from "../reducers/filterSlice";
@@ -244,10 +246,10 @@ export function Table() {
             <div className="flex gap-[14px] items-center justify-between">
               <div className="flex gap-[14px] items-center">
                 <div className="flex flex-col">
-                  <span className="text-heading-default text-fg.0">
+                  <span className="text-body-default text-fg.0">
                     {info.row.original.title}
                   </span>
-                  <span className="text-body-default">
+                  <span className="text-body-small-default">
                     {info.row.original.composers
                       .map((composer) =>
                         composer.last_name
@@ -259,10 +261,15 @@ export function Table() {
                 </div>
                 <ol>
                   {info.row.original.tags.map((tag) => (
-                    <li
-                      className="h-[14px] w-[14px] rounded-full"
-                      style={{ backgroundColor: tag.color }}
-                    />
+                    <Badge
+                      variant="outline"
+                      className="gap-[4px] hover:text-fg.0 hover:border-divider.focus"
+                      // onClick add tag to filter
+                      onClick={() => handleClickPushTag(tag)}
+                    >
+                      <Icon path={mdiCircle} size={0.667} style={{ color: tag.color }} />
+                      {tag.name}
+                    </Badge>
                   ))}
                 </ol>
               </div>
@@ -454,6 +461,10 @@ export function Table() {
     dispatch(
       setPiece({ piece: table.getRowModel().rows[index].original as Piece })
     );
+  }
+
+  async function handleClickPushTag(tag: Tag) {
+    dispatch(pushTag(tag));
   }
 
   function handleClick(event: globalThis.MouseEvent) {
@@ -648,30 +659,30 @@ export function Table() {
 
   return (
     <>
-      <div className="p-[14px] flex flex-col gap-[14px] flex-grow">
-        <div className="flex gap-[14px] items-center text-fg.1 flex-wrap">
+      <div className="flex flex-col flex-grow">
+        <div className="flex gap-[14px] items-center text-fg.1 flex-wrap px-[14px] py-[8px]">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="link flex items-center gap-2">
+              <Button variant="main">
                 {sortOptions.find((option) => option.id === sorting[0].id)?.label}
                 {sorting[0].desc ? (
-                  <Icon path={mdiChevronDown} size={1} className="shrink-0" />
+                  <Icon path={mdiArrowDown} size={0.667} className="shrink-0" />
                 ) : (
-                  <Icon path={mdiChevronUp} size={1} className="shrink-0" />
+                  <Icon path={mdiArrowUp} size={0.667} className="shrink-0" />
                 )}
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {sortOptions.map((option) => (
                 <DropdownMenuItem key={option.id}
-                  className="dropdown-item outline-none gap-2"
+                  className="justify-between"
                   onClick={() => handleClickDropdownSelect(option.id)}
                 >
                   {option.label}
                   {sorting[0].id === option.id ? (
                     <Icon
-                      path={sorting[0].desc ? mdiChevronDown : mdiChevronUp}
-                      size={1}
+                      path={sorting[0].desc ? mdiArrowDown : mdiArrowUp}
+                      size={0.667}
                       className=""
                     />
                   ) : (
@@ -683,23 +694,22 @@ export function Table() {
           </DropdownMenu>
           {filter.tags.length > 0 &&
             filter.tags.map((tag) => (
-              <div
-                key={tag.id}
-                className="rounded-default text-fg.1 px-[14px] py-[8px] bg-bg.1 flex gap-[14px]"
-              >
-                <Icon path={mdiTag} size={1} style={{ color: tag.color }} />
-                {tag.name}
-                <button
+              <Badge key={tag.id} variant="outline" className="gap-[14px]">
+                <span className="flex items-center gap-[4px]">
+                  <Icon path={mdiCircle} size={0.667} style={{ color: tag.color }} />
+                  {tag.name}
+                </span>
+                <Button
                   onClick={() => dispatch(removeTag(tag.id))}
-                  className="link"
+                  variant="link"
                 >
-                  <Icon path={mdiClose} size={1} />
-                </button>
-              </div>
+                  <Icon path={mdiClose} size={0.667} />
+                </Button>
+              </Badge>
             ))}
           {(filter.yearPublishedMin !== undefined ||
             filter.yearPublishedMax !== undefined) && (
-              <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+              <Badge variant="outline" className="gap-[14px]">
                 <span className="flex gap-[4px]">
                   <span className="text-fg.1">Published:</span>
                   <span className="text-fg.0">
@@ -709,33 +719,33 @@ export function Table() {
                     )}
                   </span>
                 </span>
-                <button
+                <Button
                   onClick={() => dispatch(clearYearPublished())}
-                  className="link"
+                  variant="link"
                 >
-                  <Icon path={mdiClose} size={1} />
-                </button>
-              </div>
+                  <Icon path={mdiClose} size={0.667} />
+                </Button>
+              </Badge>
             )}
           {(filter.difficultyMin !== undefined ||
             filter.difficultyMax !== undefined) && (
-              <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+              <Badge variant="outline" className="gap-[14px]">
                 <span className="flex gap-[4px]">
                   <span className="text-fg.1">Difficulty:</span>
                   <span className="text-fg.0">
                     {parseNumberRange(filter.difficultyMin, filter.difficultyMax)}
                   </span>
                 </span>
-                <button
+                <Button
                   onClick={() => dispatch(clearDifficulty())}
-                  className="link"
+                  variant="link"
                 >
-                  <Icon path={mdiClose} size={1} />
-                </button>
-              </div>
+                  <Icon path={mdiClose} size={0.667} />
+                </Button>
+              </Badge>
             )}
           {filter.instruments.length > 0 && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+            <Badge variant="outline" className="gap-[14px]">
               <span className="flex gap-[4px]">
                 <span className="text-fg.1">Instruments:</span>
                 <span className="text-fg.0">
@@ -744,16 +754,16 @@ export function Table() {
                     .join(", ")}
                 </span>
               </span>
-              <button
+              <Button
                 onClick={() => dispatch(clearInstruments())}
-                className="link"
+                variant="link"
               >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
+                <Icon path={mdiClose} size={0.667} />
+              </Button>
+            </Badge>
           )}
           {filter.composers.length > 0 && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+            <Badge variant="outline" className="gap-[14px]">
               <span className="flex gap-[4px]">
                 <span className="text-fg.1">Composers:</span>
                 <span className="text-fg.0">
@@ -766,16 +776,16 @@ export function Table() {
                     .join(", ")}
                 </span>
               </span>
-              <button
+              <Button
                 onClick={() => dispatch(clearRole("composers"))}
-                className="link"
+                variant="link"
               >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
+                <Icon path={mdiClose} size={0.667} />
+              </Button>
+            </Badge>
           )}
           {filter.arrangers.length > 0 && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+            <Badge variant="outline" className="gap-[14px]">
               <span className="flex gap-[4px]">
                 <span className="text-fg.1">Arrangers:</span>
                 <span className="text-fg.0">
@@ -788,16 +798,16 @@ export function Table() {
                     .join(", ")}
                 </span>
               </span>
-              <button
+              <Button
                 onClick={() => dispatch(clearRole("arrangers"))}
-                className="link"
+                variant="link"
               >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
+                <Icon path={mdiClose} size={0.667} />
+              </Button>
+            </Badge>
           )}
           {filter.orchestrators.length > 0 && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+            <Badge variant="outline" className="gap-[14px]">
               <span className="flex gap-[4px]">
                 <span className="text-fg.1">orchestrators:</span>
                 <span className="text-fg.0">
@@ -810,16 +820,16 @@ export function Table() {
                     .join(", ")}
                 </span>
               </span>
-              <button
+              <Button
                 onClick={() => dispatch(clearRole("orchestrators"))}
-                className="link"
+                variant="link"
               >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
+                <Icon path={mdiClose} size={0.667} />
+              </Button>
+            </Badge>
           )}
           {filter.transcribers.length > 0 && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+            <Badge variant="outline" className="gap-[14px]">
               <span className="flex gap-[4px]">
                 <span className="text-fg.1">transcribers:</span>
                 <span className="text-fg.0">
@@ -832,16 +842,16 @@ export function Table() {
                     .join(", ")}
                 </span>
               </span>
-              <button
+              <Button
                 onClick={() => dispatch(clearRole("transcribers"))}
-                className="link"
+                variant="link"
               >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
+                <Icon path={mdiClose} size={0.667} />
+              </Button>
+            </Badge>
           )}
           {filter.lyricists.length > 0 && (
-            <div className="rounded-default bg-bg.1 px-[14px] py-[8px] flex gap-[14px]">
+            <Badge variant="outline" className="gap-[14px]">
               <span className="flex gap-[4px]">
                 <span className="text-fg.1">lyricists:</span>
                 <span className="text-fg.0">
@@ -854,24 +864,25 @@ export function Table() {
                     .join(", ")}
                 </span>
               </span>
-              <button
+              <Button
                 onClick={() => dispatch(clearRole("lyricists"))}
-                className="link"
+                variant="link"
               >
-                <Icon path={mdiClose} size={1} />
-              </button>
-            </div>
+                <Icon path={mdiClose} size={0.667} />
+              </Button>
+            </Badge>
           )}
-          <Button onClick={handleClickResetFilters} className='gap-2'>
-            <Icon path={mdiEraser} size={1} className="shrink-0" />
+          <Button onClick={handleClickResetFilters} className='gap-1'>
+            <Icon path={mdiEraser} size={0.667} className="shrink-0" />
             <span>Reset filters</span>
           </Button>
         </div>
+        <Separator />
         <table
           ref={tableRef}
-          className="flex flex-col gap-[14px] flex-grow h-0 overflow-y-auto scrollbar-default"
+          className="flex flex-col flex-grow h-0 overflow-y-auto scrollbar-default"
         >
-          <thead className="p-[14px]">
+          <thead className="px-[14px] py-[8px]">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="flex gap-[14px]">
                 {headerGroup.headers.map((header) => (
@@ -886,7 +897,7 @@ export function Table() {
                   >
                     <button
                       onClick={() => handleClickSortColumn(header.column)}
-                      className="w-full flex"
+                      className="w-full flex items-center gap-[8px]"
                     >
                       {header.id !== "main" || isMainTitle
                         ? flexRender(
@@ -899,15 +910,15 @@ export function Table() {
                         {
                           asc: (
                             <Icon
-                              path={mdiChevronUp}
-                              size={1}
+                              path={mdiArrowUp}
+                              size={0.667}
                               className="shrink-0"
                             />
                           ),
                           desc: (
                             <Icon
-                              path={mdiChevronDown}
-                              size={1}
+                              path={mdiArrowDown}
+                              size={0.667}
                               className="shrink-0"
                             />
                           ),
@@ -932,8 +943,8 @@ export function Table() {
                 ref={rowRef}
                 key={row.original.id}
                 className={classNames(
-                  "flex items-center  gap-[14px] px-[14px] py-[4px]",
-                  selected.includes(index) ? "bg-bg.2" : "hover:bg-bg.1"
+                  "flex items-center gap-[14px] px-[14px] py-[4px]",
+                  selected.includes(index) ? "bg-main-bg.focus" : "hover:bg-main-bg.hover"
                 )}
                 onClick={(event) => handleClickSelect(event, index)}
               >
