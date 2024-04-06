@@ -891,7 +891,7 @@ export function Table() {
                     className="text-body-small-default"
                     style={
                       header.id === "main"
-                        ? { flexGrow: 1 }
+                        ? { width: "100%" }
                         : { width: header.getSize() }
                     }
                   >
@@ -954,7 +954,7 @@ export function Table() {
                     className="h-full"
                     style={
                       cell.column.id === "main"
-                        ? { flexGrow: 1 }
+                        ? { width: "100%" }
                         : { width: cell.column.getSize() }
                     }
                   >
