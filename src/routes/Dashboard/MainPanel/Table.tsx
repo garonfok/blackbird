@@ -393,7 +393,7 @@ export function Table() {
             if (updatedAt.hasSame(DateTime.now(), "day")) {
               return updatedAt.toLocaleString(DateTime.TIME_SIMPLE);
             } else if (updatedAt.hasSame(DateTime.now(), "year")) {
-              return updatedAt.toLocaleString(DateTime.DATE_SHORT);
+              return updatedAt.toLocaleString({ month: 'short', day: 'numeric' });
             } else {
               return updatedAt.toLocaleString(DateTime.DATE_MED);
             }
