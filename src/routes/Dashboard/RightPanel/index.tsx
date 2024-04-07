@@ -1,24 +1,19 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { Piece } from "@/app/types";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
-import { mdiClose } from "@mdi/js";
-import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import { useNavigate } from "react-router-dom";
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece } from "../reducers/previewSlice";
+import { Header } from "./Header";
 import { Preview } from "./Preview";
 
 export function RightPanel() {
   const preview = useAppSelector((state) => state.preview);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
-  function handleClickClearPreview() {
-    dispatch(clearPiece());
-  }
 
   async function handleClickOpenDirectory() {
     await invoke("open", { path: preview.piece!.path });
@@ -43,48 +38,60 @@ export function RightPanel() {
     <>
       <ResizableHandle />
       <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-        <div className="p-[14px] flex flex-col h-full gap-[14px]">
-          <span className="flex justify-end items-center py-[8px]">
-            <button onClick={handleClickClearPreview} className="link">
-              <Icon path={mdiClose} size={1} />
-            </button>
-          </span>
-          <div className="flex flex-col gap-[14px] flex-grow">
-            {preview.piece && <Preview piece={preview.piece} />}
-          </div>
-          <hr className="text-divider.default" />
-          <div className="flex flex-col gap-[8px]">
-            <button
+        <div className="bg-sidebar-bg.default flex flex-col h-full gap-[14px]">
+          <Header piece={preview.piece!} />
+          <Preview piece={preview.piece!} />
+          <div className="flex flex-col gap-[2px] px-[14px] pb-[14px]">
+            <Button
               onClick={handleClickOpenDirectory}
-              className="text-left link"
+              variant="sidebar"
+              className="text-left"
             >
               Open folder
-            </button>
-            <button onClick={handleClickEditPiece} className="text-left link">
+            </Button>
+            <Button
+              onClick={handleClickEditPiece}
+              className="text-left"
+              variant="sidebar"
+            >
               Edit data
-            </button>
-            <button className="text-left link">Print parts</button>
-            <Dialog>
-              <DialogTrigger className="text-error.default hover:text-error.default text-left">
-                Delete
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Are you sure you want to delete this piece?</DialogTitle>
-                  <DialogDescription>
+            </Button>
+            <Button
+              className="text-left"
+              variant="sidebar"
+            >
+              Print parts
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="text-left text-error.default hover:text-error.focus" variant="sidebar">
+                  Delete
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure you want to delete this piece?</AlertDialogTitle>
+                  <AlertDialogDescription>
                     This action cannot be undone!
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <DialogClose>
-                    <Button variant="link">Cancel</Button>
-                  </DialogClose>
-                  <DialogClose>
-                    <Button onClick={handleConfirmDeletePiece}>Delete</Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>
+                    Cancel
+                  </AlertDialogCancel>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      handleConfirmDeletePiece();
+                    }}
+                  >
+                    <Button type="submit">
+                      Delete
+                    </Button>
+                  </form>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
       </ResizablePanel>

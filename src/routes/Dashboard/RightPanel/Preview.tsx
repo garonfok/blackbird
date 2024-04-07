@@ -1,38 +1,71 @@
-import { mdiChevronDown, mdiCircle, mdiCircleOutline, mdiTag } from "@mdi/js";
-import Icon from "@mdi/react";
-import classNames from "classnames";
-import { useState } from "react";
-import { Piece } from "@/app/types";
+import { useAppDispatch } from "@/app/hooks";
+import { Piece, Tag } from "@/app/types";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { mdiCircle, mdiCircleOutline, mdiMenuDown } from "@mdi/js";
+import Icon from "@mdi/react";
+import { pushTag } from "../reducers/filterSlice";
+import { invoke } from "@tauri-apps/api";
 
 export function Preview(props: { piece: Piece }) {
   const { piece } = props;
 
-  const [open, setOpen] = useState<boolean[]>(
-    piece.parts.map((part) => part.instruments.length > 1)
-  );
+  const dispatch = useAppDispatch();
 
-  function handleClickToggleOpen(index: number) {
-    const newOpen = [...open];
-    newOpen[index] = !newOpen[index];
-    setOpen(newOpen);
+  async function handleClickOpenDirectory(path: string) {
+    await invoke("open", { path });
   }
+
+  async function handleClickPushTag(tag: Tag) {
+    dispatch(pushTag(tag));
+  }
+
+  const roles = [
+    {
+      name: "Composed By",
+      musicians: piece.composers,
+    },
+    {
+      name: "Arranged By",
+      musicians: piece.arrangers,
+    },
+    {
+      name: "Orchestrated By",
+      musicians: piece.orchestrators,
+    },
+    {
+      name: "Transcribed By",
+      musicians: piece.transcribers,
+    },
+    {
+      name: "Lyrics By",
+      musicians: piece.lyricists,
+    }
+  ]
 
   return (
     piece && (
-      <div className="flex flex-col h-0 gap-[14px] flex-grow overflow-y-auto scrollbar-default">
+      <div className="flex flex-col gap-[14px] flex-grow">
         <div className="flex flex-wrap gap-[14px]">
           {piece.tags.map((tag) => {
             return (
-              <Badge variant="outline" key={tag.id}>
-                <Icon path={mdiTag} size={.8} color={tag.color} />
-                <span>{tag.name}</span>
+              <Badge
+                variant="outline"
+                className="gap-[4px] hover:text-fg.0 hover:border-divider.focus"
+                onClick={() => handleClickPushTag(tag)}
+              >
+                <Icon path={mdiCircle} size={0.667} style={{ color: tag.color }} />
+                {tag.name}
               </Badge>
             );
           })}
         </div>
-        <div className="flex flex-col gap-[14px]">
+        <div className="flex flex-col gap-[14px] px-[14px]">
           <div className="flex flex-col gap-[4px]">
             {piece.difficulty && (
               <span className="text-fg.1 text-body-small-default">Grade {piece.difficulty}</span>
@@ -42,117 +75,94 @@ export function Preview(props: { piece: Piece }) {
               <span className="text-fg.1 text-body-small-default">{piece.year_published}</span>
             )}
           </div>
-          <div>
-            <div className="">
-              <span className="flex flex-wrap">
-                {piece.composers
-                  .map((composer) =>
-                    [composer.first_name, composer.last_name].join(" ")
-                  )
-                  .join(", ")}
-              </span>
-              {piece.arrangers.length > 0 && (
-                <span className="flex flex-wrap text-fg.1">
-                  Arr.{" "}
-                  {piece.arrangers
-                    .map((arranger) =>
-                      [arranger.first_name, arranger.last_name].join(" ")
-                    )
-                    .join(", ")}
-                </span>
-              )}
-              {piece.transcribers.length > 0 && (
-                <span className="flex flex-wrap text-fg.1">
-                  Trans.{" "}
-                  {piece.transcribers
-                    .map((transcriber) =>
-                      [transcriber.first_name, transcriber.last_name].join(" ")
-                    )
-                    .join(", ")}
-                </span>
-              )}
-              {piece.orchestrators.length > 0 && (
-                <span className="flex flex-wrap text-fg.1">
-                  Orch.{" "}
-                  {piece.orchestrators
-                    .map((orchestrator) =>
-                      [orchestrator.first_name, orchestrator.last_name].join(
-                        " "
-                      )
-                    )
-                    .join(", ")}
-                </span>
-              )}
-              {piece.lyricists.length > 0 && (
-                <span className="flex flex-wrap text-fg.1">
-                  Lyr.{" "}
-                  {piece.lyricists
-                    .map((lyricist) =>
-                      [lyricist.first_name, lyricist.last_name].join(" ")
-                    )
-                    .join(", ")}
-                </span>
-              )}
-            </div>
-          </div>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="secondary" className="text-left w-fit">
+                Show all credits
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Credits</DialogTitle>
+              </DialogHeader>
+              <div className="flex flex-col gap-[14px]">
+                {roles.filter(role => role.musicians.length > 0).map((role) => (
+                  <div>
+                    <Label htmlFor={role.name}>{role.name}</Label>
+                    <span className="flex flex-wrap text-fg.2">
+                      {role.musicians
+                        .map((musician) =>
+                          [musician.first_name, musician.last_name].join(" ")
+                        )
+                        .join(", ")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
-        <div className="flex flex-col gap-[14px]">
-          <div className="flex flex-col text-fg.1">
-            {piece.title.length > 0 &&
-              piece.composers.length > 0 &&
-              piece.scores.map((score) => (
-                <div key={score.id} className="flex gap-[4px] items-center">
-                  <Icon
-                    path={!score.path ? mdiCircleOutline : mdiCircle}
-                    size={0.667}
-                    className={cn("text-fg.0")}
-                  />
-                  <span>{score.name}</span>
-                </div>
-              ))}
-          </div>
-          <div className="flex flex-col">
-            {piece.parts.map((part, index) => (
-              <div key={part.id} className="">
-                <button
-                  className="flex gap-[4px] justify-between w-full"
-                  onClick={() => handleClickToggleOpen(index)}
-                >
+        <Separator />
+        <ScrollArea className="overflow-y-scroll h-0 grow">
+          <div className="flex flex-col gap-[14px] px-[14px]">
+            <div className="flex flex-col">
+              {piece.scores.map((score) => (
+                <div key={score.id} className="text-sm justify-between gap-[4px] text-fg.2 px-2 py-1 flex items-center group">
                   <span className="flex items-center gap-[4px]">
                     <Icon
-                      path={!part.path ? mdiCircleOutline : mdiCircle}
+                      path={!score.path ? mdiCircleOutline : mdiCircle}
                       size={0.667}
-                      className={cn("text-fg.0")}
                     />
-                    <span className="truncate">{part.name}</span>
+                    <span>{score.name}</span>
                   </span>
-                  <Icon
-                    path={mdiChevronDown}
-                    size={1}
-                    className={classNames(
-                      "transition-default",
-                      open[index] && "rotate-180"
-                    )}
-                  />
-                </button>
-                {open[index] && (
-                  <div className="ml-[14px] flex-wrap flex text-fg.1">
-                    {part.instruments
-                      .map((instrument) => instrument.name)
-                      .join(", ")}
-                  </div>
-                )}
-              </div>
-            ))}
+                  {score.path && <Button variant='link' className="invisible group-hover:visible" onClick={() => handleClickOpenDirectory(score.path!)}>Open file</Button>}
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col">
+              {piece.parts.map((part) => (
+                <div key={part.id}>
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="sidebarCollapisble" className="w-full justify-between gap-[4px] group">
+                        <span className="flex items-center gap-[4px]">
+                          <Icon
+                            path={!part.path ? mdiCircleOutline : mdiCircle}
+                            size={0.667}
+                          />
+                          <span>{part.name}</span>
+                          <Icon
+                            path={mdiMenuDown}
+                            size={1}
+                            className="group-data-[state=open]:rotate-180"
+                          />
+                        </span>
+                        {part.path && <Button variant='link' className="invisible group-hover:visible" onClick={() => handleClickOpenDirectory(part.path!)}>Open file</Button>}
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <span className="flex flex-wrap text-fg.1 ml-8">
+                        {part.instruments
+                          .map((instrument) => instrument.name)
+                          .join(", ")}
+                      </span>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-
+        </ScrollArea >
+        <Separator />
         {piece.notes.length > 0 && (
-          <div className="break-words px-[14px] py-[8px] rounded-default bg-bg.2">
-            {piece.notes}
+          <div className="break-words px-[14px] py-[8px]">
+            <Label htmlFor="notes">Notes</Label>
+            <p>
+              {piece.notes}
+            </p>
           </div>
         )}
-      </div>
+      </div >
     )
   );
 }

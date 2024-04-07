@@ -30,6 +30,9 @@ export default {
 
       "float-bg.default": "#131315",
       "float-bg.focus": "#303036",
+
+      "button-secondary-bg.default": "#1D1D20",
+      "button-secondary-bg.focus": "#27272B",
     },
   },
   plugins: [require("tailwind-scrollbar")({ nocompatible: true })],

@@ -9,16 +9,17 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-fg.0 text-bg.0 hover:bg-fg.0/90 py-1 border border-divider.default",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border border-fg.2 bg-bg.0 hover:bg-accent hover:text-accent-foreground",
         primary:
           "bg-primary.default text-bg.0 hover:bg-primary.default/90",
+
+        default:
+          "bg-fg.0 text-bg.0 hover:bg-fg.0/90 py-1 border border-divider.default",
         secondary:
-          "bg-bg.0 text-fg.0 hover:bg-bg.1 border border-fg.2",
+          "bg-button-secondary-bg.default hover:bg-button-secondary-bg.focus py-1 border border-divider.default",
         sidebar:
           cn(
             "justify-start gap-[8px] text-fg.1 py-1 text-md",
