@@ -183,7 +183,7 @@ export function LeftPanel() {
                         <div key={sl.id} className="flex gap-[4px] w-full">
                           <Button
                             variant="sidebar"
-                            className={cn("w-full", sl.id === setlist.setlist?.id && "bg-sidebar-bg.focus")}
+                            className={cn("w-full group", sl.id === setlist.setlist?.id && "bg-sidebar-bg.focus")}
                             onClick={() => dispatch(setSetlist({ setlist: sl }))}>
                             <span className="flex gap-[8px] w-full items-center">
                               <Icon path={mdiBookOpenOutline} size={1} />
@@ -191,7 +191,7 @@ export function LeftPanel() {
                             </span>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="link">
+                                <Button variant="link" className="invisible group-hover:visible">
                                   <Icon path={mdiDotsHorizontal} size={1} />
                                 </Button>
                               </DropdownMenuTrigger>
@@ -307,7 +307,7 @@ export function LeftPanel() {
                       <Button
                         key={tag.id}
                         variant="sidebar"
-                        className="w-full"
+                        className="w-full group"
                         onClick={() => handleClickPushTag(tag)}>
                         <span className="flex gap-[8px] w-full items-center">
                           <Icon
@@ -320,7 +320,7 @@ export function LeftPanel() {
                         </span>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="link">
+                            <Button variant="link" className="invisible group-hover:visible">
                               <Icon path={mdiDotsHorizontal} size={1} />
                             </Button>
                           </DropdownMenuTrigger>
