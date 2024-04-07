@@ -50,25 +50,25 @@ const MultiSelect = ({ options, selected, onChange, className, selectPlaceholder
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between border-divider.default bg-bg.2", selected.length > 1 ? "h-full" : "h-10")}
+          className={cn("w-full justify-between border-divider.default bg-bg.2")}
           onClick={() => setOpen(!open)}
         >
           <div className="flex gap-1 flex-wrap">
             {selected.length > 0 ? selected.map((item) => (
               <Badge
                 key={item}
-                className="mr-1 mb-1"
+                className="gap-2"
               >
                 {options.find((option) => option.value === item)?.label}
-                <button
-                  className="ml-1 ring-offset-fg.0 rounded-default outline-none focus:ring-1 focus:ring-fg.0"
+                <Button
+                  variant="link"
                   onClick={(e) => {
                     e.stopPropagation()
                     handleUnselect(item)
                   }}
                 >
-                  <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />
-                </button>
+                  <Icon path={mdiClose} size={0.667} className="text-fg.2 hover:text-fg.0" />
+                </Button>
               </Badge>
             )) : <span className="text-fg.2">{selectPlaceholder ?? "Select options"}</span>}
           </div>

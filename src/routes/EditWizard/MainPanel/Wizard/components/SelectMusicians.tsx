@@ -89,7 +89,13 @@ export function SelectMusicians(props: {
   async function fetchMusicians() {
     const fetchedMusicians = (await invoke("musicians_get_all")) as Musician[];
 
-    dispatch(setMusicians({ musicians: fetchedMusicians }));
+    const sortedMusicians = fetchedMusicians.sort((a, b) => {
+      if (a.first_name < b.first_name) return -1;
+      if (a.first_name > b.first_name) return 1;
+      return 0;
+    });
+
+    dispatch(setMusicians({ musicians: sortedMusicians }));
   }
 
   async function onCreateMusician(firstName: string, lastName?: string) {
@@ -155,14 +161,14 @@ export function SelectMusicians(props: {
               role="combobox"
               aria-expanded={popoverOpen}
               onClick={() => setPopoverOpen(!open)}
-              className={cn("w-full justify-between border-fg.2 bg-bg.2", getRoleMusicians().length > 1 ? "h-full" : "h-10")}
+              className={cn("w-full justify-between border-divider.default bg-bg.2")}
             >
               <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId={"droppable"} direction="horizontal">
-                  {provided => (
+                  {droppableProvided => (
                     <div
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
+                      ref={droppableProvided.innerRef}
+                      {...droppableProvided.droppableProps}
                       className="flex gap-1 flex-wrap">
                       {getRoleMusicians().length > 0 ? getRoleMusicians().map((musician, index) => (
                         <Draggable
@@ -170,22 +176,22 @@ export function SelectMusicians(props: {
                           draggableId={musician.id.toString()}
                           index={index}
                         >
-                          {provided => (
+                          {draggableProvided => (
                             <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}>
+                              ref={draggableProvided.innerRef}
+                              {...draggableProvided.draggableProps}
+                              {...draggableProvided.dragHandleProps}>
                               <Badge
-                                className="mr-1 mb-1"
+                                className="gap-2"
                               >
                                 <Icon
                                   path={mdiDragVertical}
-                                  size={1}
-                                  className="ml-[-10px]"
+                                  size={0.667}
+                                  className="ml-[-4px]"
                                 />
                                 {musician.first_name} {musician.last_name}
                                 <button
-                                  className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-fg.0 focus:ring-offset-2"
+                                  className="ml-1 ring-offset-fg.0 rounded-full outline-none focus:ring-2 focus:ring-fg.0"
                                   onKeyDown={e => {
                                     if (e.key === "Enter") {
                                       handleClickRemoveMusician(musician.id);
@@ -198,13 +204,14 @@ export function SelectMusicians(props: {
                                   onClick={() => handleClickRemoveMusician(musician.id)}
                                   onSelect={() => handleClickRemoveMusician(musician.id)}
                                 >
-                                  <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />
+                                  <Icon path={mdiClose} size={0.667} className="text-fg.2 hover:text-fg.0" />
                                 </button>
                               </Badge>
                             </div>
                           )}
                         </Draggable>
                       )) : <span className="text-fg.1">{required && "Required"}</span>}
+                      {droppableProvided.placeholder}
                     </div>
                   )}
                 </Droppable>
@@ -238,7 +245,9 @@ export function SelectMusicians(props: {
                                 "opacity-100" : "opacity-0"
                             )}
                           />
-                          {musician.first_name} {musician.last_name}
+                          <span>{musician.first_name} {musician.last_name}</span>
+                          {/* Workaround to ensure hover function works for duplicate */}
+                          <span className="invisible">{musician.id}</span>
                         </CommandItem>
                       ))}
                     </div>
