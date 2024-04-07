@@ -51,7 +51,7 @@ export function Preview(props: { piece: Piece }) {
   return (
     piece && (
       <div className="flex flex-col gap-[14px] flex-grow">
-        <div className="flex flex-wrap gap-[14px]">
+        <div className="flex flex-wrap gap-[14px] px-[14px]">
           {piece.tags.map((tag) => {
             return (
               <Badge
