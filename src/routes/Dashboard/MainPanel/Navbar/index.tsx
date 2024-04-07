@@ -9,6 +9,9 @@ import classNames from "classnames";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { setQuery } from "../querySlice";
 import { AdvancedFilters } from "./AdvancedFilters";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { clearSetlist, setSetlist } from "../../reducers/setlistSlice";
+import { Setlist } from "@/app/types";
 
 export function Navbar() {
   const [isSearchFocused, setSearchFocused] = useState(false);
@@ -19,6 +22,7 @@ export function Navbar() {
 
   const dispatch = useAppDispatch();
   const setlist = useAppSelector((state) => state.setlist);
+  const setlists = useAppSelector((state) => state.setlists);
 
   useCmdOrCtrlHotkey("k", () => {
     inputRef.current?.focus();
@@ -34,6 +38,10 @@ export function Navbar() {
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     dispatch(setQuery({ query: event.target.value }));
+  }
+
+  function handleSelectSetlist(setlist: Setlist) {
+    dispatch(setSetlist({ setlist }));
   }
 
   const handleChangeDebounced = useCallback(debounce(handleChange), []);
@@ -80,19 +88,37 @@ export function Navbar() {
           />
         </span>
       </div>
-      <span className="px-[14px] py-[8px] text-lg font-bold leading-8">
-        {setlist.setlist ? (
-          <span className="flex gap-[8px] items-center">
-            <Icon path={mdiBookOpenOutline} size={1.25} />
-            <span>{setlist.setlist.name}</span>
-          </span>
-        ) :
-          <span className="flex gap-[8px] items-center">
-            <Icon path={mdiBookshelf} size={1.25} />
-            <span>All Pieces</span>
-          </span>
-        }
-      </span>
+      <div className="px-[14px]">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="link" className="text-left text-lg font-bold leading-8 hover:bg-main-bg.hover px-2 py-1 rounded-default">
+              {setlist.setlist ? (
+                <span className="flex gap-[8px] items-center">
+                  <Icon path={mdiBookOpenOutline} size={1.25} />
+                  <span>{setlist.setlist.name}</span>
+                </span>
+              ) :
+                <span className="flex gap-[8px] items-center">
+                  <Icon path={mdiBookshelf} size={1.25} />
+                  <span>All Pieces</span>
+                </span>
+              }
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem className="gap-[8px]" onSelect={() => dispatch(clearSetlist())}>
+              <Icon path={mdiBookshelf} size={1} className="shrink-0" />
+              <span>All Pieces</span>
+            </DropdownMenuItem>
+            {setlists.map((setlist) => (
+              <DropdownMenuItem key={setlist.id} className="gap-[8px]" onSelect={() => handleSelectSetlist(setlist)}>
+                <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
+                <span>{setlist.name}</span>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }
