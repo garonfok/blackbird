@@ -876,7 +876,6 @@ export function Table() {
             <span>Reset filters</span>
           </Button>
         </div>
-        <Separator />
         <table
           ref={tableRef}
           className="flex flex-col flex-grow h-0 overflow-y-auto scrollbar-default"

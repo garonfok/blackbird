@@ -2,7 +2,6 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import { debounce, isWindows } from "@/app/utils";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
 import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
 import { mdiBookOpenOutline, mdiBookshelf, mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
@@ -81,7 +80,6 @@ export function Navbar() {
           />
         </span>
       </div>
-      <Separator />
       <span className="px-[14px] py-[8px] text-lg font-bold leading-8">
         {setlist.setlist ? (
           <span className="flex gap-[8px] items-center">
