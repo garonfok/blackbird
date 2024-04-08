@@ -48,10 +48,10 @@ export function Navbar() {
 
   return (
     <div className="flex flex-col">
-      <div className="px-[14px] py-[14px] w-full flex gap-[14px] items-center">
+      <div className="px-[14px] py-[14px] w-full flex gap-[8px] items-center">
         <Popover open={isFiltersOpen} onOpenChange={setFiltersOpen}>
           <PopoverTrigger asChild>
-            <Button variant="link">
+            <Button variant="main" className="p-1">
               <Icon
                 path={mdiTune}
                 size={1}

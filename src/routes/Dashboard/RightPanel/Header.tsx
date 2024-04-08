@@ -24,7 +24,7 @@ export function Header(props: { piece: Piece }) {
           )
           .join(", ")}
       </span>
-      <Button onClick={handleClickClosePreview} variant="link">
+      <Button onClick={handleClickClosePreview} variant="sidebar" className="p-1">
         <Icon path={mdiClose} size={1} />
       </Button>
     </span>
