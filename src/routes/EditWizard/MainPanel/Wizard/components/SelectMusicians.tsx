@@ -258,9 +258,11 @@ export function SelectMusicians(props: {
           </PopoverContent>
         </Popover>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-          <DialogTrigger className="flex items-center gap-[8px] hover:text-fg.0 transitio-default">
-            <Icon path={mdiPlus} size={1} />
-            <span>Create musician</span>
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-[4px] text-left w-fit" variant='main'>
+              <Icon path={mdiPlus} size={0.667} />
+              <span>Create musician</span>
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <EditMusicianDialog onConfirm={onCreateMusician} onClose={setCreateOpen} />

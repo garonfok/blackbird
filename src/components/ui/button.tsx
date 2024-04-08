@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "px-2 py-2 inline-flex items-center justify-center whitespace-nowrap rounded-default text-sm font-medium transition-default focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-fg.0 disabled:pointer-events-none disabled:opacity-50",
+  "px-[8px] py-[8px] inline-flex items-center justify-center whitespace-nowrap rounded-default text-sm font-medium transition-default focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-fg.0 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
@@ -27,7 +27,7 @@ const buttonVariants = cva(
           ),
         sidebarCollapisble:
           cn(
-            "text-sm justify-start gap-[4px] text-fg.2 py-1",
+            "text-sm justify-start gap-[4px] text-fg.2 py-[4px]",
             "hover:bg-sidebar-bg.focus",
           ),
         link: cn(
@@ -35,7 +35,7 @@ const buttonVariants = cva(
           "hover:text-fg.0"
         ),
         main: cn(
-          "justify-start gap-[8px] text-fg.1 py-1 text-sm",
+          "justify-start gap-[8px] text-fg.1 py-[4px] text-sm",
           "hover:bg-main-bg.focus hover:text-fg.0",
         )
       },

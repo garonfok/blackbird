@@ -5,6 +5,7 @@ import { SelectTags } from "@/components/SelectTags";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { mdiPlus } from "@mdi/js";
@@ -19,6 +20,7 @@ import {
   setYearPublished,
 } from "../../pieceSlice";
 import { SelectMusicians } from "./components/SelectMusicians";
+import { Button } from "@/components/ui/button";
 
 export function GeneralInformation() {
   const [createTagOpen, setCreateTagOpen] = useState(false);
@@ -57,8 +59,8 @@ export function GeneralInformation() {
   );
 
   return (
-    <>
-      <div className="edit-wizard-panel">
+    <ScrollArea>
+      <div className='p-[14px] flex flex-col gap-[14px]'>
         <div className="flex flex-col gap-[8px]">
           <Label htmlFor="title">Title</Label>
           <Input
@@ -119,9 +121,11 @@ export function GeneralInformation() {
           <Label>Tags</Label>
           <SelectTags allTags={allTags} selected={piece.tags} onChange={(tags) => dispatch(setTags(tags))} />
           <Dialog open={createTagOpen} onOpenChange={setCreateTagOpen}>
-            <DialogTrigger className="flex items-center gap-[8px] hover:text-fg.0 transition-default">
-              <Icon path={mdiPlus} size={1} />
-              <span>Create Tag</span>
+            <DialogTrigger asChild>
+              <Button className="flex items-center gap-[4px] text-left w-fit" variant='main'>
+                <Icon path={mdiPlus} size={0.667} />
+                <span>Create Tag</span>
+              </Button>
             </DialogTrigger>
             <DialogContent>
               <EditTagDialog onConfirm={handleConfirmCreateTag} onClose={setCreateTagOpen} />
@@ -129,6 +133,6 @@ export function GeneralInformation() {
           </Dialog>
         </div>
       </div>
-    </>
+    </ScrollArea>
   );
 }

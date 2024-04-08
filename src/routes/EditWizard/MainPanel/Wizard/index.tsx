@@ -41,8 +41,8 @@ export function Wizard(props: { stepState: StepState }) {
   }, [stepState]);
 
   return (
-    <div className="p-[14px] flex flex-col gap-[14px] flex-grow overflow-hidden">
-      <span className="text-heading-default">{title}</span>
+    <div className="flex flex-col flex-grow overflow-hidden">
+      <span className="text-heading-default p-[14px]">{title}</span>
       {content}
     </div>
   );
