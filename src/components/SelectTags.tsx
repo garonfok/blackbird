@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { mdiCheck, mdiChevronDown, mdiClose, mdiTag } from "@mdi/js";
+import { mdiCheck, mdiChevronDown, mdiCircle, mdiClose, mdiTag } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useState } from "react";
 
@@ -38,7 +38,7 @@ export function SelectTags(props: { allTags: Tag[], selected: Tag[], onChange: (
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cn("w-full justify-between border-fg.2 bg-bg.2", selected.length > 1 ? "h-full" : "h-10")}
+          className={cn("w-full justify-between border-divider.default bg-bg.2")}
           onClick={() => setOpen(!open)}
         >
           <div className="flex gap-1 flex-wrap">
@@ -47,13 +47,13 @@ export function SelectTags(props: { allTags: Tag[], selected: Tag[], onChange: (
                 key={tag.id}
                 className="mr-1 mb-1"
               >
-                <Icon path={mdiTag} size={0.75} color={tag.color} className="mr-1" />
+                <Icon path={mdiCircle} size={0.667} color={tag.color} className="mr-1" />
                 {tag.name}
                 <button
                   className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-fg.0 focus:ring-offset-2"
                   onSelect={() => handleUnselect(tag)}
                 >
-                  <Icon path={mdiClose} size={0.75} className="text-fg.2 hover:text-fg.0" />
+                  <Icon path={mdiClose} size={0.667} className="text-fg.2 hover:text-fg.0" />
                 </button>
               </Badge>
             )) : <span className="text-fg.1">Select tags</span>}
