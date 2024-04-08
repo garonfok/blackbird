@@ -12,6 +12,7 @@ import { ControlledMenu, MenuItem } from "@szhsin/react-menu";
 import { ByteFile } from "@/app/types";
 import { cleanPiece } from "../../pieceSlice";
 import { invoke } from "@tauri-apps/api";
+import { Label } from "@/components/ui/label";
 
 export function FileList() {
   const [anchorPoint, setAnchorPoint] = useState({ x: 0, y: 0 });
@@ -73,7 +74,8 @@ export function FileList() {
   }
 
   return (
-    <>
+    <div className="flex flex-col px-[14px] gap-[14px] h-full">
+      <Label>Files</Label>
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId={"dropppable"} direction="vertical">
           {(provided) => (
@@ -90,7 +92,7 @@ export function FileList() {
                 >
                   {(provided) => (
                     <div
-                      className="mb-[8px] last:mb-0"
+                      className="mb-[4px] last:mb-0"
                       onContextMenu={(event) =>
                         handleContextMenu(event, file, index)
                       }
@@ -138,6 +140,6 @@ export function FileList() {
           </MenuItem>
         </div>
       </ControlledMenu>
-    </>
+    </div>
   );
 }

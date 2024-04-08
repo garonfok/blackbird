@@ -14,7 +14,7 @@ export function MainPanel() {
   const piece = useAppSelector((state) => state.piece.present);
 
   return (
-    <ResizablePanel className="w-full flex flex-col overflow-hidden">
+    <ResizablePanel className="bg-main-bg.default w-full flex flex-col overflow-hidden">
       {loading ? (
         <div className="h-full w-full flex justify-center items-center flex-col">
           {/* TODO: Replace this with shadcn/ui component */}

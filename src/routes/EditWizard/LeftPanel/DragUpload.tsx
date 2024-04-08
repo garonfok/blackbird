@@ -12,6 +12,8 @@ import { ActionCreators } from "redux-undo";
 import { pushFiles } from "../filesSlice";
 import { setPiece } from "../pieceSlice";
 import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
+import Icon from "@mdi/react";
+import { mdiUpload } from "@mdi/js";
 
 export function DragUpload() {
   const [isUploading, setIsUploading] = useState(false);
@@ -162,17 +164,17 @@ export function DragUpload() {
   useCmdOrCtrlHotkey("o", handleClickUploadFiles);
 
   return (
-    <>
-      <div className="flex items-center gap-[14px]">
-        <Button variant="secondary" onClick={handleClickUploadFiles}>Browse files</Button>
-        <span>Drop files here</span>
-      </div>
+    <div className="px-[14px] flex flex-col gap-[14px]">
+      <Button variant="secondary" onClick={handleClickUploadFiles} className="flex items-center gap-[4px] w-fit">
+        <Icon path={mdiUpload} size={0.667} />
+        <span>Browse files</span>
+      </Button>
       {isUploading && (
         <>
           <Progress value={uploadCount / totalFiles * 100} />
           {isFinishedUploading ? <span>Finished uploading</span> : <span>Uploaded {uploadCount} of {totalFiles}</span>}
         </>
       )}
-    </>
+    </div>
   );
 }

@@ -28,34 +28,37 @@ export function LeftPanel() {
   return (
     <>
       <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
-        <div ref={panelRef} className="p-[14px] flex flex-col h-full gap-[14px]">
+        <div ref={panelRef} className="bg-sidebar-bg.default py-[14px] flex flex-col h-full gap-[14px]">
           {!loading && (
             <>
               <DragUpload />
               <Separator />
               <FileList />
-              <Separator />
-              <Dialog>
-                <DialogTrigger className="text-left hover:text-fg.0 transirtion-default">
-                  Cancel
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>
-                      Are you sure you want to cancel?
-                    </DialogTitle>
-                    <DialogDescription>
-                      You will lose all unsaved changes.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <DialogClose asChild>
-                      <Button variant="link">Keep working</Button>
-                    </DialogClose>
-                    <Button onClick={handleConfirmCancel}>Yes</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+              <div className="px-[14px]">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="sidebar" className="w-full">
+                      Cancel
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>
+                        Are you sure you want to cancel?
+                      </DialogTitle>
+                      <DialogDescription>
+                        You will lose all unsaved changes.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant="link">Keep working</Button>
+                      </DialogClose>
+                      <Button onClick={handleConfirmCancel}>Yes</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
             </>
           )}
         </div>
