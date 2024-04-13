@@ -92,10 +92,6 @@ export function Wizard() {
     });
   }
 
-  async function handleDragEnd() {
-
-  }
-
   return (
     <Form {...pieceForm}>
       <form onSubmit={pieceForm.handleSubmit(onSubmitPieceForm)} className="bg-main-bg.default h-screen w-screen flex flex-col">

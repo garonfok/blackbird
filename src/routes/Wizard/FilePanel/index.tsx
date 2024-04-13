@@ -4,16 +4,20 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, closestCenter, defaultDropAnimationSideEffects, useSensor, useSensors } from '@dnd-kit/core';
+import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { mdiClose, mdiFile, mdiUploadMultipleOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { open } from "@tauri-apps/api/dialog";
 import { Event, listen } from "@tauri-apps/api/event";
 import { readBinaryFile } from "@tauri-apps/api/fs";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { DragItem } from "./DragItem";
+import { SortableItem } from "./SortableItem";
 
 export function FilePanel(props: {
   uploadedFiles: ByteFile[];
-  setUploadedFiles: (files: ByteFile[]) => void;
+  setUploadedFiles: Dispatch<SetStateAction<ByteFile[]>>
 }) {
 
   const { uploadedFiles, setUploadedFiles } = props;
@@ -22,6 +26,14 @@ export function FilePanel(props: {
   const [uploadingFilesCount, setUploadingFilesCount] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [isFinishedUploading, setIsFinishedUploading] = useState(false);
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  )
 
   useEffect(() => {
     const unlisten = listen("tauri://file-drop", handleDrop);
@@ -61,7 +73,7 @@ export function FilePanel(props: {
 
       const buffer = await readBinaryFile(file);
       const data: ByteFile = {
-        id: Math.max(...uploadedFiles.map((file) => file.id), 0) + 1,
+        id: Math.max(...completedUploads.map(file => file.id), ...uploadedFiles.map(file => file.id), 0) + 1,
         name: file.split("/").pop() || "",
         bytearray: buffer
       };
@@ -89,6 +101,37 @@ export function FilePanel(props: {
     setUploadedFiles(newFiles);
   }
 
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    setActiveId(active.id)
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!over || !active) return;
+
+    if (active.id !== over.id) {
+      setUploadedFiles(files => {
+        const oldIndex = files.findIndex(file => file.id === active.id);
+        const newIndex = files.findIndex(file => file.id === over.id);
+        return arrayMove(files, oldIndex, newIndex)
+      })
+    }
+
+    setActiveId(null)
+  }
+
+  const dropAnimationConfig = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: "0.5",
+        }
+      }
+    })
+  }
+
   return (
     <div className="h-full w-full p-[14px] flex flex-col gap-[14px]">
       {isUploading ? (
@@ -106,25 +149,39 @@ export function FilePanel(props: {
           </Button>
         </span >
       )}
-      <div
-        className="bg-sidebar-bg.default rounded-default p-[4px] flex flex-col h-full"
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
       >
-        <ScrollArea className="h-0 grow">
-          <div className="flex flex-col gap-[4px]">
-            {uploadedFiles.map((file, index) => (
-              <span className="flex item-center gap-[4px] p-[4px] bg-float-bg.default shadow-float">
-                <Icon path={mdiFile} size={0.667} className="shrink-0 flex self-center" />
-                <span className="text-body-small-default text-fg.2 flex items-center grow break-all">
-                  {file.name}
-                </span>
-                <Button type="button" variant="main" className="p-1 h-fit" onClick={() => handleClickRemoveFile(index)}>
-                  <Icon path={mdiClose} size={0.667} className="shrink-0" />
-                </Button>
-              </span>
-            ))}
+        <SortableContext items={uploadedFiles} strategy={verticalListSortingStrategy}>
+          <div
+            className="bg-sidebar-bg.default rounded-default p-[4px] flex flex-col h-full"
+          >
+            <ScrollArea className="h-0 grow">
+              <div className="flex flex-col gap-[4px]">
+                {uploadedFiles.map((file, index) => (
+                  <SortableItem key={file.id} id={file.id}>
+                    <>
+                      <Icon path={mdiFile} size={0.667} className="shrink-0 self-center" />
+                      <span className="text-body-small-default text-fg.2 self-center grow break-all">
+                        {file.name}
+                      </span>
+                      <Button type="button" variant="main" className="p-1 h-fit" onClick={() => handleClickRemoveFile(index)}>
+                        <Icon path={mdiClose} size={0.667} className="shrink-0" />
+                      </Button>
+                    </>
+                  </SortableItem>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
-        </ScrollArea>
-      </div>
+        </SortableContext>
+        <DragOverlay dropAnimation={dropAnimationConfig}>
+          {activeId ? <DragItem file={uploadedFiles.find(file => file.id === activeId)!} /> : null}
+        </DragOverlay>
+      </DndContext>
     </div >
   )
 }
