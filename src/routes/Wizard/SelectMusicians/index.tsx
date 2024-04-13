@@ -8,17 +8,14 @@ import { FormControl, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import {
-  DragDropContext,
-  Draggable,
-  DropResult,
-  Droppable,
-} from "@hello-pangea/dnd";
-import { mdiCheck, mdiChevronDown, mdiClose, mdiDragVertical, mdiPlus } from "@mdi/js";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, closestCenter, defaultDropAnimationSideEffects, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, arrayMove, horizontalListSortingStrategy, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { mdiCheck, mdiChevronDown, mdiClose, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { invoke } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
+import { SortableItem } from "./SortableItem";
 
 export function SelectMusicians(props: {
   role: "composers" | "arrangers" | "transcribers" | "orchestrators" | "lyricists";
@@ -31,6 +28,14 @@ export function SelectMusicians(props: {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [musicians, setMusicians] = useState<Musician[]>([]);
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  )
 
   useEffect(() => {
     fetchMusicians();
@@ -57,23 +62,23 @@ export function SelectMusicians(props: {
     onChange([...value, musician]);
   }
 
-  function handleDragEnd(result: DropResult) {
-    const { destination, source } = result;
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    setActiveId(active.id)
+  }
 
-    if (!destination) return;
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
 
-    if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
-    )
-      return;
+    if (!over || !active) return;
 
-    const cloned = [...value];
-    const file = cloned[source.index];
-    cloned.splice(source.index, 1);
-    cloned.splice(destination.index, 0, file);
+    if (active.id !== over.id) {
+      const oldIndex = value.findIndex((musician) => musician.id === active.id);
+      const newIndex = value.findIndex((musician) => musician.id === over.id);
+      onChange(arrayMove(value, oldIndex, newIndex))
+    }
 
-    onChange(cloned);
+    setActiveId(null)
   }
 
   function handleClickRemoveMusician(musicianId: number) {
@@ -98,6 +103,17 @@ export function SelectMusicians(props: {
       onChange([...value, musician]);
     }
   }
+
+  const dropAnimationConfig = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: "0.5",
+        }
+      }
+    })
+  }
+
   return (
     <>
       <div className="flex flex-col gap-[4px]">
@@ -127,59 +143,53 @@ export function SelectMusicians(props: {
                 onClick={() => setPopoverOpen(!open)}
                 className={cn("w-full justify-between border-divider.default bg-bg.2")}
               >
-                <DragDropContext onDragEnd={handleDragEnd}>
-                  <Droppable droppableId={"droppable"} direction="horizontal">
-                    {droppableProvided => (
-                      <div
-                        ref={droppableProvided.innerRef}
-                        {...droppableProvided.droppableProps}
-                        className="flex gap-1 flex-wrap">
-                        {value.length > 0 ? value.map((musician, index) => (
-                          <Draggable
-                            key={musician.id}
-                            draggableId={musician.id.toString()}
-                            index={index}
-                          >
-                            {draggableProvided => (
-                              <div
-                                ref={draggableProvided.innerRef}
-                                {...draggableProvided.draggableProps}
-                                {...draggableProvided.dragHandleProps}>
-                                <Badge
-                                  className="gap-2"
-                                >
-                                  <Icon
-                                    path={mdiDragVertical}
-                                    size={0.667}
-                                    className="ml-[-4px]"
-                                  />
-                                  {musician.first_name} {musician.last_name}
-                                  <button
-                                    className="ml-1 ring-offset-fg.0 rounded-full outline-none focus:ring-2 focus:ring-fg.0"
-                                    onKeyDown={e => {
-                                      if (e.key === "Enter") {
-                                        handleClickRemoveMusician(musician.id);
-                                      }
-                                    }}
-                                    onMouseDown={e => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                    }}
-                                    onClick={() => handleClickRemoveMusician(musician.id)}
-                                    onSelect={() => handleClickRemoveMusician(musician.id)}
-                                  >
-                                    <Icon path={mdiClose} size={0.667} className="text-fg.2 hover:text-fg.0" />
-                                  </button>
-                                </Badge>
-                              </div>
-                            )}
-                          </Draggable>
-                        )) : <span className="text-fg.2">{required && "Required"}</span>}
-                        {droppableProvided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                  onDragStart={handleDragStart}
+                >
+                  <SortableContext
+                    id="select-musicians"
+                    items={value}
+                    strategy={horizontalListSortingStrategy}
+                  >
+                    <div className="flex gap-1 flex-wrap">
+                      {value.length > 0 ? value.map((musician) => (
+                        <SortableItem key={musician.id} id={musician.id}>
+                          <>
+                            {musician.first_name} {musician.last_name}
+                            <Button
+                              type="button"
+                              variant="link"
+                              onKeyDown={e => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleClickRemoveMusician(musician.id);
+                                }
+                              }}
+                              onMouseDown={e => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleClickRemoveMusician(musician.id)
+                              }}
+                            >
+                              <Icon path={mdiClose} size={0.667} className="text-fg.2 hover:text-fg.0" />
+                            </Button>
+                          </>
+                        </SortableItem>
+                      )) : <span className="text-fg.2">{required && "Required"}</span>}
+                    </div>
+                  </SortableContext>
+                  <DragOverlay dropAnimation={dropAnimationConfig}>
+                    {activeId ? (
+                      <Badge>
+                        {value.find((musician) => musician.id === activeId)?.first_name} {value.find((musician) => musician.id === activeId)?.last_name}
+                      </Badge>
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
                 <Icon path={mdiChevronDown} size={1} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", popoverOpen && "rotate-180")} />
               </Button>
             </PopoverTrigger>
