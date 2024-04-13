@@ -12,7 +12,7 @@ export function Dashboard() {
   const navigate = useNavigate();
   const preview = useAppSelector((state) => state.preview);
 
-  useCmdOrCtrlHotkey("n", () => navigate("/edit-wizard"));
+  useCmdOrCtrlHotkey("n", () => navigate("/wizard"));
 
   useEffect(() => {
     const unlisten = listen("tauri://file-drop", handleDrop);
