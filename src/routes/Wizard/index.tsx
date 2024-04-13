@@ -1,11 +1,10 @@
 import { ByteFile, byteFileSchema, instrumentSchema, musicianSchema, tagSchema } from "@/app/types";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -137,8 +136,8 @@ export function Wizard() {
   return (
     <Form {...pieceForm}>
       <form onSubmit={pieceForm.handleSubmit(onSubmitPieceForm)} className="bg-main-bg.default h-screen w-screen flex flex-col">
-        <Collapsible>
-          <div className="px-[14px] pt-[14px] pb-[4px] flex flex-col gap-[14px] bg-sidebar-bg.default">
+        <div className="px-[14px] pt-[14px] pb-[8px] flex flex-col gap-[4px] bg-sidebar-bg.default">
+          <div className="flex flex-col gap-[14px]">
             <div className="flex gap-[14px]">
               <FormField
                 control={pieceForm.control}
@@ -226,39 +225,48 @@ export function Wizard() {
               render={({ field }) => (
                 <SelectMusicians required role={field.name} key={field.name} {...field} />
               )} />
-            <CollapsibleContent className="flex flex-col gap-[8px]">
-              <FormField
-                control={pieceForm.control}
-                name="arrangers"
-                render={({ field }) => (
-                  <SelectMusicians role={field.name} key={field.name} {...field} />
-                )} />
-              <FormField
-                control={pieceForm.control}
-                name="orchestrators"
-                render={({ field }) => (
-                  <SelectMusicians role={field.name} key={field.name} {...field} />
-                )} />
-              <FormField
-                control={pieceForm.control}
-                name="transcribers"
-                render={({ field }) => (
-                  <SelectMusicians role={field.name} key={field.name} {...field} />
-                )} />
-              <FormField
-                control={pieceForm.control}
-                name="lyricists"
-                render={({ field }) => (
-                  <SelectMusicians role={field.name} key={field.name} {...field} />
-                )} />
-            </CollapsibleContent>
-            <CollapsibleTrigger asChild className="group">
-              <Button variant="main" type="button" className="w-full flex items-center justify-center">
-                <Icon path={mdiChevronDown} size={1} className="group-data-[state=open]:rotate-180" />
-              </Button>
-            </CollapsibleTrigger>
           </div>
-        </Collapsible>
+          <Popover>
+            <PopoverAnchor>
+              <PopoverContent className="flex flex-col gap-[8px] pb-[8px] w-screen bg-sidebar-bg.default">
+                <FormField
+                  control={pieceForm.control}
+                  name="arrangers"
+                  render={({ field }) => (
+                    <SelectMusicians role={field.name} key={field.name} {...field} />
+                  )} />
+                <FormField
+                  control={pieceForm.control}
+                  name="orchestrators"
+                  render={({ field }) => (
+                    <SelectMusicians role={field.name} key={field.name} {...field} />
+                  )} />
+                <FormField
+                  control={pieceForm.control}
+                  name="transcribers"
+                  render={({ field }) => (
+                    <SelectMusicians role={field.name} key={field.name} {...field} />
+                  )} />
+                <FormField
+                  control={pieceForm.control}
+                  name="lyricists"
+                  render={({ field }) => (
+                    <SelectMusicians role={field.name} key={field.name} {...field} />
+                  )} />
+                <PopoverTrigger asChild className="group">
+                  <Button variant="main" type="button" className="w-full flex items-center justify-center">
+                    <Icon path={mdiChevronDown} size={1} className="group-data-[state=open]:rotate-180" />
+                  </Button>
+                </PopoverTrigger>
+              </PopoverContent>
+            </PopoverAnchor>
+            <PopoverTrigger asChild className="data-[state=open]:hidden">
+              <Button variant="main" type="button" className="w-full flex items-center justify-center">
+                <Icon path={mdiChevronDown} size={1} />
+              </Button>
+            </PopoverTrigger>
+          </Popover>
+        </div>
         <Separator />
         <ResizablePanelGroup direction="horizontal">
 
