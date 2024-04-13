@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface Piece {
   id: number;
   title: string;
@@ -18,13 +20,15 @@ export interface Piece {
   tags: Tag[];
 }
 
-export interface Musician {
-  id: number;
-  first_name: string;
-  last_name?: string;
-  created_at: string;
-  updated_at: string;
-}
+export const musicianSchema = z.object({
+  id: z.number(),
+  first_name: z.string(),
+  last_name: z.string().optional(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+
+export type Musician = z.infer<typeof musicianSchema>;
 
 export interface Score {
   id: number;
@@ -74,21 +78,26 @@ export interface EditScore {
   name: string;
   file: ByteFile | null;
 }
-export interface Instrument {
-  id: number;
-  name: string;
-  category?: string;
-  is_default: boolean;
-  created_at: Date;
-  updated_at: Date;
-}
-export interface Tag {
-  id: number;
-  name: string;
-  color: string;
-  created_at: Date;
-  updated_at: Date;
-}
+
+export const instrumentSchema = z.object({
+  id: z.number().int(),
+  name: z.string(),
+  category: z.string().optional(),
+  is_default: z.boolean(),
+  created_at: z.string().datetime(),
+  updated_at: z.string().datetime(),
+})
+
+export type Instrument = z.infer<typeof instrumentSchema>
+
+export const tagSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  color: z.string(),
+  created_at: z.string(),
+  updated_at: z.string(),
+});
+export type Tag = z.infer<typeof tagSchema>;
 
 export interface Ensemble {
   id: number;
@@ -99,11 +108,13 @@ export interface Ensemble {
   parts?: Part[];
 }
 
-export interface ByteFile {
-  id: number;
-  name: string;
-  bytearray: Uint8Array;
-}
+export const byteFileSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  bytearray: z.custom<Uint8Array>((data) => data instanceof Uint8Array),
+});
+
+export type ByteFile = z.infer<typeof byteFileSchema>;
 
 export interface Setlist {
   id: number;

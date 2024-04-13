@@ -35,6 +35,11 @@
         "all": false,
         "exit": false,
         "relaunch": true
+      },
+      "window": {
+        "create": true,
+        "hide": true,
+        "show": true
       }
     },
     "bundle": {
@@ -54,6 +59,7 @@
     },
     "windows": [
       {
+        "label": "main",
         "fullscreen": false,
         "maximized": true,
         "resizable": true,

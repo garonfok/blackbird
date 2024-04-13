@@ -1,17 +1,17 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Setlist } from "@/app/types";
 import { debounce, isWindows } from "@/app/utils";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
-import { mdiBookOpenOutline, mdiBookshelf, mdiMagnify, mdiTune } from "@mdi/js";
+import { mdiBookOpenVariantOutline, mdiBookshelf, mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import classNames from "classnames";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { clearSetlist, setSetlist } from "../../reducers/setlistSlice";
 import { setQuery } from "../querySlice";
 import { AdvancedFilters } from "./AdvancedFilters";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { clearSetlist, setSetlist } from "../../reducers/setlistSlice";
-import { Setlist } from "@/app/types";
 
 export function Navbar() {
   const [isSearchFocused, setSearchFocused] = useState(false);
@@ -94,7 +94,7 @@ export function Navbar() {
             <Button variant="link" className="text-left text-lg font-bold leading-8 hover:bg-main-bg.hover px-2 py-1 rounded-default">
               {setlist.setlist ? (
                 <span className="flex gap-[8px] items-center">
-                  <Icon path={mdiBookOpenOutline} size={1.25} />
+                  <Icon path={mdiBookOpenVariantOutline} size={1.25} />
                   <span>{setlist.setlist.name}</span>
                 </span>
               ) :
@@ -112,7 +112,7 @@ export function Navbar() {
             </DropdownMenuItem>
             {setlists.map((setlist) => (
               <DropdownMenuItem key={setlist.id} className="gap-[8px]" onSelect={() => handleSelectSetlist(setlist)}>
-                <Icon path={mdiBookOpenOutline} size={1} className="shrink-0" />
+                <Icon path={mdiBookOpenVariantOutline} size={1} className="shrink-0" />
                 <span>{setlist.name}</span>
               </DropdownMenuItem>
             ))}

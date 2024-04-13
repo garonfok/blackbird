@@ -2,12 +2,12 @@ import store from "@/app/store";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Dashboard } from "@/routes/Dashboard";
-import { EditWizard } from "@/routes/EditWizard";
 import { Settings } from "@/routes/Settings";
 import "@/styles.css";
 import React, { useCallback } from "react";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Wizard } from "./routes/Wizard";
 
 const router = createBrowserRouter([
   {
@@ -19,9 +19,9 @@ const router = createBrowserRouter([
     element: <Settings />,
   },
   {
-    path: "/edit-wizard",
-    element: <EditWizard />,
-  },
+    path: "/wizard",
+    element: <Wizard />,
+  }
 ]);
 
 export function App() {

@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  mdiBookOpenOutline,
+  mdiBookOpenVariantOutline,
   mdiBookshelf,
   mdiCircle,
   mdiCog,
@@ -104,6 +104,10 @@ export function LeftPanel() {
     await fetchTags();
   }
 
+  async function openWizardWindow() {
+    await invoke("open_wizard")
+  }
+
   return (
     <>
       <ResizablePanel defaultSize={20} minSize={15} maxSize={30}>
@@ -111,11 +115,9 @@ export function LeftPanel() {
           <div className="h-screen">
             <div className="bg-sidebar-bg.default p-[14px] flex flex-col gap-[8px] h-full justify-between">
               <div className="flex flex-col gap-[14px]">
-                <Button variant="sidebar" asChild>
-                  <Link to="/edit-wizard" className="flex items-center gap-[8px]">
-                    <Icon path={mdiTextBoxPlusOutline} size={1} />
-                    <span>New piece</span>
-                  </Link>
+                <Button variant="sidebar" className="gap-[8px]" onClick={() => openWizardWindow()}>
+                  <Icon path={mdiTextBoxPlusOutline} size={1} />
+                  <span>New piece</span>
                 </Button>
                 <div className="flex flex-col gap-[2px]">
                   <Button
@@ -186,7 +188,7 @@ export function LeftPanel() {
                             className={cn("w-full group", sl.id === setlist.setlist?.id && "bg-sidebar-bg.focus")}
                             onClick={() => dispatch(setSetlist({ setlist: sl }))}>
                             <span className="flex gap-[8px] w-full items-center">
-                              <Icon path={mdiBookOpenOutline} size={1} />
+                              <Icon path={mdiBookOpenVariantOutline} size={1} />
                               <span>{sl.name}</span>
                             </span>
                             <DropdownMenu>

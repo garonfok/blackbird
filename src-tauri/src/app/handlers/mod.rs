@@ -3,6 +3,7 @@ use tauri::{generate_handler, Invoke};
 mod db;
 mod fs;
 mod settings;
+mod window;
 
 pub fn init() -> impl Fn(Invoke) {
     generate_handler![
@@ -65,5 +66,7 @@ pub fn init() -> impl Fn(Invoke) {
         fs::delete_dir,
         settings::get_working_directory,
         settings::set_working_directory,
+        window::open_wizard,
+        window::close_window
     ]
 }
