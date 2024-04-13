@@ -10,6 +10,8 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, closestCenter, defaultDropAnimationSideEffects, useSensor, useSensors } from '@dnd-kit/core';
+import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { mdiCheck, mdiChevronDown, mdiUnfoldMoreHorizontal } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -17,6 +19,7 @@ import { invoke } from "@tauri-apps/api";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { DragItem } from "./DragItem";
 import { FilePanel } from "./FilePanel";
 import { SelectMusicians } from "./SelectMusicians";
 import { SelectTags } from "./SelectTags";
@@ -81,6 +84,14 @@ export function Wizard() {
 
   const [selectDifficultyOpen, setSelectDifficultyOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<ByteFile[]>([]);
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  )
 
   function onSubmitPieceForm(data: z.infer<typeof pieceFormSchema>) {
     console.log(data);
@@ -90,6 +101,37 @@ export function Wizard() {
     await invoke("close_window", {
       windowLabel: "wizard",
     });
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    setActiveId(active.id)
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!over || !active) return;
+
+    if (active.id !== over.id) {
+      setUploadedFiles(files => {
+        const oldIndex = files.findIndex(file => file.id === active.id);
+        const newIndex = files.findIndex(file => file.id === over.id);
+        return arrayMove(files, oldIndex, newIndex)
+      })
+    }
+
+    setActiveId(null)
+  }
+
+  const dropAnimationConfig = {
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        active: {
+          opacity: "0.5",
+        }
+      }
+    })
   }
 
   return (
@@ -219,13 +261,24 @@ export function Wizard() {
         </Collapsible>
         <Separator />
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={30} minSize={15}>
-            <FilePanel uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} />
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel minSize={15}>
 
-          </ResizablePanel>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <ResizablePanel defaultSize={30} minSize={15}>
+              <FilePanel uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} />
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel minSize={15}>
+
+            </ResizablePanel>
+            <DragOverlay dropAnimation={dropAnimationConfig}>
+              {activeId ? <DragItem file={uploadedFiles.find(file => file.id === activeId)!} /> : null}
+            </DragOverlay>
+          </DndContext>
           <ResizableHandle />
           <ResizablePanel defaultSize={30} minSize={15} className="p-[14px] flex flex-col gap-[14px]">
             <FormField
