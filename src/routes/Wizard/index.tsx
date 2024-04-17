@@ -9,8 +9,10 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { mdiCheck, mdiChevronDown, mdiUnfoldMoreHorizontal } from "@mdi/js";
+import { mdiCheck, mdiChevronDown, mdiFile, mdiUnfoldMoreHorizontal } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import { useState } from "react";
@@ -48,6 +50,14 @@ export function Wizard() {
 
   const [selectDifficultyOpen, setSelectDifficultyOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<ByteFile[]>([]);
+  const [activeItem, setActiveItem] = useState<null | ByteFile>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
 
   function onSubmitPieceForm(data: z.infer<typeof pieceFormSchema>) {
     console.log(data);
@@ -57,6 +67,34 @@ export function Wizard() {
     await invoke("close_window", {
       windowLabel: "wizard",
     });
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    const file = uploadedFiles.find((file) => file.id === active.id);
+    setActiveItem(file!);
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!over) {
+      setActiveItem(null);
+      return;
+    };
+
+    if (active.id !== over.id) {
+      const oldIndex = uploadedFiles.findIndex((file) => file.id === parseInt(active.id.toString().slice(1)));
+      const newIndex = uploadedFiles.findIndex((file) => file.id === parseInt(over.id.toString().slice(1)));
+      const newFiles = arrayMove(uploadedFiles, oldIndex, newIndex);
+      setUploadedFiles(newFiles);
+    }
+
+    setActiveItem(null);
+  }
+
+  function handleDragCancel() {
+    setActiveItem(null);
   }
 
   return (
@@ -195,13 +233,30 @@ export function Wizard() {
         </div>
         <Separator />
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={30} minSize={15}>
-            <FilePanel uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} />
-          </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel minSize={15}>
-            <CentralPanel pieceForm={pieceForm} />
-          </ResizablePanel>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
+          >
+            <ResizablePanel defaultSize={30} minSize={15}>
+              <FilePanel uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} />
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel minSize={15}>
+              <CentralPanel pieceForm={pieceForm} />
+            </ResizablePanel>
+            <DragOverlay >
+              {activeItem &&
+                <div className="w-36 flex item-center gap-[4px] p-[4px] bg-float-bg.default float-shadow rounded-default">
+                  <Icon path={mdiFile} size={0.667} className="shrink-0 self-center" />
+                  <span className="text-body-small-default text-fg.2 self-center grow break-all">
+                    {activeItem.name}
+                  </span>
+                </div>}
+            </DragOverlay>
+          </DndContext>
           <ResizableHandle />
           <ResizablePanel defaultSize={30} minSize={15} className="p-[14px] flex flex-col gap-[14px]">
             <FormField
