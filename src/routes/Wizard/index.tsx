@@ -1,4 +1,4 @@
-import { ByteFile, byteFileSchema, instrumentSchema, musicianSchema, tagSchema } from "@/app/types";
+import { ByteFile } from "@/app/types";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -9,8 +9,6 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/componen
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, closestCenter, defaultDropAnimationSideEffects, useSensor, useSensors } from '@dnd-kit/core';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { mdiCheck, mdiChevronDown, mdiUnfoldMoreHorizontal } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -18,49 +16,11 @@ import { invoke } from "@tauri-apps/api";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { DragItem } from "./DragItem";
+import { CentralPanel } from "./CentralPanel";
 import { FilePanel } from "./FilePanel";
 import { SelectMusicians } from "./SelectMusicians";
 import { SelectTags } from "./SelectTags";
-
-const pieceFormSchema = z.object({
-  title: z.string().min(1, {
-    message: "Title is required",
-  }),
-  yearPublished: z.coerce.number().positive().int().min(1, {
-    message: "Year cannot be less than 1",
-  }).max(9999, {
-    message: "Year cannot be greater than 9999",
-  }).optional(),
-  difficulty: z.number({
-    invalid_type_error: "Difficulty must be a number",
-  }).int().min(1).max(6).optional(),
-  notes: z.string().optional(),
-  tags: tagSchema.array(),
-  composers: musicianSchema.array().min(1, {
-    message: "At least one composer is required",
-  }),
-  arrangers: musicianSchema.array(),
-  orchestrators: musicianSchema.array(),
-  transcribers: musicianSchema.array(),
-  lyricists: musicianSchema.array(),
-  parts: z.object({
-    id: z.string(),
-    name: z.string().min(1, {
-      message: "Name is required",
-    }),
-    instruments: instrumentSchema.array(),
-    file: byteFileSchema,
-  }).array(),
-  scores: z.object({
-    id: z.string(),
-    name: z.string().min(1, {
-      message: "Name is required",
-    }),
-    file: byteFileSchema,
-  }).array()
-})
-
+import { pieceFormSchema } from "./types";
 export function Wizard() {
 
   const pieceForm = useForm<z.infer<typeof pieceFormSchema>>({
@@ -77,20 +37,17 @@ export function Wizard() {
       transcribers: [],
       lyricists: [],
       parts: [],
-      scores: [],
+      scores: [
+        {
+          id: -1,
+          name: "Full Score",
+        }
+      ],
     },
   });
 
   const [selectDifficultyOpen, setSelectDifficultyOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<ByteFile[]>([]);
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
-  )
 
   function onSubmitPieceForm(data: z.infer<typeof pieceFormSchema>) {
     console.log(data);
@@ -100,37 +57,6 @@ export function Wizard() {
     await invoke("close_window", {
       windowLabel: "wizard",
     });
-  }
-
-  function handleDragStart(event: DragStartEvent) {
-    const { active } = event;
-    setActiveId(active.id)
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-
-    if (!over || !active) return;
-
-    if (active.id !== over.id) {
-      setUploadedFiles(files => {
-        const oldIndex = files.findIndex(file => file.id === active.id);
-        const newIndex = files.findIndex(file => file.id === over.id);
-        return arrayMove(files, oldIndex, newIndex)
-      })
-    }
-
-    setActiveId(null)
-  }
-
-  const dropAnimationConfig = {
-    sideEffects: defaultDropAnimationSideEffects({
-      styles: {
-        active: {
-          opacity: "0.5",
-        }
-      }
-    })
   }
 
   return (
@@ -269,24 +195,13 @@ export function Wizard() {
         </div>
         <Separator />
         <ResizablePanelGroup direction="horizontal">
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <ResizablePanel defaultSize={30} minSize={15}>
-              <FilePanel uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} />
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel minSize={15}>
-
-            </ResizablePanel>
-            <DragOverlay dropAnimation={dropAnimationConfig}>
-              {activeId ? <DragItem file={uploadedFiles.find(file => file.id === activeId)!} /> : null}
-            </DragOverlay>
-          </DndContext>
+          <ResizablePanel defaultSize={30} minSize={15}>
+            <FilePanel uploadedFiles={uploadedFiles} setUploadedFiles={setUploadedFiles} />
+          </ResizablePanel>
+          <ResizableHandle />
+          <ResizablePanel minSize={15}>
+            <CentralPanel pieceForm={pieceForm} />
+          </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel defaultSize={30} minSize={15} className="p-[14px] flex flex-col gap-[14px]">
             <FormField

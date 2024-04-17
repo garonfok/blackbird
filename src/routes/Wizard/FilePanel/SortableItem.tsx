@@ -19,7 +19,9 @@ export function SortableItem(props: {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id });
+  } = useSortable({
+    id
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -28,7 +30,7 @@ export function SortableItem(props: {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex item-center gap-[4px] p-[4px] bg-float-bg.default shadow-float rounded-default">
+    <div ref={setNodeRef} style={style} className="flex item-center gap-[4px] p-[4px] bg-float-bg.default float-shadow rounded-default">
       <Button type="button" variant="main" className="p-1 h-fit self-center"  {...attributes} {...listeners}>
         <Icon path={mdiDragVertical} size={0.667} className="shrink-0 self-center" />
       </Button>

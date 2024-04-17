@@ -29,7 +29,7 @@ const toastVariants = cva(
   {
     variants: {
       variant: {
-        default: "border border-divider.default bg-float-bg.default text-fg.0 shadow-float"
+        default: "border border-divider.default bg-float-bg.default text-fg.0 float-shadow"
       },
     },
     defaultVariants: {
