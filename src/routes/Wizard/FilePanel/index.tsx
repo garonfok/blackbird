@@ -110,7 +110,7 @@ export function FilePanel(props: {
       )}
       <SortableContext
         id="file-list"
-        items={uploadedFiles}
+        items={uploadedFiles.map((file) => `f${file.id}`)}
         strategy={verticalListSortingStrategy}
       >
         <div
@@ -119,7 +119,7 @@ export function FilePanel(props: {
           <ScrollArea className="h-0 grow">
             <div className="flex flex-col gap-[4px]">
               {uploadedFiles.map((file, index) => (
-                <SortableItem key={file.id} id={file.id}>
+                <SortableItem key={file.id} id={`f${file.id}`}>
                   <>
                     <Icon path={mdiFile} size={0.667} className="shrink-0 self-center" />
                     <span className="text-body-small-default text-fg.2 self-center grow break-all">

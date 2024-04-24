@@ -6,15 +6,14 @@ import { FormField } from "@/components/ui/form";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
-import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { mdiContentSaveOutline, mdiPlus, mdiTextBoxOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { partFormSchema, pieceFormSchema } from "../../types";
+import { pieceFormSchema } from "../../types";
 import { SortableItem } from "../SortableItem";
 
 export function Parts(props: { pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>> }) {
@@ -24,7 +23,6 @@ export function Parts(props: { pieceForm: UseFormReturn<z.infer<typeof pieceForm
   const [instruments, setInstruments] = useState<{
     [key: string]: Instrument[]
   }>();
-  const [activeItem, setActiveItem] = useState<null | z.infer<typeof partFormSchema>>(null)
 
   useEffect(() => {
     async function fetchInstruments() {
@@ -50,13 +48,6 @@ export function Parts(props: { pieceForm: UseFormReturn<z.infer<typeof pieceForm
     fetchInstruments();
   }, [])
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
-
   function handleSelectInstrument(instrument: Instrument) {
     pieceForm.setValue("parts", [
       ...pieceForm.getValues("parts"),
@@ -66,25 +57,6 @@ export function Parts(props: { pieceForm: UseFormReturn<z.infer<typeof pieceForm
         instruments: [instrument],
       }
     ]);
-
-    formatPartNumbers(pieceForm);
-  }
-
-  function handleDragStart(event: DragStartEvent) {
-    const { active } = event;
-    const part = pieceForm.getValues("parts").find((part) => part.id === active.id);
-    setActiveItem(part!);
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-
-    if (active.id !== over?.id) {
-      const oldIndex = pieceForm.getValues("parts").findIndex((part) => part.id === active.id);
-      const newIndex = pieceForm.getValues("parts").findIndex((part) => part.id === over?.id);
-      const newParts = arrayMove(pieceForm.getValues("parts"), oldIndex, newIndex);
-      pieceForm.setValue("parts", newParts);
-    }
 
     formatPartNumbers(pieceForm);
   }
@@ -137,37 +109,23 @@ export function Parts(props: { pieceForm: UseFormReturn<z.infer<typeof pieceForm
             )}
           </span>
           <Separator />
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
+          <SortableContext
+            id="score-list"
+            items={field.value.map((part) => `p${part.id}`)}
+            strategy={verticalListSortingStrategy}
           >
-            <SortableContext
-              id="score-list"
-              items={field.value}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="h-full flex flex-col">
-                <ScrollArea className="h-0 grow">
-                  <div className="flex flex-col gap-[4px]">
-                    {field.value.map((part) => (
-                      <SortableItem key={part.id} id={part.id} pieceForm={pieceForm} type="parts" >
-                        <span>{part.name}</span>
-                      </SortableItem>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
-            </SortableContext>
-            <DragOverlay>
-              {activeItem &&
-                (<SortableItem id={activeItem.id} pieceForm={pieceForm} type="scores" >
-                  <span>{activeItem.name}</span>
-                </SortableItem>)
-              }
-            </DragOverlay>
-          </DndContext>
+            <div className="h-full flex flex-col">
+              <ScrollArea className="h-0 grow">
+                <div className="flex flex-col gap-[4px]">
+                  {field.value.map((part) => (
+                    <SortableItem key={part.id} id={`p${part.id}`} pieceForm={pieceForm} type="parts" >
+                      <span>{part.name}</span>
+                    </SortableItem>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </SortableContext>
         </div>
       )}
     />

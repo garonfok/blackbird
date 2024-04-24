@@ -2,9 +2,9 @@ import { formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from '@dnd-kit/utilities';
-import { mdiClose, mdiDragVertical } from '@mdi/js';
-import Icon from '@mdi/react';
+import { CSS } from "@dnd-kit/utilities";
+import { mdiClose, mdiDragVertical } from "@mdi/js";
+import Icon from "@mdi/react";
 import { ReactNode } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -26,7 +26,7 @@ export function SortableItem(props: {
     transform,
     transition,
   } = useSortable({
-    id
+    id,
   });
 
   const style = {
@@ -37,22 +37,41 @@ export function SortableItem(props: {
   };
 
   function handleClickRemoveItem() {
-    pieceForm.setValue(type, pieceForm.getValues(type).filter((item) => item.id !== id));
+    pieceForm.setValue(
+      type,
+      pieceForm.getValues(type).filter((item) => item.id.toString() !== id.toString().slice(1)),
+    );
     formatPartNumbers(pieceForm);
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="flex item-center gap-[4px] p-[4px] border border-divider.default rounded-default bg-main-bg.default">
-      <Button type="button" variant="main" className="p-1 h-fit self-center"  {...attributes} {...listeners}>
-        <Icon path={mdiDragVertical} size={0.667} className="shrink-0 self-center" />
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex item-center gap-[4px] p-[4px] border border-divider.default rounded-default bg-main-bg.default"
+    >
+      <Button
+        type="button"
+        variant="main"
+        className="p-1 h-fit self-center"
+        {...attributes}
+        {...listeners}
+      >
+        <Icon
+          path={mdiDragVertical}
+          size={0.667}
+          className="shrink-0 self-center"
+        />
       </Button>
-      <span className="grow self-center">
-        {children}
-      </span>
-      <span className="h-8 bg-sidebar-bg.default w-48  rounded-default" />
-      <Button type="button" variant="main" className="p-1 h-fit self-center" onClick={handleClickRemoveItem}>
+      <span className="grow self-center">{children}</span>
+      <Button
+        type="button"
+        variant="main"
+        className="p-1 h-fit self-center"
+        onClick={handleClickRemoveItem}
+      >
         <Icon path={mdiClose} size={0.667} className="shrink-0 self-center" />
       </Button>
     </div>
-  )
+  );
 }
