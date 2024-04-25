@@ -1,4 +1,4 @@
-import { Instrument } from "@/app/types";
+import { ByteFile, Instrument } from "@/app/types";
 import { formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -16,8 +16,11 @@ import { z } from "zod";
 import { pieceFormSchema } from "../../types";
 import { SortableItem } from "../SortableItem";
 
-export function Parts(props: { pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>> }) {
-  const { pieceForm } = props;
+export function Parts(props: {
+  pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>
+  uploadedFiles: ByteFile[]
+}) {
+  const { pieceForm, uploadedFiles } = props;
 
   const [selectInstrumentOpen, setSelectInstrumentOpen] = useState(false)
   const [instruments, setInstruments] = useState<{
@@ -110,7 +113,7 @@ export function Parts(props: { pieceForm: UseFormReturn<z.infer<typeof pieceForm
           </span>
           <Separator />
           <SortableContext
-            id="score-list"
+            id="part-list"
             items={field.value.map((part) => `p${part.id}`)}
             strategy={verticalListSortingStrategy}
           >
@@ -118,9 +121,7 @@ export function Parts(props: { pieceForm: UseFormReturn<z.infer<typeof pieceForm
               <ScrollArea className="h-0 grow">
                 <div className="flex flex-col gap-[4px]">
                   {field.value.map((part) => (
-                    <SortableItem key={part.id} id={`p${part.id}`} pieceForm={pieceForm} type="parts" >
-                      <span>{part.name}</span>
-                    </SortableItem>
+                    <SortableItem key={part.id} id={`p${part.id}`} pieceForm={pieceForm} item={part} uploadedFiles={uploadedFiles} />
                   ))}
                 </div>
               </ScrollArea>

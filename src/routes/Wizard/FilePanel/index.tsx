@@ -12,13 +12,18 @@ import { Event, listen } from "@tauri-apps/api/event";
 import { readBinaryFile } from "@tauri-apps/api/fs";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { SortableItem } from "./SortableItem";
+import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
+import { UseFormReturn } from "react-hook-form";
+import { pieceFormSchema } from "../types";
+import { z } from "zod";
 
 export function FilePanel(props: {
   uploadedFiles: ByteFile[];
   setUploadedFiles: Dispatch<SetStateAction<ByteFile[]>>
+  pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>;
 }) {
 
-  const { uploadedFiles, setUploadedFiles } = props;
+  const { uploadedFiles, setUploadedFiles, pieceForm } = props;
 
   const [uploadedFilesCount, setUploadedFilesCount] = useState(0);
   const [uploadingFilesCount, setUploadingFilesCount] = useState(0);
@@ -30,6 +35,8 @@ export function FilePanel(props: {
 
     return (() => { unlisten })
   }, [])
+
+  useCmdOrCtrlHotkey("o", handleClickUpload);
 
   async function handleDrop(event: Event<string[]>) {
     const { payload: files } = event;
@@ -89,6 +96,42 @@ export function FilePanel(props: {
     const newFiles = [...uploadedFiles];
     newFiles.splice(index, 1);
     setUploadedFiles(newFiles);
+
+    const parts = pieceForm.getValues("parts");
+    for (const part of parts) {
+      if (part.file?.id === uploadedFiles[index].id) {
+        pieceForm.setValue(
+          "parts",
+          pieceForm.getValues("parts").map((p) => {
+            if (p.id === part.id) {
+              return {
+                ...p,
+                file: undefined,
+              };
+            }
+            return p;
+          }),
+        );
+      }
+    }
+
+    const scores = pieceForm.getValues("scores");
+    for (const score of scores) {
+      if (score.file?.id === uploadedFiles[index].id) {
+        pieceForm.setValue(
+          "scores",
+          pieceForm.getValues("scores").map((s) => {
+            if (s.id === score.id) {
+              return {
+                ...s,
+                file: undefined,
+              };
+            }
+            return s;
+          }),
+        );
+      }
+    }
   }
 
   return (

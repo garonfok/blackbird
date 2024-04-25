@@ -44,7 +44,6 @@ import { cn } from "@/lib/utils";
 import {
   DndContext,
   DragEndEvent,
-  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   KeyboardSensor,
@@ -52,7 +51,7 @@ import {
   UniqueIdentifier,
   closestCorners,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -122,17 +121,6 @@ export function Wizard() {
     setActiveId(active.id);
   }
 
-  function handleDragOver(event: DragOverEvent) {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    const activeContainer = active.data.current?.sortable?.containerId
-    const overContainer = over.data.current?.sortable?.containerId
-
-    console.log(activeContainer, overContainer)
-  }
-
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
@@ -145,6 +133,23 @@ export function Wizard() {
     const overContainer = over.data.current?.sortable?.containerId
 
     if (activeContainer !== overContainer) {
+
+      if (activeContainer !== "file-list") return
+
+      console.log("Dragging" + active.id + " to " + over.id)
+
+      const file = uploadedFiles.find((file) => `f${file.id}` === active.id)!
+
+      if (overContainer === "part-list") {
+        const part = pieceForm.getValues("parts").find((part) => `p${part.id}` === over.id)!
+        part.file = file
+        pieceForm.setValue("parts", pieceForm.getValues("parts"))
+      } else if (overContainer === "score-list") {
+        const score = pieceForm.getValues("scores").find((score) => `s${score.id}` === over.id)!
+        score.file = file
+        pieceForm.setValue("scores", pieceForm.getValues("scores"))
+      }
+
       setActiveId(null);
       return;
     }
@@ -470,7 +475,6 @@ export function Wizard() {
             sensors={sensors}
             collisionDetection={closestCorners}
             onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
           >
@@ -478,11 +482,12 @@ export function Wizard() {
               <FilePanel
                 uploadedFiles={uploadedFiles}
                 setUploadedFiles={setUploadedFiles}
+                pieceForm={pieceForm}
               />
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel minSize={15}>
-              <CentralPanel pieceForm={pieceForm} />
+              <CentralPanel pieceForm={pieceForm} uploadedFiles={uploadedFiles} />
             </ResizablePanel>
             <DragOverlay>
               <DragOverlayItem />

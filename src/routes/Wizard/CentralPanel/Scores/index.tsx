@@ -1,3 +1,4 @@
+import { ByteFile } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -10,8 +11,11 @@ import { z } from "zod";
 import { pieceFormSchema } from "../../types";
 import { SortableItem } from "../SortableItem";
 
-export function Scores(props: { pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>> }) {
-  const { pieceForm } = props;
+export function Scores(props: {
+  pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>
+  uploadedFiles: ByteFile[]
+}) {
+  const { pieceForm, uploadedFiles } = props;
 
   function handleClickAddScore() {
     pieceForm.setValue("scores", [
@@ -45,9 +49,7 @@ export function Scores(props: { pieceForm: UseFormReturn<z.infer<typeof pieceFor
               <ScrollArea className="h-0 grow">
                 <div className="flex flex-col gap-[4px]">
                   {field.value.map((score) => (
-                    <SortableItem key={score.id} id={`s${score.id}`} pieceForm={pieceForm} type="scores" >
-                      <span>{score.name}</span>
-                    </SortableItem>
+                    <SortableItem key={score.id} id={`s${score.id}`} pieceForm={pieceForm} item={score} uploadedFiles={uploadedFiles} />
                   ))}
                 </div>
               </ScrollArea>

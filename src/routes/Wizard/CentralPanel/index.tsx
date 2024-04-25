@@ -1,12 +1,16 @@
+import { ByteFile } from "@/app/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Parts } from "./Parts";
-import { Scores } from "./Scores";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { pieceFormSchema } from "../types";
+import { Parts } from "./Parts";
+import { Scores } from "./Scores";
 
-export function CentralPanel(props: { pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>> }) {
-  const { pieceForm } = props;
+export function CentralPanel(props: {
+  pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>
+  uploadedFiles: ByteFile[]
+}) {
+  const { pieceForm, uploadedFiles } = props;
 
   return (
     <div className="h-full w-full p-[14px]">
@@ -16,10 +20,10 @@ export function CentralPanel(props: { pieceForm: UseFormReturn<z.infer<typeof pi
           <TabsTrigger value="scores">Scores</TabsTrigger>
         </TabsList>
         <TabsContent value="parts" className="h-full">
-          <Parts pieceForm={pieceForm} />
+          <Parts pieceForm={pieceForm} uploadedFiles={uploadedFiles} />
         </TabsContent>
         <TabsContent value="scores" className="h-full">
-          <Scores pieceForm={pieceForm} />
+          <Scores pieceForm={pieceForm} uploadedFiles={uploadedFiles} />
         </TabsContent>
       </Tabs>
     </div>
