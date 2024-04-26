@@ -111,6 +111,7 @@ pub fn menu_handler(event: WindowMenuEvent<tauri::Wry>) {
 
     match menu_id {
         "new_piece" => handlers::window::open_wizard(app, None),
+        "settings" => win.emit("settings", ()).unwrap(),
         "undo" => println!("Unhandled menu event"),
         "redo" => println!("Unhandled menu event"),
         "zoom_0" => win.eval("window.__zoom0 && window.__zoom0()").unwrap(),

@@ -15,8 +15,10 @@ export function Dashboard() {
 
   useEffect(() => {
     const unlistenFileDrop = listen("tauri://file-drop", handleDrop);
+    const unlistenNavigateSettings = listen("settings", () => navigate("/settings"))
     return () => {
       unlistenFileDrop;
+      unlistenNavigateSettings;
     };
   }, []);
 
