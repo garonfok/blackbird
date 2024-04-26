@@ -28,8 +28,8 @@ import {
 } from "@tanstack/react-table";
 import { invoke } from "@tauri-apps/api";
 import { useMachine } from "@xstate/react";
+import dayjs from "dayjs";
 import Fuse from "fuse.js";
-import { DateTime } from "luxon";
 import {
   MouseEvent,
   useCallback,
@@ -383,21 +383,20 @@ export function Table() {
       },
       {
         id: "updatedAt",
-        accessorFn: (row) => DateTime.fromSQL(row.updated_at),
+        accessorFn: (row) => dayjs(row.updated_at),
         header: () => <span className="">Updated</span>,
         cell: (info) => {
-          const updatedAt = info.getValue() as DateTime;
+          const updatedAt = info.getValue() as dayjs.Dayjs;
 
           const formattedUpdatedAt = (() => {
-            if (updatedAt.hasSame(DateTime.now(), "day")) {
-              return updatedAt.toLocaleString(DateTime.TIME_SIMPLE);
-            } else if (updatedAt.hasSame(DateTime.now(), "year")) {
-              return updatedAt.toLocaleString({ month: 'short', day: 'numeric' });
+            if (updatedAt.isSame(dayjs(), "day")) {
+              return updatedAt.format("h:mm A");
+            } else if (updatedAt.isSame(dayjs(), "year")) {
+              return updatedAt.format("MMM D");
             } else {
-              return updatedAt.toLocaleString(DateTime.DATE_MED);
+              return updatedAt.format("MMM D, YYYY");
             }
           })();
-
           return (
             <span className="text-body-small-default">
               {formattedUpdatedAt}
