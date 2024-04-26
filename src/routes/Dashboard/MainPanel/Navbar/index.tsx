@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
+import { cn } from "@/lib/utils";
 import { mdiBookOpenVariantOutline, mdiBookshelf, mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";
-import classNames from "classnames";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { clearSetlist, setSetlist } from "../../reducers/setlistSlice";
 import { setQuery } from "../querySlice";
@@ -64,7 +64,7 @@ export function Navbar() {
           </PopoverContent>
         </Popover>
         <span
-          className={classNames(
+          className={cn(
             "bg-bg.2 gap-[14px] py-1 px-2 rounded-default flex w-full text-fg.2 items-center transition-default",
             isSearchFocused && "ring-1 ring-fg.0"
           )}
@@ -72,7 +72,7 @@ export function Navbar() {
           <Icon
             path={mdiMagnify}
             size={1}
-            className={classNames(
+            className={cn(
               "shrink-0 transition-default",
               isSearchFocused && "text-fg.0"
             )}

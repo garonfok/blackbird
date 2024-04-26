@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import {
   mdiArrowDown,
   mdiArrowUp,
@@ -27,7 +28,6 @@ import {
 } from "@tanstack/react-table";
 import { invoke } from "@tauri-apps/api";
 import { useMachine } from "@xstate/react";
-import classNames from "classnames";
 import Fuse from "fuse.js";
 import { DateTime } from "luxon";
 import {
@@ -940,7 +940,7 @@ export function Table() {
               <tr
                 ref={rowRef}
                 key={row.original.id}
-                className={classNames(
+                className={cn(
                   "flex items-center gap-[14px] px-[14px] py-[4px]",
                   selected.includes(index) ? "bg-main-bg.focus" : "hover:bg-main-bg.hover"
                 )}
