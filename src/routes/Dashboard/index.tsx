@@ -1,6 +1,5 @@
 import { useAppSelector } from "@/app/hooks";
 import { ResizablePanelGroup } from "@/components/ui/resizable";
-import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
 import { Event, listen } from "@tauri-apps/api/event";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,12 +11,12 @@ export function Dashboard() {
   const navigate = useNavigate();
   const preview = useAppSelector((state) => state.preview);
 
-  useCmdOrCtrlHotkey("n", () => navigate("/wizard"));
+
 
   useEffect(() => {
-    const unlisten = listen("tauri://file-drop", handleDrop);
+    const unlistenFileDrop = listen("tauri://file-drop", handleDrop);
     return () => {
-      unlisten;
+      unlistenFileDrop;
     };
   }, []);
 

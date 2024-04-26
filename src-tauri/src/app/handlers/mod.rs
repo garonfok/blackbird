@@ -3,7 +3,7 @@ use tauri::{generate_handler, Invoke};
 mod db;
 mod fs;
 mod settings;
-mod window;
+pub mod window;
 
 pub fn init() -> impl Fn(Invoke) {
     generate_handler![

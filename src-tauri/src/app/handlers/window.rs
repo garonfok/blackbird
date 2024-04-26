@@ -1,7 +1,11 @@
 use tauri::{command, AppHandle, Manager};
 
 #[command]
-pub async fn open_wizard(app_handle: AppHandle, piece_id: Option<i32>) {
+pub fn open_wizard(app_handle: AppHandle, piece_id: Option<i32>) {
+    if app_handle.get_window("wizard").is_some() {
+        return;
+    }
+
     let app_url = if let Some(piece_id) = piece_id {
         format!("/wizard?piece_id={}", piece_id)
     } else {

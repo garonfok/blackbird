@@ -1,4 +1,5 @@
-use tauri::{AboutMetadata, CustomMenuItem, Menu, MenuItem, Submenu, WindowMenuEvent};
+use crate::handlers;
+use tauri::{AboutMetadata, CustomMenuItem, Manager, Menu, MenuItem, Submenu, WindowMenuEvent};
 
 pub fn init() -> Menu {
     let name = "Blackbird";
@@ -24,6 +25,13 @@ pub fn init() -> Menu {
             MenuItem::Separator.into(),
             MenuItem::Quit.into(),
         ]),
+    );
+
+    let file_menu = Submenu::new(
+        "File",
+        Menu::with_items([CustomMenuItem::new("new_piece", "New Piece")
+            .accelerator("CmdorCtrl+N")
+            .into()]),
     );
 
     let edit_menu = Submenu::new(
@@ -89,6 +97,7 @@ pub fn init() -> Menu {
 
     Menu::new()
         .add_submenu(app_menu)
+        .add_submenu(file_menu)
         .add_submenu(edit_menu)
         .add_submenu(view_menu)
         .add_submenu(window_menu)
@@ -98,26 +107,12 @@ pub fn init() -> Menu {
 pub fn menu_handler(event: WindowMenuEvent<tauri::Wry>) {
     let menu_id = event.menu_item_id();
     let win = Some(event.window()).unwrap();
+    let app = win.app_handle();
 
     match menu_id {
-        "undo" => match win.url().path() {
-            "/edit-wizard" => {
-                win.emit("undo", "undo").unwrap();
-            }
-            "/settings" => {}
-            _ => {
-                println!("Unhandled menu event");
-            }
-        },
-        "redo" => match win.url().path() {
-            "/edit-wizard" => {
-                win.emit("redo", "redo").unwrap();
-            }
-            "/settings" => {}
-            _ => {
-                println!("Unhandled menu event");
-            }
-        },
+        "new_piece" => handlers::window::open_wizard(app, None),
+        "undo" => println!("Unhandled menu event"),
+        "redo" => println!("Unhandled menu event"),
         "zoom_0" => win.eval("window.__zoom0 && window.__zoom0()").unwrap(),
         "zoom_out" => win.eval("window.__zoomOut && window.__zoomOut()").unwrap(),
         "zoom_in" => win.eval("window.__zoomIn && window.__zoomIn()").unwrap(),
