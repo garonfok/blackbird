@@ -1,10 +1,12 @@
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { open } from "@tauri-apps/api/dialog";
 import { relaunch } from "@tauri-apps/api/process";
 import { invoke } from "@tauri-apps/api/tauri";
 import { useMachine } from "@xstate/react";
 import { useEffect, useState } from "react";
 import { createMachine } from "xstate";
-import { Modal } from "../../components/Modal";
 import { SettingsEntry } from "./components/SettingsEntry";
 
 const changeDirMachine = createMachine({
@@ -94,44 +96,51 @@ export function WorkingDirectory() {
     <>
       <SettingsEntry
         name="Working Directory"
-        description={workingDirectory || "Loading..."}
+        description={<Badge variant="outline">{workingDirectory}</Badge> || "Loading..."}
       >
-        <button className="button-default" onClick={handleClickChangeDirectory}>
+        <Button variant="secondary" onClick={handleClickChangeDirectory}>
           Change Working Directory
-        </button>
+        </Button>
       </SettingsEntry>
-
-      <Modal
-        title="Could not change working directory."
-        isOpen={changeDirState.matches("canceling")}
-        confirmText="Okay"
-        closeModal={() => sendChangeDir("FINISH")}
-        onConfirm={() => sendChangeDir("FINISH")}
-      >
-        The selected directory is not empty.
-      </Modal>
-
-      <Modal
-        title="Restart Blackbird to save changes."
-        isOpen={changeDirState.matches("restarting")}
-        confirmText="Restart Blackbird"
-        cancelText="Cancel"
-        closeModal={handleCancelRestart}
-        onConfirm={handleConfirmRestart}
-      >
-        You must restart Blackbird to load the selected directory.
-      </Modal>
-
-      <Modal
-        title="No library was found at this location."
-        isOpen={changeDirState.matches("creatingDatabase")}
-        confirmText="Yes"
-        cancelText="No"
-        closeModal={handleCancelRestart}
-        onConfirm={() => sendChangeDir("RESTART")}
-      >
-        Would you like to create a library here?
-      </Modal>
+      <AlertDialog open={changeDirState.matches("canceling")}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Could not change working directory</AlertDialogTitle>
+            <AlertDialogDescription>The selected directory is not empty.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button onClick={() => sendChangeDir("FINISH")}>Okay</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={changeDirState.matches("restarting")}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Restart Blackbird to save changes</AlertDialogTitle>
+            <AlertDialogDescription>You must restart Blackbird to load the selected directory.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelRestart}>Cancel</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Button onClick={handleConfirmRestart}>Restart Blackbird</Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={changeDirState.matches("creatingDatabase")}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>No library was found at this location</AlertDialogTitle>
+            <AlertDialogDescription>Would you like to create a library here?</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelRestart}>No</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Button onClick={() => sendChangeDir("RESTART")}>Yes</Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

@@ -1,9 +1,9 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, ReactNode } from "react";
 
 export function SettingsEntry(
   props: PropsWithChildren<{
     name: string;
-    description: string;
+    description: ReactNode;
   }>
 ) {
   const { name, description, children } = props;
