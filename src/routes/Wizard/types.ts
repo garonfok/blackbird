@@ -32,7 +32,7 @@ export const pieceFormSchema = z.object({
   }).int().min(1).max(6).optional(),
   notes: z.string().optional(),
   tags: z.array(tagSchema),
-  composers: z.array(musicianSchema).min(1, {
+  composers: z.array(musicianSchema).nonempty({
     message: "At least one composer is required",
   }),
   arrangers: z.array(musicianSchema),

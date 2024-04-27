@@ -71,6 +71,7 @@ import { FilePanel } from "./FilePanel";
 import { SelectMusicians } from "./SelectMusicians";
 import { SelectTags } from "./SelectTags";
 import { pieceFormSchema } from "./types";
+import { createPiece } from "./createPiece";
 export function Wizard() {
   const pieceForm = useForm<z.infer<typeof pieceFormSchema>>({
     resolver: zodResolver(pieceFormSchema),
@@ -106,8 +107,17 @@ export function Wizard() {
     }),
   );
 
-  function onSubmitPieceForm(data: z.infer<typeof pieceFormSchema>) {
-    console.log(data);
+  async function onSubmitPieceForm(piece: z.infer<typeof pieceFormSchema>) {
+    try {
+      await createPiece(piece)
+      console.log("Success!")
+    } catch (error) {
+      console.error(error)
+    }
+
+    await invoke("close_window", {
+      windowLabel: "wizard",
+    });
   }
 
   async function handleClickCancel() {
@@ -135,8 +145,6 @@ export function Wizard() {
     if (activeContainer !== overContainer) {
 
       if (activeContainer !== "file-list") return
-
-      console.log("Dragging" + active.id + " to " + over.id)
 
       const file = uploadedFiles.find((file) => `f${file.id}` === active.id)!
 
@@ -290,6 +298,7 @@ export function Wizard() {
                       >
                         <PopoverTrigger asChild>
                           <Button
+                            type="button"
                             variant="outline"
                             className="group w-[100px] p-1 text-fg.2 bg-bg.2 h-[24px]"
                           >

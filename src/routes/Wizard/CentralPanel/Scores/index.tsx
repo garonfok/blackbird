@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
-import { UseFormReturn } from "react-hook-form";
+import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { pieceFormSchema } from "../../types";
 import { SortableItem } from "../SortableItem";
@@ -17,11 +17,11 @@ export function Scores(props: {
 }) {
   const { pieceForm, uploadedFiles } = props;
 
-  function handleClickAddScore() {
-    pieceForm.setValue("scores", [
-      ...pieceForm.getValues("scores"),
+  function handleClickAddScore(field: ControllerRenderProps<z.infer<typeof pieceFormSchema>, "scores">) {
+    field.onChange([
+      ...field.value,
       {
-        id: (Math.max(...pieceForm.getValues("scores").map((score) => score.id), 0) + 1),
+        id: (Math.max(...field.value.map((score) => score.id), 0) + 1),
         name: "Full Score",
       }
     ])
@@ -34,7 +34,7 @@ export function Scores(props: {
       render={({ field }) => (
         <div className="flex flex-col gap-[8px] h-full">
           <span className="flex gap-[14px] items-center">
-            <Button type="button" variant='main' onClick={handleClickAddScore}>
+            <Button type="button" variant='main' onClick={() => handleClickAddScore(field)}>
               <Icon path={mdiPlus} size={2 / 3} />
               Add score
             </Button>

@@ -68,6 +68,7 @@ export function SelectTags(props: { value: Tag[], onChange: (tags: Tag[]) => voi
         <Popover open={open} onOpenChange={setOpen} {...props}>
           <PopoverTrigger asChild>
             <Button
+              type="button"
               variant="outline"
               role="combobox"
               aria-expanded={open}
@@ -83,6 +84,7 @@ export function SelectTags(props: { value: Tag[], onChange: (tags: Tag[]) => voi
                     <Icon path={mdiCircle} size={0.667} color={tag.color} className="mr-1" />
                     {tag.name}
                     <Button
+                      type="button"
                       variant="link"
                       className="p-1"
                       onClick={() => onChange(value.filter((t) => t.id !== tag.id))}

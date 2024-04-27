@@ -10,8 +10,9 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { mdiContentSaveOutline, mdiPlus, mdiTextBoxOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { pieceFormSchema } from "../../types";
 import { SortableItem } from "../SortableItem";
@@ -51,17 +52,24 @@ export function Parts(props: {
     fetchInstruments();
   }, [])
 
-  function handleSelectInstrument(instrument: Instrument) {
-    pieceForm.setValue("parts", [
-      ...pieceForm.getValues("parts"),
+  function handleSelectInstrument(field: ControllerRenderProps<z.infer<typeof pieceFormSchema>, "parts">, instrument: Instrument) {
+    const newInstrument = {
+      ...instrument,
+      created_at: dayjs(instrument.created_at).toISOString(),
+      updated_at: dayjs(instrument.updated_at).toISOString(),
+    }
+
+    field.onChange([
+      ...field.value,
       {
-        id: (Math.max(...pieceForm.getValues("parts").map((part) => part.id), 0) + 1),
+        id: (Math.max(...field.value.map((part) => part.id), 0) + 1),
         name: instrument.name,
-        instruments: [instrument],
+        instruments: [newInstrument],
       }
     ]);
-
     formatPartNumbers(pieceForm);
+
+    console.log(field)
   }
 
   return (
@@ -92,7 +100,7 @@ export function Parts(props: {
                         {instruments && Object.keys(instruments).map((category) => (
                           <CommandGroup key={category} heading={category}>
                             {instruments[category].map((instrument) => (
-                              <CommandItem key={instrument.id} onSelect={() => handleSelectInstrument(instrument)}>
+                              <CommandItem key={instrument.id} onSelect={() => handleSelectInstrument(field, instrument)}>
                                 {instrument.name}
                               </CommandItem>
                             ))}
