@@ -35,7 +35,6 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@tanstack/react-table": "^8.9.3",
     "@tauri-apps/api": "^1.5.2",
-    "@tauri-apps/cli-darwin-x64": "^1.5.11",
     "@xstate/react": "^3.2.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
