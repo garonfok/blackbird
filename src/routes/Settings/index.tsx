@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
 import { mdiHomeOutline } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -14,10 +15,12 @@ export function Settings() {
         <div className="w-[768px] flex flex-col gap-[14px] p-[14px]">
           <span className="flex justify-between items-center">
             <h1 className="text-heading-default">Settings</h1>
-            <Link to="/" className="flex gap-[8px] items-center link">
-              <Icon path={mdiHomeOutline} size={1} />
-              <span>Home</span>
-            </Link>
+            <Button variant="main" asChild>
+              <Link to="/" className="flex items-center gap-[8px]">
+                <Icon path={mdiHomeOutline} size={1} />
+                <span>Home</span>
+              </Link>
+            </Button>
           </span>
           <hr className="text-divider.default" />
           <div className="flex flex-col gap-[14px]">
