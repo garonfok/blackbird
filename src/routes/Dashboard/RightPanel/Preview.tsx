@@ -55,6 +55,7 @@ export function Preview(props: { piece: Piece }) {
           {piece.tags.map((tag) => {
             return (
               <Badge
+                key={tag.id}
                 variant="outline"
                 className="gap-[4px] hover:text-fg.0 hover:border-divider.focus"
                 onClick={() => handleClickPushTag(tag)}
@@ -87,7 +88,7 @@ export function Preview(props: { piece: Piece }) {
               </DialogHeader>
               <div className="flex flex-col gap-[14px]">
                 {roles.filter(role => role.musicians.length > 0).map((role) => (
-                  <div>
+                  <div key={role.name}>
                     <Label htmlFor={role.name}>{role.name}</Label>
                     <span className="flex flex-wrap text-fg.2">
                       {role.musicians
@@ -124,20 +125,22 @@ export function Preview(props: { piece: Piece }) {
                 <div key={part.id}>
                   <Collapsible>
                     <CollapsibleTrigger asChild>
-                      <Button variant="sidebarCollapisble" className="w-full justify-between gap-[4px] group">
-                        <span className="flex items-center gap-[4px]">
-                          <Icon
-                            path={!part.path ? mdiCircleOutline : mdiCircle}
-                            size={0.667}
-                          />
-                          <span>{part.name}</span>
-                          <Icon
-                            path={mdiMenuDown}
-                            size={1}
-                            className="group-data-[state=open]:rotate-180"
-                          />
+                      <Button variant="sidebarCollapisble" className="w-full justify-between gap-[4px] group cursor-pointer" asChild>
+                        <span>
+                          <span className="flex items-center gap-[4px]">
+                            <Icon
+                              path={!part.path ? mdiCircleOutline : mdiCircle}
+                              size={0.667}
+                            />
+                            <span>{part.name}</span>
+                            <Icon
+                              path={mdiMenuDown}
+                              size={1}
+                              className="group-data-[state=open]:rotate-180"
+                            />
+                          </span>
+                          {part.path && <Button variant='link' className="invisible group-hover:visible" onClick={() => handleClickOpenDirectory(part.path!)}>Open file</Button>}
                         </span>
-                        {part.path && <Button variant='link' className="invisible group-hover:visible" onClick={() => handleClickOpenDirectory(part.path!)}>Open file</Button>}
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
