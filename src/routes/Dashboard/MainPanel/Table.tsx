@@ -5,7 +5,6 @@ import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescript
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import {
   mdiArrowDown,
@@ -257,6 +256,7 @@ export function Table() {
               <ol>
                 {info.row.original.tags.map((tag) => (
                   <Badge
+                    key={tag.id}
                     variant="outline"
                     className="gap-[4px] hover:text-fg.0 hover:border-divider.focus"
                     onClick={() => handleClickPushTag(tag)}
@@ -301,6 +301,7 @@ export function Table() {
                           )
                           .map((sl) => (
                             <DropdownMenuItem
+                              key={sl.id}
                               onClick={() => handleClickAddToSetlist(
                                 info.row.original.id,
                                 sl.id
@@ -867,7 +868,7 @@ export function Table() {
         ref={tableRef}
         className="flex flex-col flex-grow h-0 overflow-y-auto scrollbar-default"
       >
-        <thead className="px-[14px] py-[8px]">
+        <thead className="px-[14px] py-[8px] border-b border-divider.default">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="flex gap-[14px]">
               {headerGroup.headers.map((header) => (
@@ -921,7 +922,6 @@ export function Table() {
             </tr>
           ))}
         </thead>
-        <Separator />
         <tbody>
           {table.getRowModel().rows.map((row, index) => (
             <tr
