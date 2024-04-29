@@ -23,10 +23,9 @@ import { cn } from "@/lib/utils";
 import { mdiCheck, mdiChevronDown, mdiCircle, mdiClose, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
-import { useEffect, useState } from "react";
+import { Ref, forwardRef, useEffect, useState } from "react";
 
-export function SelectTags(props: { value: Tag[], onChange: (tags: Tag[]) => void }) {
-
+export const SelectTags = forwardRef((props: { value: Tag[], onChange: (tags: Tag[]) => void }, ref: Ref<HTMLDivElement>) => {
   const { value, onChange } = props;
 
   const [tags, setTags] = useState<Tag[]>([]);
@@ -50,19 +49,19 @@ export function SelectTags(props: { value: Tag[], onChange: (tags: Tag[]) => voi
   }
 
   return (
-    <FormItem className='flex flex-col gap-[4px]'>
+    <FormItem className='flex flex-col gap-[4px]' ref={ref}>
       <span className="flex gap-[8px] items-center">
         <FormLabel>Tags</FormLabel>
-          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-            <DialogTrigger asChild>
-              <Button type="button" className="flex items-center gap-[4px] p-1" variant='main'>
-                <Icon path={mdiPlus} size={0.667} />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <EditTagDialog onConfirm={onCreateTag} onClose={setCreateOpen} />
-            </DialogContent>
-          </Dialog>
+        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+          <DialogTrigger asChild>
+            <Button type="button" className="flex items-center gap-[4px] p-1" variant='main'>
+              <Icon path={mdiPlus} size={0.667} />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <EditTagDialog onConfirm={onCreateTag} onClose={setCreateOpen} />
+          </DialogContent>
+        </Dialog>
       </span>
       <FormControl>
         <Popover open={open} onOpenChange={setOpen} {...props}>
@@ -142,4 +141,4 @@ export function SelectTags(props: { value: Tag[], onChange: (tags: Tag[]) => voi
       <FormMessage />
     </FormItem>
   )
-}
+})

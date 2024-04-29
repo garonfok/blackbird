@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { FormControl, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -14,15 +14,15 @@ import { mdiCheck, mdiChevronDown, mdiClose, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { invoke } from "@tauri-apps/api";
-import { useEffect, useState } from "react";
+import { Ref, forwardRef, useEffect, useState } from "react";
 import { SortableItem } from "./SortableItem";
 
-export function SelectMusicians(props: {
+export const SelectMusicians = forwardRef((props: {
   role: "composers" | "arrangers" | "transcribers" | "orchestrators" | "lyricists";
   required?: boolean;
   onChange: (selectedMusicians: Musician[]) => void;
   value: Musician[];
-}) {
+}, ref: Ref<HTMLDivElement>) => {
   const { role, required, onChange, value } = props;
 
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -115,125 +115,123 @@ export function SelectMusicians(props: {
   }
 
   return (
-    <>
-      <div className="flex flex-col gap-[4px]">
-        <span className="flex gap-[8px] items-center">
-          <FormLabel htmlFor={role}>
-            {role.charAt(0).toUpperCase() + role.slice(1)}
-          </FormLabel>
-          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-            <DialogTrigger asChild>
-              <Button type="button" className="flex items-center gap-[4px] p-1" variant='main'>
-                <Icon path={mdiPlus} size={0.667} />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <EditMusicianDialog onConfirm={onCreateMusician} onClose={setCreateOpen} />
-            </DialogContent>
-          </Dialog>
-        </span>
-        <FormControl>
-          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                role="combobox"
-                aria-expanded={popoverOpen}
-                onClick={() => setPopoverOpen(!open)}
-                className={cn("w-full justify-between border-divider.default bg-bg.2")}
+    <FormItem className="flex flex-col gap-[4px]" ref={ref}>
+      <span className="flex gap-[8px] items-center">
+        <FormLabel htmlFor={role}>
+          {role.charAt(0).toUpperCase() + role.slice(1)}
+        </FormLabel>
+        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+          <DialogTrigger asChild>
+            <Button type="button" className="flex items-center gap-[4px] p-1" variant='main'>
+              <Icon path={mdiPlus} size={0.667} />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <EditMusicianDialog onConfirm={onCreateMusician} onClose={setCreateOpen} />
+          </DialogContent>
+        </Dialog>
+      </span>
+      <FormControl>
+        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              role="combobox"
+              aria-expanded={popoverOpen}
+              onClick={() => setPopoverOpen(!open)}
+              className={cn("w-full justify-between border-divider.default bg-bg.2")}
+            >
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+                onDragStart={handleDragStart}
               >
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
-                  onDragStart={handleDragStart}
+                <SortableContext
+                  id="select-musicians"
+                  items={value}
+                  strategy={horizontalListSortingStrategy}
                 >
-                  <SortableContext
-                    id="select-musicians"
-                    items={value}
-                    strategy={horizontalListSortingStrategy}
-                  >
-                    <div className="flex gap-1 flex-wrap">
-                      {value.length > 0 ? value.map((musician) => (
-                        <SortableItem key={musician.id} id={musician.id}>
-                          <>
-                            {musician.first_name} {musician.last_name}
-                            <Button
-                              type="button"
-                              variant="link"
-                              onKeyDown={e => {
-                                if (e.key === "Enter") {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleClickRemoveMusician(musician.id);
-                                }
-                              }}
-                              onMouseDown={e => {
+                  <div className="flex gap-1 flex-wrap">
+                    {value.length > 0 ? value.map((musician) => (
+                      <SortableItem key={musician.id} id={musician.id}>
+                        <>
+                          {musician.first_name} {musician.last_name}
+                          <Button
+                            type="button"
+                            variant="link"
+                            onKeyDown={e => {
+                              if (e.key === "Enter") {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                handleClickRemoveMusician(musician.id)
-                              }}
-                            >
-                              <Icon path={mdiClose} size={0.667} className="text-fg.2 hover:text-fg.0" />
-                            </Button>
-                          </>
-                        </SortableItem>
-                      )) : <span className="text-fg.2">{required && "Required"}</span>}
-                    </div>
-                  </SortableContext>
-                  <DragOverlay dropAnimation={dropAnimationConfig}>
-                    {activeId ? (
-                      <Badge>
-                        {value.find((musician) => musician.id === activeId)?.first_name} {value.find((musician) => musician.id === activeId)?.last_name}
-                      </Badge>
-                    ) : null}
-                  </DragOverlay>
-                </DndContext>
-                <Icon path={mdiChevronDown} size={1} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", popoverOpen && "rotate-180")} />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-              <Command>
-                <CommandInput placeholder="Search for a musician" />
-                <CommandList>
-                  <CommandEmpty>No results found.</CommandEmpty>
-                  <CommandGroup>
-                    <ScrollArea>
-                      <div className="max-h-60">
-                        {musicians.map((musician) => (
-                          <CommandItem
-                            key={musician.id}
-                            onSelect={() => {
-                              handleClickSelectMusician(musician);
-                              setPopoverOpen(true);
+                                handleClickRemoveMusician(musician.id);
+                              }
                             }}
-                            className="text-fg.1"
+                            onMouseDown={e => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleClickRemoveMusician(musician.id)
+                            }}
                           >
-                            <Icon
-                              path={mdiCheck}
-                              size={1}
-                              className={cn(
-                                "mr-2",
-                                value.map(m => m.id).includes(musician.id) ?
-                                  "opacity-100" : "opacity-0"
-                              )}
-                            />
-                            <span>{musician.first_name} {musician.last_name}</span>
-                            {/* Workaround to ensure hover function works for duplicate */}
-                            <span className="invisible">{musician.id}</span>
-                          </CommandItem>
-                        ))}
-                      </div>
-                    </ScrollArea>
-                  </CommandGroup>
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
-        </FormControl>
-        <FormMessage />
-      </div >
-    </>
+                            <Icon path={mdiClose} size={0.667} className="text-fg.2 hover:text-fg.0" />
+                          </Button>
+                        </>
+                      </SortableItem>
+                    )) : <span className="text-fg.2">{required && "Required"}</span>}
+                  </div>
+                </SortableContext>
+                <DragOverlay dropAnimation={dropAnimationConfig}>
+                  {activeId ? (
+                    <Badge>
+                      {value.find((musician) => musician.id === activeId)?.first_name} {value.find((musician) => musician.id === activeId)?.last_name}
+                    </Badge>
+                  ) : null}
+                </DragOverlay>
+              </DndContext>
+              <Icon path={mdiChevronDown} size={1} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", popoverOpen && "rotate-180")} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0">
+            <Command>
+              <CommandInput placeholder="Search for a musician" />
+              <CommandList>
+                <CommandEmpty>No results found.</CommandEmpty>
+                <CommandGroup>
+                  <ScrollArea>
+                    <div className="max-h-60">
+                      {musicians.map((musician) => (
+                        <CommandItem
+                          key={musician.id}
+                          onSelect={() => {
+                            handleClickSelectMusician(musician);
+                            setPopoverOpen(true);
+                          }}
+                          className="text-fg.1"
+                        >
+                          <Icon
+                            path={mdiCheck}
+                            size={1}
+                            className={cn(
+                              "mr-2",
+                              value.map(m => m.id).includes(musician.id) ?
+                                "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          <span>{musician.first_name} {musician.last_name}</span>
+                          {/* Workaround to ensure hover function works for duplicate */}
+                          <span className="invisible">{musician.id}</span>
+                        </CommandItem>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </FormControl>
+      <FormMessage />
+    </FormItem >
   );
-}
+})
