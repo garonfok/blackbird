@@ -47,38 +47,6 @@ export interface Part {
   instruments: Instrument[];
 }
 
-export interface EditPiece {
-  id?: number;
-  title: string;
-  yearPublished?: number;
-  difficulty?: number;
-  notes: string;
-  tags: Tag[];
-  composers: Musician[];
-  arrangers: Musician[];
-  transcribers: Musician[];
-  orchestrators: Musician[];
-  lyricists: Musician[];
-  parts: EditPart[];
-  scores: EditScore[];
-}
-
-export interface EditPart {
-  id: number;
-  renaming: boolean;
-  show: boolean;
-  name: string;
-  instruments: Instrument[];
-  file: ByteFile | null;
-}
-
-export interface EditScore {
-  id: number;
-  renaming: boolean;
-  name: string;
-  file: ByteFile | null;
-}
-
 export const instrumentSchema = z.object({
   id: z.number().int(),
   name: z.string(),
