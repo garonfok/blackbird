@@ -7,7 +7,7 @@ pub fn open_wizard(app_handle: AppHandle, piece_id: Option<i32>) {
     }
 
     let app_url = if let Some(piece_id) = piece_id {
-        format!("/wizard?piece_id={}", piece_id)
+        format!("/wizard/{}", piece_id)
     } else {
         "/wizard".to_string()
     };
@@ -20,7 +20,7 @@ pub fn open_wizard(app_handle: AppHandle, piece_id: Option<i32>) {
         .unwrap();
 }
 
-#[tauri::command]
+#[command]
 pub fn close_window(app_handle: tauri::AppHandle, window_label: String) {
     app_handle
         .get_window(&window_label)

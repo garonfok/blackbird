@@ -65,17 +65,21 @@ import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLoaderData } from "react-router-dom";
 import { z } from "zod";
 import { CentralPanel } from "./CentralPanel";
 import { FilePanel } from "./FilePanel";
 import { SelectMusicians } from "./SelectMusicians";
 import { SelectTags } from "./SelectTags";
 import { pieceFormSchema } from "./types";
-import { createPiece } from "./createPiece";
+import { createPiece, updatePiece } from "./utils";
+
 export function Wizard() {
+  const { piece, files, pieceId } = useLoaderData() as { piece?: z.infer<typeof pieceFormSchema>, files?: ByteFile[], pieceId?: number };
+
   const pieceForm = useForm<z.infer<typeof pieceFormSchema>>({
     resolver: zodResolver(pieceFormSchema),
-    defaultValues: {
+    defaultValues: piece || {
       title: undefined,
       yearPublished: undefined,
       difficulty: undefined,
@@ -97,7 +101,7 @@ export function Wizard() {
   });
 
   const [selectDifficultyOpen, setSelectDifficultyOpen] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<ByteFile[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<ByteFile[]>(files || []);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
   const sensors = useSensors(
@@ -107,10 +111,13 @@ export function Wizard() {
     }),
   );
 
-  async function onSubmitPieceForm(piece: z.infer<typeof pieceFormSchema>) {
+  async function onSubmitPieceForm(submittedPiece: z.infer<typeof pieceFormSchema>) {
     try {
-      await createPiece(piece)
-      console.log("Success!")
+      if (piece) {
+        await updatePiece(submittedPiece, pieceId!)
+      } else {
+        await createPiece(submittedPiece)
+      }
     } catch (error) {
       console.error(error)
     }
@@ -530,8 +537,8 @@ export function Wizard() {
         </ResizablePanelGroup>
         <Separator />
         <div className="p-[14px] flex-row-reverse flex gap-[14px]">
-          <Button type="submit" variant="default">
-            Create Piece
+          <Button type="submit" variant="default" onClick={() => console.log(pieceForm.formState)}>
+            {piece ? "Save changes" : "Create piece"}
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>

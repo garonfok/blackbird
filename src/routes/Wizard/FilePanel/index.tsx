@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
+import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { mdiClose, mdiFile, mdiUploadMultipleOutline } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -11,18 +12,16 @@ import { open } from "@tauri-apps/api/dialog";
 import { Event, listen } from "@tauri-apps/api/event";
 import { readBinaryFile } from "@tauri-apps/api/fs";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { SortableItem } from "./SortableItem";
-import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
 import { UseFormReturn } from "react-hook-form";
-import { pieceFormSchema } from "../types";
 import { z } from "zod";
+import { pieceFormSchema } from "../types";
+import { SortableItem } from "./SortableItem";
 
 export function FilePanel(props: {
   uploadedFiles: ByteFile[];
   setUploadedFiles: Dispatch<SetStateAction<ByteFile[]>>
   pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>;
 }) {
-
   const { uploadedFiles, setUploadedFiles, pieceForm } = props;
 
   const [uploadedFilesCount, setUploadedFilesCount] = useState(0);

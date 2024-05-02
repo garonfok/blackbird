@@ -4,7 +4,6 @@ import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescript
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { invoke } from "@tauri-apps/api";
-import { useNavigate } from "react-router-dom";
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece } from "../reducers/previewSlice";
 import { Header } from "./Header";
@@ -13,14 +12,13 @@ import { Preview } from "./Preview";
 export function RightPanel() {
   const preview = useAppSelector((state) => state.preview);
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   async function handleClickOpenDirectory() {
     await invoke("open", { path: preview.piece!.path });
   }
 
   function handleClickEditPiece() {
-    navigate("/edit-wizard", { state: { piece: preview.piece } });
+    invoke("open_wizard", { pieceId: preview.piece!.id })
   }
 
   async function handleConfirmDeletePiece() {

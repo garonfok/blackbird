@@ -67,8 +67,6 @@ export function Parts(props: {
       }
     ]);
     formatPartNumbers(pieceForm);
-
-    console.log(field)
   }
 
   return (
