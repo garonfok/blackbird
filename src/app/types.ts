@@ -52,8 +52,8 @@ export const instrumentSchema = z.object({
   name: z.string(),
   category: z.string().optional(),
   is_default: z.boolean(),
-  created_at: z.string().datetime(),
-  updated_at: z.string().datetime(),
+  created_at: z.string(),
+  updated_at: z.string(),
 })
 
 export type Instrument = z.infer<typeof instrumentSchema>

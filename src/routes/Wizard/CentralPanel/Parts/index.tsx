@@ -10,7 +10,6 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { mdiContentSaveOutline, mdiPlus, mdiTextBoxOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -55,8 +54,8 @@ export function Parts(props: {
   function handleSelectInstrument(field: ControllerRenderProps<z.infer<typeof pieceFormSchema>, "parts">, instrument: Instrument) {
     const newInstrument = {
       ...instrument,
-      created_at: dayjs(instrument.created_at).toISOString(),
-      updated_at: dayjs(instrument.updated_at).toISOString(),
+      created_at: instrument.created_at,
+      updated_at: instrument.updated_at,
     }
 
     field.onChange([
