@@ -63,6 +63,7 @@ import {
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
+import { emit } from "@tauri-apps/api/event";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLoaderData } from "react-router-dom";
@@ -122,9 +123,13 @@ export function Wizard() {
       console.error(error)
     }
 
+    await emit("refresh_dashboard")
+
     await invoke("close_window", {
       windowLabel: "wizard",
     });
+
+    console.log("refreshed dashboard")
   }
 
   async function handleClickCancel() {

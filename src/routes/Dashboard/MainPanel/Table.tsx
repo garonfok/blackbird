@@ -50,6 +50,7 @@ import {
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece, setPiece } from "../reducers/previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
+import { listen } from "@tauri-apps/api/event";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -106,9 +107,12 @@ export function Table() {
 
     window.addEventListener("click", handleClick);
 
+    const unlistenRefresh = listen("refresh_dashboard", () => fetchPieces())
+
     return () => {
       window.removeEventListener("click", handleClick);
       resizeObserver.disconnect();
+      unlistenRefresh;
     };
   }, []);
 
