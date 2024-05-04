@@ -6,7 +6,7 @@ import {
 import * as SelectPrimitive from "@radix-ui/react-select"
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/app/utils"
 import { mdiChevronDown } from "@mdi/js"
 import Icon from "@mdi/react"
 
@@ -149,7 +149,7 @@ const SelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-fg.2", className)}
+    className={cn("-mx-1 my-1 h-px bg-divider.default", className)}
     {...props}
   />
 ))

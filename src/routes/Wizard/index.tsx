@@ -40,7 +40,7 @@ import {
 } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/utils";
 import {
   DndContext,
   DragEndEvent,
@@ -73,7 +73,7 @@ import { FilePanel } from "./FilePanel";
 import { SelectMusicians } from "./SelectMusicians";
 import { SelectTags } from "./SelectTags";
 import { pieceFormSchema } from "./types";
-import { createPiece, updatePiece } from "./utils";
+import { createPiece, updatePiece } from "@/app/utils";
 
 export function Wizard() {
   const { piece, files, pieceId } = useLoaderData() as { piece?: z.infer<typeof pieceFormSchema>, files?: ByteFile[], pieceId?: number };

@@ -2,7 +2,7 @@ import * as ToastPrimitives from "@radix-ui/react-toast"
 import { cva, type VariantProps } from "class-variance-authority"
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/app/utils"
 import { mdiClose } from "@mdi/js"
 import Icon from "@mdi/react"
 import { Button } from "./button"

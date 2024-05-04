@@ -6,7 +6,7 @@ import {
 } from "@radix-ui/react-icons"
 import { mdiChevronRight } from "@mdi/js"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/app/utils"
 import Icon from "@mdi/react"
 
 const DropdownMenu = DropdownMenuPrimitive.Root
@@ -167,7 +167,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-bg.2", className)}
+    className={cn("-mx-1 my-1 h-px bg-divider.default", className)}
     {...props}
   />
 ))

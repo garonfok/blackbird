@@ -2,7 +2,7 @@ import store from "@/app/store";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Dashboard } from "@/routes/Dashboard";
-import { Settings } from "@/routes/Settings";
+import { AppSettings } from "@/routes/AppSettings";
 import "@/styles.css";
 import { invoke } from "@tauri-apps/api";
 import { readBinaryFile } from "@tauri-apps/api/fs";
@@ -13,6 +13,7 @@ import { z } from "zod";
 import { Musician, Piece } from "./app/types";
 import { Wizard } from "./routes/Wizard";
 import { partFormSchema, pieceFormSchema, scoreFormSchema } from "./routes/Wizard/types";
+import { LibSettings } from "./routes/LibrarySettings";
 
 const router = createBrowserRouter([
   {
@@ -20,8 +21,12 @@ const router = createBrowserRouter([
     element: <Dashboard />,
   },
   {
-    path: "/settings",
-    element: <Settings />,
+    path: "/app-settings",
+    element: <AppSettings />,
+  },
+  {
+    path: "/lib-settings",
+    element: <LibSettings />
   },
   {
     path: "/wizard",
