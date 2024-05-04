@@ -84,7 +84,7 @@ export function Wizard() {
       title: undefined,
       yearPublished: undefined,
       difficulty: undefined,
-      notes: undefined,
+      notes: "",
       tags: [],
       composers: [],
       arrangers: [],

@@ -22,15 +22,50 @@ export const pieceFormSchema = z.object({
   title: z.string().min(1, {
     message: "Title is required",
   }),
-  yearPublished: z.coerce.number().positive().int().min(1, {
-    message: "Year cannot be less than 1",
-  }).max(9999, {
-    message: "Year cannot be greater than 9999",
-  }).optional(),
+  yearPublished: z.string().transform(
+    (val, ctx) => {
+      if (val === "") {
+        return undefined;
+      }
+      const year = parseInt(val);
+
+      if (isNaN(year)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Year must be a number",
+          fatal: true,
+        })
+        return z.NEVER
+      }
+      if (year < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_small,
+          message: "Year cannot be less than 1",
+          fatal: true,
+          minimum: 1,
+          type: "number",
+          inclusive: true,
+        })
+        return z.NEVER
+      }
+      if (year > 9999) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.too_big,
+          message: "Year cannot be greater than 9999",
+          fatal: true,
+          maximum: 9999,
+          type: "number",
+          inclusive: true,
+        })
+        return z.NEVER
+      }
+      return year;
+    }
+  ).optional(),
   difficulty: z.number({
     invalid_type_error: "Difficulty must be a number",
   }).int().min(1).max(6).optional(),
-  notes: z.string().optional(),
+  notes: z.string(),
   tags: z.array(tagSchema),
   composers: z.array(musicianSchema).nonempty({
     message: "At least one composer is required",
