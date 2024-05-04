@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { useCmdOrCtrlHotkey } from "@/app/hooks";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { useNavigate } from "react-router-dom";
 import * as SettingEntries from "./SettingEntries";
+import { useHotkey } from "@/app/hooks";
 
 export function LibSettings() {
   const navigate = useNavigate();
-  useCmdOrCtrlHotkey("Escape", () => navigate("/"));
+  useHotkey("Escape", () => navigate("/"));
 
   return (
     <div className="justify-center flex h-screen bg-gradient-to-r from-sidebar-bg.default from-[24%] to-[25%] to-main-bg.default">
