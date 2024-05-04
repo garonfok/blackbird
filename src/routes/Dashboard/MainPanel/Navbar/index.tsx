@@ -55,7 +55,7 @@ export function Navbar() {
               <Icon
                 path={mdiTune}
                 size={1}
-                className="shrink-0 link"
+                className="shrink-0"
               />
             </Button>
           </PopoverTrigger>
