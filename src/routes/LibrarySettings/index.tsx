@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
+import { useCmdOrCtrlHotkey } from "@/app/hooks";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { useNavigate } from "react-router-dom";
 import * as SettingEntries from "./SettingEntries";

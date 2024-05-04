@@ -4,7 +4,7 @@ import { debounce, isWindows } from "@/app/utils";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
+import { useCmdOrCtrlHotkey } from "@/app/hooks";
 import { cn } from "@/app/utils";
 import { mdiBookOpenVariantOutline, mdiBookshelf, mdiMagnify, mdiTune } from "@mdi/js";
 import { Icon } from "@mdi/react";

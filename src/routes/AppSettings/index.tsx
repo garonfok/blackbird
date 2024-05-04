@@ -1,5 +1,5 @@
+import { useHotkey } from "@/app/hooks";
 import { Button } from "@/components/ui/button";
-import { useCmdOrCtrlHotkey } from "@/hooks/useHotkey";
 import { mdiHomeOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link, useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import { WorkingDirectory } from "./WorkingDirectory";
 
 export function AppSettings() {
   const navigate = useNavigate();
-  useCmdOrCtrlHotkey("Escape", () => navigate("/"));
+  useHotkey("Escape", () => navigate("/"));
 
   return (
     <div className="justify-center flex">
