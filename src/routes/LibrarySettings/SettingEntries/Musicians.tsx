@@ -1,12 +1,16 @@
 import { Musician, Piece } from "@/app/types";
+import { getPieceFromDb, updatePiece } from "@/app/utils";
+import { EditMusicianDialog } from "@/components/EditMusicianDialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { mdiPencil, mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { invoke } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
 import { ContentWrapper } from "../components/ContentWrapper";
+import { readDir, removeDir } from "@tauri-apps/api/fs";
 
 type DeletingMusician = {
   musician: Musician
@@ -25,6 +29,7 @@ export function Musicians() {
   const [deletingMusician, setDeletingMusician] = useState<DeletingMusician | null>(null)
   const [confirmingDeleteMusician, setConfirmingDeleteMusician] = useState(false)
   const [autoRemoveMusicians, setAutoRemoveMusicians] = useState<Musician[]>([])
+  const [editOpen, setEditOpen] = useState<boolean[]>([])
 
   useEffect(() => {
     fetchMusicians()
@@ -34,6 +39,7 @@ export function Musicians() {
   async function fetchMusicians() {
     const musicians: Musician[] = await invoke("musicians_get_all")
     setMusicians(musicians)
+    setEditOpen(new Array(musicians.length).fill(false))
   }
 
   async function fetchPieces() {
@@ -178,6 +184,41 @@ export function Musicians() {
     setAutoRemoveMusicians(islandMusicians)
   }
 
+  async function onEditMusician(firstName: string, lastName?: string, id?: number) {
+    const principalComposerPieces = pieces.filter(piece => piece.composers[0].id === id)
+
+    await invoke("musicians_update", {
+      id,
+      firstName,
+      lastName
+    })
+
+    const workingDir: string = await invoke("get_working_directory")
+    const allDirs = await readDir(workingDir)
+    const originalDir = allDirs.find(dir => dir.name?.startsWith(`${id}_`))
+
+    if (originalDir) {
+      const path = originalDir.path
+      await removeDir(path, { recursive: true })
+    }
+
+    for (const dbPiece of principalComposerPieces) {
+      const { piece, pieceId } = await getPieceFromDb(dbPiece)
+
+      const composers = piece.composers
+
+      composers[0].first_name = firstName
+      composers[0].last_name = lastName
+
+      await updatePiece({
+        ...piece,
+        composers,
+      }, pieceId)
+    }
+
+    await fetchMusicians()
+  }
+
   return (
     <>
       <ContentWrapper value="musicians" name="Musicians">
@@ -190,15 +231,32 @@ export function Musicians() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {musicians.map((musician) => (
+            {musicians.map((musician, index) => (
               <TableRow key={musician.id} className="group">
                 <TableCell>{musician.first_name}</TableCell>
                 <TableCell>{musician.last_name}</TableCell>
                 <TableCell className="w-[70px] p-0">
                   <span className="invisible group-hover:visible">
-                    <Button variant="main" className="p-1">
-                      <Icon path={mdiPencil} size={1} />
-                    </Button>
+                    <Dialog open={editOpen[index]} onOpenChange={(open) => {
+                      const newEditOpen = [...editOpen]
+                      newEditOpen[index] = open
+                      setEditOpen(newEditOpen)
+                    }}>
+                      <DialogTrigger asChild>
+                        <Button type="button" className="p-1" variant='main'>
+                          <Icon path={mdiPencil} size={1} />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <EditMusicianDialog defaultMusician={musician} onConfirm={onEditMusician} onClose={
+                          () => {
+                            const newEditOpen = [...editOpen]
+                            newEditOpen[index] = false
+                            setEditOpen(newEditOpen)
+                          }
+                        } />
+                      </DialogContent>
+                    </Dialog>
                     <Button variant="main" className="p-1" onClick={() => handleClickDeleteMusician(musician)}>
                       <Icon path={mdiTrashCanOutline} size={1} />
                     </Button>

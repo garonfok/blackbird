@@ -1,12 +1,12 @@
-import { partFormSchema, pieceFormSchema } from "@/routes/Wizard/types";
+import { partFormSchema, pieceFormSchema, scoreFormSchema } from "@/routes/Wizard/types";
 import { invoke } from "@tauri-apps/api";
-import { createDir, removeDir, writeBinaryFile } from "@tauri-apps/api/fs";
+import { createDir, readBinaryFile, removeDir, writeBinaryFile } from "@tauri-apps/api/fs";
 import { type } from "@tauri-apps/api/os";
-import { UseFormReturn } from "react-hook-form";
-import { z } from "zod";
-import { Piece } from "./types";
 import clsx, { ClassValue } from "clsx";
+import { UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
+import { z } from "zod";
+import { Musician, Piece } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -99,9 +99,8 @@ export function formatPartNumbers(pieceForm: UseFormReturn<z.infer<typeof pieceF
 
 export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
   const principalComposer = piece.composers[0];
-  const composerName = principalComposer.last_name
-    ? `${principalComposer.first_name} ${principalComposer.last_name}`
-    : principalComposer.first_name;
+
+  const composerName = [principalComposer.last_name, principalComposer.first_name].filter(Boolean).join(", ")
 
   const workingDir = await invoke("get_working_directory")
 
@@ -213,16 +212,23 @@ export async function updatePiece(piece: z.infer<typeof pieceFormSchema>, id: nu
   const originalPath = originalPiece.path;
 
   const principalComposer = piece.composers[0];
-  const composerName = principalComposer.last_name
-    ? `${principalComposer.first_name} ${principalComposer.last_name}`
-    : principalComposer.first_name;
+
+  const composerName = [principalComposer.last_name, principalComposer.first_name].filter(Boolean).join(", ")
 
   const workingDir = await invoke("get_working_directory")
   const pathSlash = window.navigator.userAgent.includes("Windows") ? "\\" : "/";
   const path = `${workingDir}${pathSlash}${principalComposer.id}_${composerName}${pathSlash}${id}_${piece.title}`;
 
-  await removeDir(originalPath, { recursive: true });
-  await createDir(path, { recursive: true });
+  try {
+    await removeDir(originalPath, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
+  try {
+    await createDir(path, { recursive: true });
+  } catch (error) {
+    console.error(error);
+  }
 
   await invoke("pieces_update", {
     id,
@@ -317,4 +323,78 @@ export async function updatePiece(piece: z.infer<typeof pieceFormSchema>, id: nu
       await writeBinaryFile(partPath, part.file.bytearray);
     }
   }
+}
+
+export async function getPieceFromDb(piece: Piece) {
+  let files = new Map<number, { name: string, file: Uint8Array }>()
+  let maxId = -1
+
+  const parts: z.infer<typeof partFormSchema>[] = await Promise.all(piece.parts.map(async part => {
+    const filePath = part.path
+    if (filePath) {
+      const buffer = await readBinaryFile(filePath)
+      files.set(++maxId, {
+        name: filePath.split("/").pop() || "",
+        file: buffer
+      })
+    }
+    return {
+      id: part.id,
+      name: part.name,
+      instruments: part.instruments,
+      file: filePath ? {
+        id: maxId,
+        name: files.get(maxId)!.name,
+        bytearray: files.get(maxId)!.file,
+      } : undefined
+    }
+  }))
+
+  const scores: z.infer<typeof scoreFormSchema>[] = await Promise.all(piece.scores.map(async score => {
+    const filePath = score.path
+    if (filePath) {
+      const buffer = await readBinaryFile(filePath)
+      files.set(++maxId, {
+        name: filePath.split("/").pop() || "",
+        file: buffer
+      })
+    }
+    return {
+      id: score.id,
+      name: score.name,
+      file: filePath ? {
+        id: maxId,
+        name: files.get(maxId)!.name,
+        bytearray: files.get(maxId)!.file,
+      } : undefined
+    }
+  }))
+
+  const editPiece: z.infer<typeof pieceFormSchema> = {
+    title: piece.title,
+    yearPublished: piece.year_published,
+    difficulty: piece.difficulty,
+    notes: piece.notes,
+    tags: piece.tags,
+    composers: piece.composers as [Musician, ...Musician[]],
+    arrangers: piece.arrangers,
+    orchestrators: piece.orchestrators,
+    transcribers: piece.transcribers,
+    lyricists: piece.lyricists,
+    parts,
+    scores,
+  }
+
+  return {
+    piece: editPiece,
+    files: Array.from(files, ([key, value]) => {
+      return {
+        id: key,
+        name: value.name,
+        bytearray: value.file
+      }
+    }),
+    pieceId: Number(piece.id)
+  }
+
 }

@@ -17,7 +17,7 @@ const musicianFormSchema = z.object({
 
 export function EditMusicianDialog(props: {
   defaultMusician?: Musician;
-  onConfirm: (firstName: string, lastName?: string) => void;
+  onConfirm: (firstName: string, lastName?: string, id?: number) => void;
   onClose: Dispatch<SetStateAction<boolean>>;
 }) {
   const { defaultMusician, onConfirm, onClose } = props;
@@ -33,7 +33,7 @@ export function EditMusicianDialog(props: {
   function onSubmitMusicianForm(data: z.infer<typeof musicianFormSchema>) {
     const { firstName, lastName } = data;
     const nulledLastName = lastName?.length === 0 ? undefined : lastName;
-    onConfirm(firstName, nulledLastName);
+    onConfirm(firstName, nulledLastName, defaultMusician?.id);
     musicianForm.reset();
     onClose(false);
   }
@@ -77,9 +77,7 @@ export function EditMusicianDialog(props: {
             <DialogClose asChild>
               <Button variant="link">Cancel</Button>
             </DialogClose>
-            {/* <DialogClose asChild> */}
             <Button type="submit">Save</Button>
-            {/* </DialogClose> */}
           </DialogFooter>
         </form>
       </Form>

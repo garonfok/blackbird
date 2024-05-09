@@ -128,8 +128,6 @@ export function Wizard() {
     await invoke("close_window", {
       windowLabel: "wizard",
     });
-
-    console.log("refreshed dashboard")
   }
 
   async function handleClickCancel() {
@@ -542,7 +540,7 @@ export function Wizard() {
         </ResizablePanelGroup>
         <Separator />
         <div className="p-[14px] flex-row-reverse flex gap-[14px]">
-          <Button type="submit" variant="default" onClick={() => console.log(pieceForm.formState)}>
+          <Button type="submit" variant="default">
             {piece ? "Save changes" : "Create piece"}
           </Button>
           <AlertDialog>
