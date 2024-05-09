@@ -30,6 +30,7 @@ export function Musicians() {
   const [confirmingDeleteMusician, setConfirmingDeleteMusician] = useState(false)
   const [autoRemoveMusicians, setAutoRemoveMusicians] = useState<Musician[]>([])
   const [editOpen, setEditOpen] = useState<boolean[]>([])
+  const [createOpen, setCreateOpen] = useState(false)
 
   useEffect(() => {
     fetchMusicians()
@@ -185,35 +186,42 @@ export function Musicians() {
   }
 
   async function onEditMusician(firstName: string, lastName?: string, id?: number) {
-    const principalComposerPieces = pieces.filter(piece => piece.composers[0].id === id)
+    if (id === undefined) {
+      await invoke("musicians_add", {
+        firstName,
+        lastName
+      })
+    } else {
+      const principalComposerPieces = pieces.filter(piece => piece.composers[0].id === id)
 
-    await invoke("musicians_update", {
-      id,
-      firstName,
-      lastName
-    })
+      await invoke("musicians_update", {
+        id,
+        firstName,
+        lastName
+      })
 
-    const workingDir: string = await invoke("get_working_directory")
-    const allDirs = await readDir(workingDir)
-    const originalDir = allDirs.find(dir => dir.name?.startsWith(`${id}_`))
+      const workingDir: string = await invoke("get_working_directory")
+      const allDirs = await readDir(workingDir)
+      const originalDir = allDirs.find(dir => dir.name?.startsWith(`${id}_`))
 
-    if (originalDir) {
-      const path = originalDir.path
-      await removeDir(path, { recursive: true })
-    }
+      if (originalDir) {
+        const path = originalDir.path
+        await removeDir(path, { recursive: true })
+      }
 
-    for (const dbPiece of principalComposerPieces) {
-      const { piece, pieceId } = await getPieceFromDb(dbPiece)
+      for (const dbPiece of principalComposerPieces) {
+        const { piece, pieceId } = await getPieceFromDb(dbPiece)
 
-      const composers = piece.composers
+        const composers = piece.composers
 
-      composers[0].first_name = firstName
-      composers[0].last_name = lastName
+        composers[0].first_name = firstName
+        composers[0].last_name = lastName
 
-      await updatePiece({
-        ...piece,
-        composers,
-      }, pieceId)
+        await updatePiece({
+          ...piece,
+          composers,
+        }, pieceId)
+      }
     }
 
     await fetchMusicians()
@@ -266,9 +274,21 @@ export function Musicians() {
             ))}
           </TableBody>
         </Table>
-        <Button className='w-fit' onClick={handleClickAutoRemoveMusicians}>
-          Remove all unused musicians
-        </Button>
+        <div className="flex gap-[8px]">
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                Add Musician
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <EditMusicianDialog onConfirm={onEditMusician} onClose={setCreateOpen} />
+            </DialogContent>
+          </Dialog>
+          <Button variant="link" onClick={handleClickAutoRemoveMusicians}>
+            Remove all unused musicians
+          </Button>
+        </div>
       </ContentWrapper>
       <AlertDialog open={deletingMusician !== null && deletingMusician.principalComposer.length > 0}>
         <AlertDialogContent>
