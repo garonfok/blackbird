@@ -1,9 +1,8 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { Piece } from "@/app/types";
+import { openFolder, openWizard, piecesDelete, piecesGetAll } from "@/app/invokers";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
-import { invoke } from "@tauri-apps/api";
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece } from "../reducers/previewSlice";
 import { Header } from "./Header";
@@ -14,21 +13,21 @@ export function RightPanel() {
   const dispatch = useAppDispatch();
 
   async function handleClickOpenDirectory() {
-    await invoke("open", { path: preview.piece!.path });
+    await openFolder({ path: preview.piece!.path });
   }
 
-  function handleClickEditPiece() {
-    invoke("open_wizard", { pieceId: preview.piece!.id })
+  async function handleClickEditPiece() {
+    await openWizard({ pieceId: preview.piece!.id })
   }
 
   async function handleConfirmDeletePiece() {
     dispatch(clearPiece());
-    await invoke("pieces_delete", { id: preview.piece!.id });
+    await piecesDelete({ id: preview.piece!.id });
     await fetchPieces();
   }
 
   async function fetchPieces() {
-    const pieces = (await invoke("pieces_get_all")) as Piece[];
+    const pieces = await piecesGetAll();
     dispatch(setPieces({ pieces }));
   }
 

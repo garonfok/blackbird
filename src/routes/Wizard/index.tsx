@@ -1,5 +1,6 @@
+import { closeWindow } from "@/app/invokers";
 import { ByteFile } from "@/app/types";
-import { formatPartNumbers } from "@/app/utils";
+import { cn, createPiece, formatPartNumbers, updatePiece } from "@/app/utils";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -40,7 +41,6 @@ import {
 } from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/app/utils";
 import {
   DndContext,
   DragEndEvent,
@@ -62,7 +62,6 @@ import {
   mdiUnfoldMoreHorizontal,
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { invoke } from "@tauri-apps/api";
 import { emit } from "@tauri-apps/api/event";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -73,7 +72,6 @@ import { FilePanel } from "./FilePanel";
 import { SelectMusicians } from "./SelectMusicians";
 import { SelectTags } from "./SelectTags";
 import { pieceFormSchema } from "./types";
-import { createPiece, updatePiece } from "@/app/utils";
 
 export function Wizard() {
   const { piece, files, pieceId } = useLoaderData() as { piece?: z.infer<typeof pieceFormSchema>, files?: ByteFile[], pieceId?: number };
@@ -125,15 +123,11 @@ export function Wizard() {
 
     await emit("refresh_dashboard")
 
-    await invoke("close_window", {
-      windowLabel: "wizard",
-    });
+    await closeWindow({ windowLabel: "wizard" })
   }
 
   async function handleClickCancel() {
-    await invoke("close_window", {
-      windowLabel: "wizard",
-    });
+    await closeWindow({ windowLabel: "wizard" })
   }
 
   function handleDragStart(event: DragStartEvent) {

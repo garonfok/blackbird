@@ -1,11 +1,11 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { openFolder, piecesDelete, piecesGetAll, piecesGetBySetlist, setlistsAddPiece, setlistsRemovePiece } from "@/app/invokers";
 import { Piece, Tag } from "@/app/types";
-import { isWindows } from "@/app/utils";
+import { cn, isWindows } from "@/app/utils";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { cn } from "@/app/utils";
 import {
   mdiArrowDown,
   mdiArrowUp,
@@ -25,7 +25,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { invoke } from "@tauri-apps/api";
+import { listen } from "@tauri-apps/api/event";
 import { useMachine } from "@xstate/react";
 import dayjs from "dayjs";
 import Fuse from "fuse.js";
@@ -50,7 +50,6 @@ import {
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece, setPiece } from "../reducers/previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
-import { listen } from "@tauri-apps/api/event";
 
 const sortOptions = [
   { id: "id", label: "#" },
@@ -428,11 +427,9 @@ export function Table() {
   async function fetchPieces() {
     const pieces = await (async () => {
       if (setlist.setlist) {
-        return (await invoke("pieces_get_by_setlist", {
-          setlistId: setlist.setlist.id,
-        })) as Piece[];
+        return await piecesGetBySetlist({ setlistId: setlist.setlist.id });
       } else {
-        return (await invoke("pieces_get_all")) as Piece[];
+        return await piecesGetAll();
       }
     })();
     dispatch(setPieces({ pieces }));
@@ -565,7 +562,7 @@ export function Table() {
   }
 
   async function handleClickOpenFolder(path: string) {
-    await invoke("open", { path });
+    await openFolder({ path });
   }
 
   function handleClickEditPiece(piece: Piece) {
@@ -577,7 +574,7 @@ export function Table() {
   }
 
   async function handleClickDeletePiece(pieceId: number) {
-    await invoke("pieces_delete", { id: pieceId });
+    await piecesDelete({ id: pieceId });
     if (preview.piece!.id === pieceId) {
       dispatch(clearPiece());
     }
@@ -588,7 +585,7 @@ export function Table() {
     pieceId: number,
     setlistId: number
   ) {
-    await invoke("setlists_add_piece", { pieceId, setlistId });
+    await setlistsAddPiece({ pieceId, setlistId });
     await fetchPieces();
   }
 
@@ -596,7 +593,7 @@ export function Table() {
     pieceId: number,
     setlistId: number
   ) {
-    await invoke("setlists_remove_piece", { pieceId, setlistId });
+    await setlistsRemovePiece({ pieceId, setlistId });
     await fetchPieces();
   }
 

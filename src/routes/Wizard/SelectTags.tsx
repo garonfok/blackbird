@@ -1,5 +1,7 @@
 
+import { tagsAdd, tagsGet, tagsGetAll } from "@/app/invokers";
 import { Tag } from "@/app/types";
+import { cn } from "@/app/utils";
 import { EditTagDialog } from "@/components/EditTagDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,10 +21,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/app/utils";
 import { mdiCheck, mdiChevronDown, mdiCircle, mdiClose, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
-import { invoke } from "@tauri-apps/api";
 import { Ref, forwardRef, useEffect, useState } from "react";
 
 export const SelectTags = forwardRef((props: { value: Tag[], onChange: (tags: Tag[]) => void }, ref: Ref<HTMLDivElement>) => {
@@ -37,14 +37,14 @@ export const SelectTags = forwardRef((props: { value: Tag[], onChange: (tags: Ta
   }, [])
 
   async function fetchTags() {
-    const fetchedTags = (await invoke("tags_get_all")) as Tag[];
+    const fetchedTags = await tagsGetAll()
     setTags(fetchedTags);
   }
 
   async function onCreateTag(name: string, color: string) {
-    const tagId = await invoke("tags_add", { name, color });
+    const tagId = await tagsAdd({ name, color });
     await fetchTags();
-    const tag = (await invoke("tags_get_by_id", { id: tagId })) as Tag;
+    const tag = await tagsGet({ id: tagId });
     onChange([...value, tag]);
   }
 

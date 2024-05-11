@@ -1,9 +1,9 @@
+import { changeWorkingDirectory, getDatabaseExists, getDirEmpty, getWorkingDirectory } from "@/app/invokers";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { open } from "@tauri-apps/api/dialog";
 import { relaunch } from "@tauri-apps/api/process";
-import { invoke } from "@tauri-apps/api/tauri";
 import { useMachine } from "@xstate/react";
 import { useEffect, useState } from "react";
 import { createMachine } from "xstate";
@@ -46,8 +46,8 @@ export function WorkingDirectory() {
 
   useEffect(() => {
     async function initSetting() {
-      const invokeGetWorkingDirectory = await invoke("get_working_directory");
-      setWorkingDirectory(invokeGetWorkingDirectory as string);
+      const workingDir = await getWorkingDirectory()
+      setWorkingDirectory(workingDir);
     }
 
     initSetting();
@@ -59,15 +59,15 @@ export function WorkingDirectory() {
     });
     if (!selectedPath) return;
     if (selectedPath === workingDirectory) return;
-    const databaseExists = await invoke("get_database_exists", {
-      path: selectedPath,
+    const databaseExists = await getDatabaseExists({
+      path: selectedPath as string,
     });
     if (databaseExists) {
       setWorkingDirectory(selectedPath as string);
       sendChangeDir("RESTART");
     } else {
-      const isDirEmpty = await invoke("get_dir_empty", {
-        path: selectedPath,
+      const isDirEmpty = await getDirEmpty({
+        path: selectedPath as string,
       });
       if (isDirEmpty) {
         setWorkingDirectory(selectedPath as string);
@@ -79,16 +79,16 @@ export function WorkingDirectory() {
   }
 
   async function handleConfirmRestart() {
-    await invoke("set_working_directory", {
-      path: workingDirectory,
-    });
+    if (workingDirectory !== undefined) {
+      await changeWorkingDirectory({ path: workingDirectory });
+    }
     sendChangeDir("FINISH");
     await relaunch();
   }
 
   async function handleCancelRestart() {
     sendChangeDir("FINISH");
-    const invokeGetWorkingDirectory = await invoke("get_working_directory");
+    const invokeGetWorkingDirectory = await getWorkingDirectory();
     setWorkingDirectory(invokeGetWorkingDirectory as string);
   }
 

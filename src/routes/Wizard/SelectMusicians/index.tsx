@@ -1,4 +1,6 @@
+import { musiciansAdd, musiciansGet, musiciansGetAll } from "@/app/invokers";
 import { Musician } from "@/app/types";
+import { cn } from "@/app/utils";
 import { EditMusicianDialog } from "@/components/EditMusicianDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,13 +9,11 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/app/utils";
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, closestCenter, defaultDropAnimationSideEffects, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, arrayMove, horizontalListSortingStrategy, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { mdiCheck, mdiChevronDown, mdiClose, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
 import { PopoverTrigger } from "@radix-ui/react-popover";
-import { invoke } from "@tauri-apps/api";
 import { Ref, forwardRef, useEffect, useState } from "react";
 import { SortableItem } from "./SortableItem";
 
@@ -42,7 +42,7 @@ export const SelectMusicians = forwardRef((props: {
   }, [])
 
   async function fetchMusicians() {
-    const fetchedMusicians = (await invoke("musicians_get_all")) as Musician[];
+    const fetchedMusicians = await musiciansGetAll()
 
     const sorted = fetchedMusicians.sort((a, b) => {
       if (a.first_name < b.first_name) return -1;
@@ -54,11 +54,11 @@ export const SelectMusicians = forwardRef((props: {
   }
 
   async function onCreateMusician(firstName: string, lastName?: string) {
-    const musicianId = await invoke("musicians_add", { firstName, lastName });
+    const musicianId = await musiciansAdd({ firstName, lastName })
     await fetchMusicians();
-    const musician = (await invoke("musicians_get_by_id", {
+    const musician = await musiciansGet({
       id: musicianId,
-    })) as Musician;
+    })
     onChange([...value, musician]);
   }
 

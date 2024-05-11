@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { Instrument, Musician } from "@/app/types";
+import { instrumentsGetAll, musiciansGetAll } from "@/app/invokers";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,6 @@ import { resetFilter, setFilterExclTag } from "@/routes/Dashboard/reducers/filte
 import { zodResolver } from "@hookform/resolvers/zod";
 import { mdiEraser } from "@mdi/js";
 import Icon from "@mdi/react";
-import { invoke } from "@tauri-apps/api";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -56,13 +55,13 @@ export function AdvancedFilters(props: { onOpenChange: Dispatch<SetStateAction<b
   }, [filter])
 
   async function fetchInstruments() {
-    const fetchedInstruments = (await invoke("instruments_get_all")) as Instrument[];
+    const fetchedInstruments = await instrumentsGetAll();
     fetchedInstruments.sort((a, b) => a.name.localeCompare(b.name));
     setInstruments(fetchedInstruments.map((instrument) => ({ value: instrument.id, label: instrument.name })));
   }
 
   async function fetchMusicians() {
-    const musicians = (await invoke("musicians_get_all")) as Musician[];
+    const musicians = await musiciansGetAll()
     musicians.sort((a, b) => {
       const aLastName = a.last_name ?? "";
       const bLastName = b.last_name ?? "";
@@ -117,8 +116,8 @@ export function AdvancedFilters(props: { onOpenChange: Dispatch<SetStateAction<b
     form.setValue("transcribers", values.transcribers);
     form.setValue("lyricists", values.lyricists);
 
-    const allInstruments = await invoke("instruments_get_all") as Instrument[];
-    const allMusicians = await invoke("musicians_get_all") as Musician[];
+    const allInstruments = await instrumentsGetAll()
+    const allMusicians = await musiciansGetAll()
 
     const foundInstruments = allInstruments.filter((instrument) => values.instruments.includes(instrument.id));
     const foundComposers = allMusicians.filter((musician) => values.composers.includes(musician.id));

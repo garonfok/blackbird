@@ -1,3 +1,4 @@
+import { getWorkingDirectory, musiciansAdd, musiciansDelete, musiciansGetAll, musiciansUpdate, piecesGetAll, piecesUpdate } from "@/app/invokers";
 import { Musician, Piece } from "@/app/types";
 import { getPieceFromDb, updatePiece } from "@/app/utils";
 import { EditMusicianDialog } from "@/components/EditMusicianDialog";
@@ -7,10 +8,9 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { mdiPencil, mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { invoke } from "@tauri-apps/api";
+import { readDir, removeDir } from "@tauri-apps/api/fs";
 import { useEffect, useState } from "react";
 import { ContentWrapper } from "../components/ContentWrapper";
-import { readDir, removeDir } from "@tauri-apps/api/fs";
 
 type DeletingMusician = {
   musician: Musician
@@ -38,13 +38,13 @@ export function Musicians() {
   }, [])
 
   async function fetchMusicians() {
-    const musicians: Musician[] = await invoke("musicians_get_all")
+    const musicians = await musiciansGetAll()
     setMusicians(musicians)
     setEditOpen(new Array(musicians.length).fill(false))
   }
 
   async function fetchPieces() {
-    const pieces: Piece[] = await invoke("pieces_get_all")
+    const pieces = await piecesGetAll()
     setPieces(pieces)
   }
 
@@ -103,7 +103,7 @@ export function Musicians() {
     await Promise.all([
       ...associatedComposer.map(async piece => {
         const { id, title, year_published, path, difficulty, notes } = piece
-        await invoke("pieces_update", {
+        await piecesUpdate({
           id,
           title,
           yearPublished: year_published,
@@ -114,7 +114,7 @@ export function Musicians() {
       }),
       ...arranger.map(async piece => {
         const { id, title, year_published, path, difficulty, notes } = piece
-        await invoke("pieces_update", {
+        await piecesUpdate({
           id,
           title,
           yearPublished: year_published,
@@ -125,7 +125,7 @@ export function Musicians() {
       }),
       ...orchestrator.map(async piece => {
         const { id, title, year_published, path, difficulty, notes } = piece
-        await invoke("pieces_update", {
+        await piecesUpdate({
           id,
           title,
           yearPublished: year_published,
@@ -136,7 +136,7 @@ export function Musicians() {
       }),
       ...transcriber.map(async piece => {
         const { id, title, year_published, path, difficulty, notes } = piece
-        await invoke("pieces_update", {
+        await piecesUpdate({
           id,
           title,
           yearPublished: year_published,
@@ -147,7 +147,7 @@ export function Musicians() {
       }),
       ...lyricist.map(async piece => {
         const { id, title, year_published, path, difficulty, notes } = piece
-        await invoke("pieces_update", {
+        await piecesUpdate({
           id,
           title,
           yearPublished: year_published,
@@ -158,13 +158,13 @@ export function Musicians() {
       }),
     ])
 
-    await invoke("musicians_delete", { id: musician.id })
+    await musiciansDelete({ id: musician.id })
     fetchMusicians()
     setDeletingMusician(null)
   }
 
   async function handleClickConfirmDeleteMusicians() {
-    await Promise.all(autoRemoveMusicians.map(async musician => await invoke("musicians_delete", { id: musician.id })))
+    await Promise.all(autoRemoveMusicians.map(async musician => await musiciansDelete({ id: musician.id })))
     fetchMusicians()
     setAutoRemoveMusicians([])
   }
@@ -187,20 +187,20 @@ export function Musicians() {
 
   async function onEditMusician(firstName: string, lastName?: string, id?: number) {
     if (id === undefined) {
-      await invoke("musicians_add", {
+      await musiciansAdd({
         firstName,
         lastName
       })
     } else {
       const principalComposerPieces = pieces.filter(piece => piece.composers[0].id === id)
 
-      await invoke("musicians_update", {
+      await musiciansUpdate({
         id,
         firstName,
         lastName
       })
 
-      const workingDir: string = await invoke("get_working_directory")
+      const workingDir: string = await getWorkingDirectory()
       const allDirs = await readDir(workingDir)
       const originalDir = allDirs.find(dir => dir.name?.startsWith(`${id}_`))
 

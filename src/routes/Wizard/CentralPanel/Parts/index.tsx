@@ -1,3 +1,4 @@
+import { instrumentsGetAll } from "@/app/invokers";
 import { ByteFile, Instrument } from "@/app/types";
 import { formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,6 @@ import { Separator } from "@/components/ui/separator";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { mdiContentSaveOutline, mdiPlus, mdiTextBoxOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { invoke } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -29,7 +29,7 @@ export function Parts(props: {
 
   useEffect(() => {
     async function fetchInstruments() {
-      const fetchedInstruments = (await invoke("instruments_get_all")) as Instrument[];
+      const fetchedInstruments = await instrumentsGetAll()
 
       const groupedInstruments = fetchedInstruments.reduce((acc, instrument) => {
         let category = instrument.category;

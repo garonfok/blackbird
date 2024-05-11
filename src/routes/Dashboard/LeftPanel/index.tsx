@@ -1,5 +1,7 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { Setlist, Tag } from "@/app/types";
+import { getWorkingDirectory, openFolder, openWizard, setlistsAdd, setlistsDelete, setlistsGetAll, setlistsUpdate, tagsAdd, tagsDelete, tagsGetAll, tagsUpdate } from "@/app/invokers";
+import { Tag } from "@/app/types";
+import { cn } from "@/app/utils";
 import { EditTagDialog } from "@/components/EditTagDialog";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -9,7 +11,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/app/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   mdiBookOpenVariantOutline,
@@ -21,7 +22,6 @@ import {
   mdiTextBoxPlusOutline
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { invoke } from "@tauri-apps/api";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -62,26 +62,26 @@ export function LeftPanel() {
   }, []);
 
   async function fetchDirectoryName() {
-    const directory: string = await invoke("get_working_directory");
-    setDirectoryPath(directory)
+    const workingDirectory = await getWorkingDirectory()
+    setDirectoryPath(workingDirectory)
   }
 
   async function handleClickOpenFolder() {
-    await invoke("open", { path: directoryPath });
+    await openFolder({ path: directoryPath })
   }
 
   async function fetchTags() {
-    const tags = (await invoke("tags_get_all")) as Tag[];
+    const tags = await tagsGetAll()
     dispatch(setTags({ tags }));
   }
 
   async function fetchSetlists() {
-    const setlists = (await invoke("setlists_get_all")) as Setlist[];
+    const setlists = await setlistsGetAll()
     dispatch(setSetlists({ setlists }));
   }
 
   async function handleConfirmDeleteSetlist(id: number) {
-    await invoke("setlists_delete", { id });
+    await setlistsDelete({ id });
     dispatch(clearSetlist());
     await fetchSetlists();
   }
@@ -91,31 +91,31 @@ export function LeftPanel() {
   }
 
   async function handleConfirmDeleteTag(id: number) {
-    await invoke("tags_delete", { id });
+    await tagsDelete({ id });
     dispatch(removeTag(id));
     await fetchTags();
   }
 
   async function onSubmitSetlistForm(data: z.infer<typeof setlistFormSchema>, setlistId?: number) {
     if (setlistId) {
-      await invoke("setlists_update", { id: setlistId, name: data.name });
+      await setlistsUpdate({ id: setlistId, name: data.name });
     } else {
-      await invoke("setlists_add", { name: data.name });
+      await setlistsAdd({ name: data.name });
     }
     await fetchSetlists();
   }
 
-  async function onSubmitTagForm(name?: string, color?: string, tagId?: number) {
+  async function onSubmitTagForm(name: string, color: string, tagId?: number) {
     if (tagId) {
-      await invoke("tags_update", { id: tagId, name, color });
+      await tagsUpdate({ id: tagId, name, color });
     } else {
-      await invoke("tags_add", { name, color });
+      await tagsAdd({ name, color });
     }
     await fetchTags();
   }
 
   async function openWizardWindow() {
-    await invoke("open_wizard")
+    await openWizard({ pieceId: undefined });
   }
 
   return (

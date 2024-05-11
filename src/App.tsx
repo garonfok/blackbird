@@ -4,14 +4,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppSettings } from "@/routes/AppSettings";
 import { Dashboard } from "@/routes/Dashboard";
 import "@/styles.css";
-import { invoke } from "@tauri-apps/api";
 import React, { useCallback } from "react";
 import { Provider } from "react-redux";
 import { createBrowserRouter, Params, RouterProvider } from "react-router-dom";
-import { Piece } from "./app/types";
-import { LibSettings } from "./routes/LibrarySettings";
-import { Wizard } from "./routes/Wizard";
-import { getPieceFromDb } from "./app/utils";
+import { piecesGet } from "@/app/invokers";
+import { getPieceFromDb } from "@/app/utils";
+import { LibSettings } from "@/routes/LibrarySettings";
+import { Wizard } from "@/routes/Wizard";
 
 const router = createBrowserRouter([
   {
@@ -43,7 +42,7 @@ async function loadWizard({ params }: { params: Params<string> }) {
   const { pieceId } = params;
   if (!pieceId) return
 
-  const dbPiece: Piece = await invoke("pieces_get_by_id", { id: Number(pieceId) })
+  const dbPiece = await piecesGet({ id: Number(pieceId) })
 
   const { piece, files } = await getPieceFromDb(dbPiece)
 

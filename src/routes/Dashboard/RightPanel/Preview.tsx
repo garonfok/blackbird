@@ -1,4 +1,5 @@
 import { useAppDispatch } from "@/app/hooks";
+import { openFolder } from "@/app/invokers";
 import { Piece, Tag } from "@/app/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import { mdiCircle, mdiCircleOutline, mdiMenuDown } from "@mdi/js";
 import Icon from "@mdi/react";
 import { pushTag } from "../reducers/filterSlice";
-import { invoke } from "@tauri-apps/api";
 
 export function Preview(props: { piece: Piece }) {
   const { piece } = props;
@@ -18,7 +18,7 @@ export function Preview(props: { piece: Piece }) {
   const dispatch = useAppDispatch();
 
   async function handleClickOpenDirectory(path: string) {
-    await invoke("open", { path });
+    await openFolder({ path });
   }
 
   async function handleClickPushTag(tag: Tag) {
