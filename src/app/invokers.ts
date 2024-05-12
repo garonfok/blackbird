@@ -55,7 +55,7 @@ export async function partsSetInstruments({ partId, instrumentIds }: { partId: n
 }
 
 export async function piecesGet({ id }: { id: number }): Promise<Piece> {
-  const piece: Piece = await invoke("pieces_get", {
+  const piece: Piece = await invoke("pieces_get_by_id", {
     id
   })
 
