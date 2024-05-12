@@ -46,7 +46,7 @@ export function EditMusicianDialog(props: {
         </DialogTitle>
       </DialogHeader>
       <Form {...musicianForm}>
-        <form onSubmit={musicianForm.handleSubmit(onSubmitMusicianForm)} className="space-y-[14px]">
+        <form className="space-y-[14px]">
           <FormField
             control={musicianForm.control}
             name="firstName"
@@ -77,7 +77,7 @@ export function EditMusicianDialog(props: {
             <DialogClose asChild>
               <Button variant="link">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Save</Button>
+            <Button type="button" onClick={musicianForm.handleSubmit(onSubmitMusicianForm)}>Save</Button>
           </DialogFooter>
         </form>
       </Form>

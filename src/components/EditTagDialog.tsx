@@ -45,7 +45,7 @@ export function EditTagDialog(props: {
         </DialogTitle>
       </DialogHeader>
       <Form {...tagForm}>
-        <form onSubmit={tagForm.handleSubmit(onSubmitForm)} className="space-y-[14px]">
+        <form className="space-y-[14px]">
           <FormField
             control={tagForm.control}
             name="name"
@@ -76,7 +76,7 @@ export function EditTagDialog(props: {
             <DialogClose asChild>
               <Button variant="link">Cancel</Button>
             </DialogClose>
-            <Button type="submit">Save</Button>
+            <Button type="button" onClick={tagForm.handleSubmit(onSubmitForm)}>Save</Button>
           </DialogFooter>
         </form>
       </Form>
