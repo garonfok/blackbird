@@ -261,7 +261,7 @@ export async function closeWindow({ windowLabel }: { windowLabel: string }) {
 }
 
 export async function tagsGet({ id }: { id: number }) {
-  const tag: Tag = await invoke("tags_get", {
+  const tag: Tag = await invoke("tags_get_by_id", {
     id
   })
 
@@ -269,7 +269,7 @@ export async function tagsGet({ id }: { id: number }) {
 }
 
 export async function musiciansGet({ id }: { id: number }) {
-  const musician: Musician = await invoke("musicians_get", {
+  const musician: Musician = await invoke("musicians_get_by_id", {
     id
   })
 
