@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { openFolder, piecesDelete, piecesGetAll, piecesGetBySetlist, setlistsAddPiece, setlistsRemovePiece } from "@/app/invokers";
+import { openFolder, openWizard, piecesDelete, piecesGetAll, piecesGetBySetlist, setlistsAddPiece, setlistsRemovePiece } from "@/app/invokers";
 import { Piece, Tag } from "@/app/types";
 import { cn, isWindows } from "@/app/utils";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -70,8 +70,6 @@ export function Table() {
   const [anchor, setAnchor] = useState(0);
 
   const [mainSortState, sendMainSortState] = useMachine(mainSortMachine);
-
-  const navigate = useNavigate();
 
   const setlists = useAppSelector((state) => state.setlists);
   const filter = useAppSelector((state) => state.filter);
@@ -565,8 +563,8 @@ export function Table() {
     await openFolder({ path });
   }
 
-  function handleClickEditPiece(piece: Piece) {
-    navigate("/edit-wizard", { state: { piece } });
+  async function handleClickEditPiece(piece: Piece) {
+    await openWizard({ pieceId: piece.id })
   }
 
   function handleClickPrintParts(path: string) {
