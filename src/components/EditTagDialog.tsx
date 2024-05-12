@@ -17,7 +17,7 @@ const formSchema = z.object({
 
 export function EditTagDialog(props: {
   defaultTag?: Tag;
-  onConfirm: (name: string, color: string) => void;
+  onConfirm: (name: string, color: string, tagId?: number) => void;
   onClose: Dispatch<SetStateAction<boolean>>;
 }) {
   const { defaultTag, onConfirm, onClose } = props;
@@ -32,7 +32,7 @@ export function EditTagDialog(props: {
 
   function onSubmitForm(data: z.infer<typeof formSchema>) {
     const { name, color } = data;
-    onConfirm(name, color);
+    onConfirm(name, color, defaultTag?.id);
     tagForm.reset();
     onClose(false);
   }
