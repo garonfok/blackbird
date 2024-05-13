@@ -19,11 +19,6 @@ export function LibSettings() {
                 Musicians
               </Button>
             </TabsPrimitive.Trigger>
-            <TabsPrimitive.Trigger value="instruments" asChild>
-              <Button variant="link" className="w-full justify-start">
-                Instruments
-              </Button>
-            </TabsPrimitive.Trigger>
             <TabsPrimitive.Trigger value="tags" asChild>
               <Button variant="link" className="w-full justify-start">
                 Tags

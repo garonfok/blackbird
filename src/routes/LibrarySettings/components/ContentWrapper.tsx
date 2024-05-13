@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { mdiHomeOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Content } from "@radix-ui/react-tabs";
