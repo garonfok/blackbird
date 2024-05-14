@@ -7,7 +7,7 @@ import { relaunch } from "@tauri-apps/api/process";
 import { useMachine } from "@xstate/react";
 import { useEffect, useState } from "react";
 import { createMachine } from "xstate";
-import { SettingsEntry } from "./components/SettingsEntry";
+import { SettingsEntry } from "../../components/SettingsEntry";
 
 const changeDirMachine = createMachine({
   id: "changeDir",

@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { mdiHomeOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Link, useNavigate } from "react-router-dom";
-import { OpenOnStartup } from "./OpenOnStartup";
-import { WorkingDirectory } from "./WorkingDirectory";
+import { OpenOnStartup } from "./Categories/Application/General/OpenOnStartup";
+import { WorkingDirectory } from "./Categories/Application/General/WorkingDirectory";
 
-export function AppSettings() {
+export function Settings() {
   const navigate = useNavigate();
   useHotkey("Escape", () => navigate("/"));
 

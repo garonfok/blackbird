@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { disable, enable, isEnabled } from "tauri-plugin-autostart-api";
-import { SettingsEntry } from "./components/SettingsEntry";
+import { SettingsEntry } from "../../components/SettingsEntry";
 import { Switch } from "@/components/ui/switch";
 
 export function OpenOnStartup() {

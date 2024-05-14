@@ -1,16 +1,15 @@
+import { piecesGet } from "@/app/invokers";
 import store from "@/app/store";
+import { getPieceFromDb } from "@/app/utils";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AppSettings } from "@/routes/AppSettings";
 import { Dashboard } from "@/routes/Dashboard";
+import { Settings } from "@/routes/Settings";
+import { Wizard } from "@/routes/Wizard";
 import "@/styles.css";
 import React, { useCallback } from "react";
 import { Provider } from "react-redux";
 import { createBrowserRouter, Params, RouterProvider } from "react-router-dom";
-import { piecesGet } from "@/app/invokers";
-import { getPieceFromDb } from "@/app/utils";
-import { LibSettings } from "@/routes/LibrarySettings";
-import { Wizard } from "@/routes/Wizard";
 
 const router = createBrowserRouter([
   {
@@ -18,12 +17,8 @@ const router = createBrowserRouter([
     element: <Dashboard />,
   },
   {
-    path: "/app-settings",
-    element: <AppSettings />,
-  },
-  {
-    path: "/lib-settings",
-    element: <LibSettings />
+    path: "/settings",
+    element: <Settings />,
   },
   {
     path: "/wizard",

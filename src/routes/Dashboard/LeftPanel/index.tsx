@@ -140,16 +140,9 @@ export function LeftPanel() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link
-                      to="/lib-settings" className="flex items-center gap-[8px]"
+                      to="/settings" className="flex items-center gap-[8px]"
                     >
-                      <span>Library settings</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      to="/app-settings" className="flex items-center gap-[8px]"
-                    >
-                      <span>App settings</span>
+                      <span>Settings</span>
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>

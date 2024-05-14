@@ -5,7 +5,7 @@ import { EditMusicianDialog } from "@/components/EditMusicianDialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { mdiPencil, mdiTrashCanOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { readDir, removeDir } from "@tauri-apps/api/fs";
@@ -227,53 +227,54 @@ export function Musicians() {
     await fetchMusicians()
   }
 
+  function getNumberOfPieces(id: number) {
+    const composerPieces = pieces.filter(piece => piece.composers.some(composer => composer.id === id))
+    const arrangerPieces = pieces.filter(piece => piece.arrangers.some(arranger => arranger.id === id))
+    const orchestratorPieces = pieces.filter(piece => piece.orchestrators.some(orchestrator => orchestrator.id === id))
+    const transcriberPieces = pieces.filter(piece => piece.transcribers.some(transcriber => transcriber.id === id))
+    const lyricistPieces = pieces.filter(piece => piece.lyricists.some(lyricist => lyricist.id === id))
+
+    return composerPieces.length + arrangerPieces.length + orchestratorPieces.length + transcriberPieces.length + lyricistPieces.length
+  }
+
   return (
     <>
       <ContentWrapper value="musicians" name="Musicians">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-divider.focus">
-              <TableHead>First Name</TableHead>
-              <TableHead>Last Name</TableHead>
-              <TableHead />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {musicians.map((musician, index) => (
-              <TableRow key={musician.id} className="group">
-                <TableCell>{musician.first_name}</TableCell>
-                <TableCell>{musician.last_name}</TableCell>
-                <TableCell className="w-[70px] p-0">
-                  <span className="invisible group-hover:visible">
-                    <Dialog open={editOpen[index]} onOpenChange={(open) => {
-                      const newEditOpen = [...editOpen]
-                      newEditOpen[index] = open
-                      setEditOpen(newEditOpen)
-                    }}>
-                      <DialogTrigger asChild>
-                        <Button type="button" className="p-1" variant='main'>
-                          <Icon path={mdiPencil} size={1} />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <EditMusicianDialog defaultMusician={musician} onConfirm={onEditMusician} onClose={
-                          () => {
-                            const newEditOpen = [...editOpen]
-                            newEditOpen[index] = false
-                            setEditOpen(newEditOpen)
-                          }
-                        } />
-                      </DialogContent>
-                    </Dialog>
-                    <Button variant="main" className="p-1" onClick={() => handleClickDeleteMusician(musician)}>
-                      <Icon path={mdiTrashCanOutline} size={1} />
+        <div className="flex flex-col">
+          {musicians.map((musician, index) => (
+            <div key={musician.id} className="flex items-center gap-[14px] px-[4px] group">
+              <div className="flex flex-col">
+                <span className="text-fg.0">{[musician.first_name, musician.last_name].join(" ")}</span>
+                <span className="text-fg.2 text-sm">{getNumberOfPieces(musician.id)} pieces</span>
+              </div>
+              <span className="invisible group-hover:visible">
+                <Dialog open={editOpen[index]} onOpenChange={(open) => {
+                  const newEditOpen = [...editOpen]
+                  newEditOpen[index] = open
+                  setEditOpen(newEditOpen)
+                }}>
+                  <DialogTrigger asChild>
+                    <Button type="button" className="p-1" variant='main'>
+                      <Icon path={mdiPencil} size={1} />
                     </Button>
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <EditMusicianDialog defaultMusician={musician} onConfirm={onEditMusician} onClose={
+                      () => {
+                        const newEditOpen = [...editOpen]
+                        newEditOpen[index] = false
+                        setEditOpen(newEditOpen)
+                      }
+                    } />
+                  </DialogContent>
+                </Dialog>
+                <Button variant="main" className="p-1" onClick={() => handleClickDeleteMusician(musician)}>
+                  <Icon path={mdiTrashCanOutline} size={1} />
+                </Button>
+              </span>
+            </div>
+          ))}
+        </div>
         <div className="flex gap-[8px]">
           <Dialog open={createOpen} onOpenChange={setCreateOpen}>
             <DialogTrigger asChild>
