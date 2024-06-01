@@ -20,10 +20,9 @@ pub async fn get_by_id(db: &DatabaseConnection, id: i32) -> Result<Value, DbErr>
     }
 }
 
-pub async fn add(db: &DatabaseConnection, name: String, color: String) -> Result<i32, DbErr> {
+pub async fn add(db: &DatabaseConnection, name: String) -> Result<i32, DbErr> {
     let active_tag = tags::ActiveModel {
         name: ActiveValue::Set(name),
-        color: ActiveValue::Set(color),
         ..Default::default()
     };
 
@@ -35,7 +34,6 @@ pub async fn update(
     db: &DatabaseConnection,
     id: i32,
     name: String,
-    color: String,
 ) -> Result<(), DbErr> {
     let tag = tags::Entity::find_by_id(id).one(db).await?;
     match tag {
@@ -43,7 +41,6 @@ pub async fn update(
             let mut tag: tags::ActiveModel = tag.into();
 
             tag.name = ActiveValue::Set(name);
-            tag.color = ActiveValue::Set(color);
             tag.updated_at = ActiveValue::Set(chrono::Local::now().naive_local().to_string());
 
             let _result = tags::Entity::update(tag).exec(db).await?;

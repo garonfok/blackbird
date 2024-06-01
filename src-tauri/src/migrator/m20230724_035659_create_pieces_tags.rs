@@ -1,8 +1,7 @@
 use sea_orm_migration::prelude::*;
 
 use super::m20230724_024746_create_pieces::Pieces;
-use super::m20230724_024817_create_tags::Tags;
-
+use super::m20240601_105525_create_tags::Tags;
 #[derive(DeriveMigrationName)]
 pub struct Migration;
 

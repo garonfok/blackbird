@@ -20,7 +20,6 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Tags::Name).string().not_null())
-                    .col(ColumnDef::new(Tags::Color).string().not_null())
                     .col(
                         ColumnDef::new(Tags::CreatedAt)
                             .date_time()
@@ -45,13 +44,11 @@ impl MigrationTrait for Migration {
     }
 }
 
-/// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
 pub enum Tags {
     Table,
     Id,
     Name,
-    Color,
     CreatedAt,
     UpdatedAt,
 }

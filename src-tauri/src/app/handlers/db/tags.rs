@@ -26,7 +26,7 @@ pub fn tags_get_by_id(app_handle: AppHandle, id: i32) -> Result<serde_json::Valu
 
 #[command]
 pub fn tags_add(app_handle: AppHandle, name: String) -> Result<i32, String> {
-    let result = app_handle.db(|db| block_on(tags::add(db, name, String::from("#ffffff"))));
+    let result = app_handle.db(|db| block_on(tags::add(db, name)));
     match result {
         Ok(id) => Ok(id),
         Err(e) => Err(e.to_string()),
@@ -39,7 +39,7 @@ pub fn tags_update(
     id: i32,
     name: String,
 ) -> Result<(), String> {
-    let result = app_handle.db(|db| block_on(tags::update(db, id, name, String::from("#ffffff"))));
+    let result = app_handle.db(|db| block_on(tags::update(db, id, name)));
     match result {
         Ok(_) => Ok(()),
         Err(e) => Err(e.to_string()),

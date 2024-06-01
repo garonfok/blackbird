@@ -495,10 +495,10 @@ mod tests {
         let db = init().await.unwrap();
 
         // Add a tag called "tag1" and another "tag2"
-        let add_tag_result = tags_add(&db, String::from("tag1"), String::from("#ffffff")).await;
+        let add_tag_result = tags_add(&db, String::from("tag1")).await;
         assert!(add_tag_result.is_ok());
         let tag1_id = add_tag_result.unwrap();
-        let add_tag_result = tags_add(&db, String::from("tag2"), String::from("#000000")).await;
+        let add_tag_result = tags_add(&db, String::from("tag2")).await;
         assert!(add_tag_result.is_ok());
         let tag2_id = add_tag_result.unwrap();
 
@@ -531,10 +531,10 @@ mod tests {
         let db = init().await.unwrap();
 
         // Add a tag called "tag1" and another "tag2"
-        let add_tag_result = tags_add(&db, String::from("tag1"), String::from("#ffffff")).await;
+        let add_tag_result = tags_add(&db, String::from("tag1")).await;
         assert!(add_tag_result.is_ok());
         let tag1_id = add_tag_result.unwrap();
-        let add_tag_result = tags_add(&db, String::from("tag2"), String::from("#000000")).await;
+        let add_tag_result = tags_add(&db, String::from("tag2")).await;
         assert!(add_tag_result.is_ok());
         let tag2_id = add_tag_result.unwrap();
 
