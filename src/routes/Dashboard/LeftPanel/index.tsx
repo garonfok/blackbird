@@ -15,7 +15,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   mdiBookOpenVariantOutline,
   mdiBookshelf,
-  mdiCircle,
   mdiDotsHorizontal,
   mdiMenuDown,
   mdiPlus,
@@ -105,11 +104,11 @@ export function LeftPanel() {
     await fetchSetlists();
   }
 
-  async function onSubmitTagForm(name: string, color: string, tagId?: number) {
+  async function onSubmitTagForm(name: string, tagId?: number) {
     if (tagId) {
-      await tagsUpdate({ id: tagId, name, color });
+      await tagsUpdate({ id: tagId, name });
     } else {
-      await tagsAdd({ name, color });
+      await tagsAdd({ name });
     }
     await fetchTags();
   }
@@ -335,7 +334,7 @@ export function LeftPanel() {
                         </Button>
                       </DialogTrigger>
                       <DialogContent>
-                        <EditTagDialog onConfirm={() => onSubmitTagForm} onClose={setIsTagDialogOpen} />
+                        <EditTagDialog onConfirm={onSubmitTagForm} onClose={setIsTagDialogOpen} />
                       </DialogContent>
                     </Dialog>
                   </span>
@@ -350,12 +349,6 @@ export function LeftPanel() {
                       onClick={() => handleClickPushTag(tag)}>
                       <span>
                         <span className="flex gap-[8px] w-full items-center">
-                          <Icon
-                            path={mdiCircle}
-                            className="shrink-0"
-                            size={.667}
-                            color={tag.color}
-                          />
                           <span>{tag.name}</span>
                         </span>
                         <DropdownMenu>

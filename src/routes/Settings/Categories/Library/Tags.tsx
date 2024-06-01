@@ -5,7 +5,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { mdiCircle, mdiPencil, mdiTrashCan } from "@mdi/js";
+import { mdiPencil, mdiTrashCan } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useEffect, useState } from "react";
 import { ContentWrapper } from "../components/ContentWrapper";
@@ -25,11 +25,11 @@ export function Tags() {
     setEditOpen(new Array(tags.length).fill(false))
   }
 
-  async function onSubmitTagForm(name: string, color: string, tagId?: number) {
+  async function onSubmitTagForm(name: string, tagId?: number) {
     if (tagId) {
-      await tagsUpdate({ id: tagId, name, color });
+      await tagsUpdate({ id: tagId, name });
     } else {
-      await tagsAdd({ name, color });
+      await tagsAdd({ name });
     }
     await fetchTags();
   }
@@ -55,7 +55,6 @@ export function Tags() {
         {tags.map((tag, index) => (
           <Badge variant="outline" key={tag.id} className="w-full group gap-[8px]">
             <span className="flex gap-[8px] items-center">
-              <Icon path={mdiCircle} size={2 / 3} color={tag.color} />
               <span className="text-fg.0">{tag.name}</span>
             </span>
             <span className="flex gap-[4px] items-center group-hover:visible invisible">
@@ -66,7 +65,7 @@ export function Tags() {
               }}>
                 <DialogTrigger asChild>
                   <Button variant="main" className="p-1">
-                    <Icon path={mdiPencil} size={2/3} />
+                    <Icon path={mdiPencil} size={2 / 3} />
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
@@ -84,7 +83,7 @@ export function Tags() {
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="main" className="p-1">
-                    <Icon path={mdiTrashCan} size={2/3} />
+                    <Icon path={mdiTrashCan} size={2 / 3} />
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>

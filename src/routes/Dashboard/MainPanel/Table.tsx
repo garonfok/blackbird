@@ -9,7 +9,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal
 import {
   mdiArrowDown,
   mdiArrowUp,
-  mdiCircle,
   mdiClose,
   mdiDotsHorizontal,
   mdiEraser
@@ -261,7 +260,6 @@ export function Table() {
                     className="gap-[4px] hover:text-fg.0 hover:border-divider.focus"
                     onClick={() => handleClickPushTag(tag)}
                   >
-                    <Icon path={mdiCircle} size={0.667} style={{ color: tag.color }} />
                     {tag.name}
                   </Badge>
                 ))}
@@ -681,7 +679,6 @@ export function Table() {
           filter.tags.map((tag) => (
             <Badge key={tag.id} variant="outline" className="gap-[14px]">
               <span className="flex items-center gap-[4px]">
-                <Icon path={mdiCircle} size={0.667} style={{ color: tag.color }} />
                 {tag.name}
               </span>
               <Button

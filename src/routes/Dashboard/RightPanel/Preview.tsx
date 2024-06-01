@@ -60,7 +60,6 @@ export function Preview(props: { piece: Piece }) {
                 className="gap-[4px] hover:text-fg.0 hover:border-divider.focus"
                 onClick={() => handleClickPushTag(tag)}
               >
-                <Icon path={mdiCircle} size={0.667} style={{ color: tag.color }} />
                 {tag.name}
               </Badge>
             );

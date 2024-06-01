@@ -158,20 +158,18 @@ export async function setlistsAdd({ name }: { name: string }) {
   })
 }
 
-export async function tagsAdd({ name, color }: { name: string, color: string }) {
+export async function tagsAdd({ name }: { name: string }) {
   const tagId: number = await invoke("tags_add", {
     name,
-    color
   })
 
   return tagId
 }
 
-export async function tagsUpdate({ id, name, color }: { id: number, name: string, color: string }) {
+export async function tagsUpdate({ id, name }: { id: number, name: string }) {
   await invoke("tags_update", {
     id,
     name,
-    color
   })
 }
 

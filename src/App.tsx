@@ -33,7 +33,6 @@ const router = createBrowserRouter([
 ]);
 
 async function loadWizard({ params }: { params: Params<string> }) {
-  console.log("loading wizard")
   const { pieceId } = params;
   if (!pieceId) return
 

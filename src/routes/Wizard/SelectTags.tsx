@@ -21,7 +21,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { mdiCheck, mdiChevronDown, mdiCircle, mdiClose, mdiPlus } from "@mdi/js";
+import { mdiCheck, mdiChevronDown, mdiClose, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
 import { Ref, forwardRef, useEffect, useState } from "react";
 
@@ -41,8 +41,8 @@ export const SelectTags = forwardRef((props: { value: Tag[], onChange: (tags: Ta
     setTags(fetchedTags);
   }
 
-  async function onCreateTag(name: string, color: string) {
-    const tagId = await tagsAdd({ name, color });
+  async function onCreateTag(name: string) {
+    const tagId = await tagsAdd({ name });
     await fetchTags();
     const tag = await tagsGet({ id: tagId });
     onChange([...value, tag]);
@@ -80,7 +80,6 @@ export const SelectTags = forwardRef((props: { value: Tag[], onChange: (tags: Ta
                     key={tag.id}
                     className="mr-1 mb-1"
                   >
-                    <Icon path={mdiCircle} size={0.667} color={tag.color} className="mr-1" />
                     {tag.name}
                     <Button
                       type="button"
@@ -126,7 +125,6 @@ export const SelectTags = forwardRef((props: { value: Tag[], onChange: (tags: Ta
                                 "opacity-100" : "opacity-0"
                             )}
                           />
-                          <Icon path={mdiCircle} size={0.667} color={tag.color} className="mr-1" />
                           {tag.name}
                         </CommandItem>
                       ))}

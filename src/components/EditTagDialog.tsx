@@ -12,12 +12,11 @@ const formSchema = z.object({
   name: z.string().min(1, {
     message: "Name is required",
   }),
-  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Invalid color")
 });
 
 export function EditTagDialog(props: {
   defaultTag?: Tag;
-  onConfirm: (name: string, color: string, tagId?: number) => void;
+  onConfirm: (name: string, tagId?: number) => void;
   onClose: Dispatch<SetStateAction<boolean>>;
 }) {
   const { defaultTag, onConfirm, onClose } = props;
@@ -26,13 +25,12 @@ export function EditTagDialog(props: {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: defaultTag?.name || "",
-      color: defaultTag?.color || "#000000",
     },
   });
 
   function onSubmitForm(data: z.infer<typeof formSchema>) {
-    const { name, color } = data;
-    onConfirm(name, color, defaultTag?.id);
+    const { name } = data;
+    onConfirm(name, defaultTag?.id);
     tagForm.reset();
     onClose(false);
   }
@@ -54,19 +52,6 @@ export function EditTagDialog(props: {
                 <FormLabel>Name</FormLabel>
                 <FormControl>
                   <Input placeholder="Required" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={tagForm.control}
-            name="color"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Color</FormLabel>
-                <FormControl>
-                  <Input type="color" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
