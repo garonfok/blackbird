@@ -325,9 +325,9 @@ export function Table() {
                   Edit data
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => handleClickPrintParts(info.row.original.path)}
+                  onClick={() => handleClickPrintPiece(info.row.original.id)}
                 >
-                  Print parts
+                  Print piece
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <AlertDialog>
@@ -566,8 +566,8 @@ export function Table() {
     await openWizard({ pieceId: piece.id })
   }
 
-  function handleClickPrintParts(path: string) {
-    void path;
+  function handleClickPrintPiece(pieceId: number) {
+    void pieceId;
   }
 
   async function handleClickDeletePiece(pieceId: number) {

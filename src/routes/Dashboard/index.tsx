@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { LeftPanel } from "./LeftPanel";
 import { MainPanel } from "./MainPanel";
 import { RightPanel } from "./RightPanel";
+import { openWizard } from "@/app/invokers";
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -22,10 +23,10 @@ export function Dashboard() {
     };
   }, []);
 
-  function handleDrop(event: Event<string[]>): void {
+  async function handleDrop(event: Event<string[]>) {
     const { payload: files } = event;
 
-    navigate("/edit-wizard", { state: { files } });
+    await openWizard({ filePaths: files })
   }
 
   return (

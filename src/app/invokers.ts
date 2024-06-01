@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api";
+import { WebviewWindow } from "@tauri-apps/api/window";
 import { Instrument, Musician, Piece, Setlist, Tag } from "./types";
 
 export async function piecesUpdate({ id, title, notes, yearPublished, path, difficulty }: { id: number, title: string, notes: string, yearPublished?: number, path?: string, difficulty?: number }) {
@@ -174,13 +175,20 @@ export async function tagsUpdate({ id, name, color }: { id: number, name: string
   })
 }
 
-export async function openWizard({ pieceId }: { pieceId?: number }) {
+export async function openWizard({ pieceId, filePaths }: { pieceId?: number, filePaths?: string[] }) {
   if (pieceId) {
     await invoke("open_wizard", {
       pieceId
     })
   } else {
     await invoke("open_wizard")
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    if (filePaths) {
+      const webviewWizard = WebviewWindow.getByLabel('wizard')!
+      await webviewWizard.emit("file-drop", filePaths)
+    }
   }
 }
 

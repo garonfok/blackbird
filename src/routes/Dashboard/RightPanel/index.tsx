@@ -31,6 +31,10 @@ export function RightPanel() {
     dispatch(setPieces({ pieces }));
   }
 
+  async function handleClickPrintPiece(pieceId: number) {
+    void pieceId
+  }
+
   return (
     <>
       <ResizableHandle />
@@ -56,8 +60,9 @@ export function RightPanel() {
             <Button
               className="text-left"
               variant="sidebar"
+              onClick={() => handleClickPrintPiece(preview.piece!.id)}
             >
-              Print parts
+              Print piece
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>

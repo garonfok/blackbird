@@ -1,10 +1,10 @@
+import { useCmdOrCtrlHotkey } from "@/app/hooks";
 import { ByteFile } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "@/components/ui/use-toast";
-import { useCmdOrCtrlHotkey } from "@/app/hooks";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { mdiClose, mdiFile, mdiUploadMultipleOutline } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -30,9 +30,13 @@ export function FilePanel(props: {
   const [isFinishedUploading, setIsFinishedUploading] = useState(false);
 
   useEffect(() => {
-    const unlisten = listen("tauri://file-drop", handleDrop);
+    const unlistenFileDrop = listen("tauri://file-drop", handleDrop);
+    const unlistenDashboardFileDrop = listen("file-drop", handleDrop);
 
-    return (() => { unlisten })
+    return (() => {
+      unlistenFileDrop.then(() => "");
+      unlistenDashboardFileDrop.then(() => "");
+    })
   }, [])
 
   useCmdOrCtrlHotkey("o", handleClickUpload);
