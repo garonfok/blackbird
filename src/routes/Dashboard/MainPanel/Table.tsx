@@ -48,9 +48,9 @@ import {
 import { setPieces } from "../reducers/piecesSlice";
 import { clearPiece, setPiece } from "../reducers/previewSlice";
 import { mainSortMachine } from "./mainSortMachine";
+import { clearSetlist } from "../reducers/setlistSlice";
 
 const sortOptions = [
-  { id: "id", label: "#" },
   { id: "main", label: "Title" },
   { id: "composers", label: "Composers" },
   { id: "yearPublished", label: "Year" },
@@ -220,16 +220,6 @@ export function Table() {
 
   const columns = useMemo<ColumnDef<Piece>[]>(
     () => [
-      {
-        accessorFn: (row) => row.id,
-        id: "id",
-        header: () => <span className="">#</span>,
-        cell: (info) => {
-          const id = info.getValue() as string;
-          return <span>{id}</span>;
-        },
-        size: 48,
-      },
       {
         id: "main",
         accessorFn: (row) => row.title,
@@ -553,6 +543,7 @@ export function Table() {
 
   function handleClickResetFilters() {
     setSorting([{ id: "updatedAt", desc: true }]);
+    dispatch(clearSetlist())
     dispatch(resetFilter());
   }
 
