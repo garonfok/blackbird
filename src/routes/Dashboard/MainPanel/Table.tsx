@@ -57,6 +57,20 @@ const sortOptions = [
   { id: "updatedAt", label: "Updated" },
 ];
 
+const initialFilterState = {
+  tags: [],
+  yearPublishedMin: undefined,
+  yearPublishedMax: undefined,
+  difficultyMin: undefined,
+  difficultyMax: undefined,
+  instruments: [],
+  composers: [],
+  arrangers: [],
+  lyricists: [],
+  orchestrators: [],
+  transcribers: [],
+};
+
 export function Table() {
   const [filteredPieces, setFilteredPieces] = useState<Piece[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -230,7 +244,7 @@ export function Table() {
           <div className="flex gap-[14px] items-center justify-between">
             <div className="flex gap-[14px] items-center">
               <div className="flex flex-col">
-                <span className="text-body-default text-fg.0">
+                <span className="text-body-default text-fg.0 font-bold">
                   {info.row.original.title}
                 </span>
                 <span className="text-body-small-default">
@@ -845,10 +859,10 @@ export function Table() {
             </Button>
           </Badge>
         )}
-        <Button onClick={handleClickResetFilters} className='gap-1'>
+        {(JSON.stringify(filter) !== JSON.stringify(initialFilterState) || setlist.setlist) && <Button onClick={handleClickResetFilters} className='gap-1'>
           <Icon path={mdiEraser} size={0.667} className="shrink-0" />
           <span>Reset filters</span>
-        </Button>
+        </Button>}
       </div>
       <table
         ref={tableRef}

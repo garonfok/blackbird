@@ -15,19 +15,6 @@ interface Filter {
   lyricists: Musician[];
 }
 
-interface FilterExclTag {
-  yearPublishedMin?: number;
-  yearPublishedMax?: number;
-  difficultyMin?: number;
-  difficultyMax?: number;
-  instruments: Instrument[];
-  composers: Musician[];
-  arrangers: Musician[];
-  orchestrators: Musician[];
-  transcribers: Musician[];
-  lyricists: Musician[];
-}
-
 const initialState: Filter = {
   tags: [],
   yearPublishedMin: undefined,
@@ -64,7 +51,7 @@ export const filterSlice = createSlice({
         state.tags.splice(index, 1);
       }
     },
-    setFilterExclTag: (state, action: PayloadAction<FilterExclTag>) => {
+    setFilter: (state, action: PayloadAction<Filter>) => {
       return {
         ...state,
         ...action.payload,
@@ -145,7 +132,7 @@ export const filterSlice = createSlice({
 export const {
   pushTag,
   removeTag,
-  setFilterExclTag,
+  setFilter,
   clearYearPublished,
   clearDifficulty,
   clearParts,
