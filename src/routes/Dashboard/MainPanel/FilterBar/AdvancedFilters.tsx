@@ -7,7 +7,7 @@ import { MultiSelect, OptionType } from "@/components/ui/multiselect";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { resetFilter, setFilterExclTag } from "@/routes/Dashboard/reducers/filterSlice";
+import { resetFilter, setFilter } from "@/routes/Dashboard/reducers/filterSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { mdiEraser } from "@mdi/js";
 import Icon from "@mdi/react";
@@ -127,7 +127,8 @@ export function AdvancedFilters(props: { onOpenChange: Dispatch<SetStateAction<b
     const foundLyricists = allMusicians.filter((musician) => values.lyricists.includes(musician.id));
 
     dispatch(
-      setFilterExclTag({
+      setFilter({
+        tags: [],
         yearPublishedMin: values.yearPublishedMin,
         yearPublishedMax: values.yearPublishedMax,
         difficultyMin: values.difficultyMin === "None" ? undefined : values.difficultyMin,

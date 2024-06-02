@@ -51,23 +51,51 @@ export const filterSlice = createSlice({
         state.tags.splice(index, 1);
       }
     },
+    clearTags: (state) => {
+      return {
+        ...state,
+        tags: [],
+      };
+    },
     setFilter: (state, action: PayloadAction<Filter>) => {
       return {
         ...state,
         ...action.payload,
       };
     },
-    clearYearPublished: (state) => {
+    clearYearPublishedMin: (state) => {
       return {
         ...state,
         yearPublishedMin: undefined,
+      };
+    },
+    clearYearPublishedMax: (state) => {
+      return {
+        ...state,
         yearPublishedMax: undefined,
       };
     },
-    clearDifficulty: (state) => {
+    setYearPublishedMin: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        yearPublishedMin: action.payload,
+      };
+    },
+    setYearPublishedMax: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        yearPublishedMax: action.payload,
+      };
+    },
+    clearDifficultyMin: (state) => {
       return {
         ...state,
         difficultyMin: undefined,
+      };
+    },
+    clearDifficultyMax: (state) => {
+      return {
+        ...state,
         difficultyMax: undefined,
       };
     },
@@ -132,9 +160,14 @@ export const filterSlice = createSlice({
 export const {
   pushTag,
   removeTag,
+  clearTags,
   setFilter,
-  clearYearPublished,
-  clearDifficulty,
+  clearYearPublishedMin,
+  clearYearPublishedMax,
+  setYearPublishedMin,
+  setYearPublishedMax,
+  clearDifficultyMin,
+  clearDifficultyMax,
   clearParts,
   clearInstruments,
   clearRole,

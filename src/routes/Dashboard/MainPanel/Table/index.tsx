@@ -1,17 +1,41 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { openFolder, openWizard, piecesDelete, piecesGetAll, piecesGetBySetlist, setlistsAddPiece, setlistsRemovePiece } from "@/app/invokers";
+import {
+  openFolder,
+  openWizard,
+  piecesDelete,
+  piecesGetAll,
+  piecesGetBySetlist,
+  setlistsAddPiece,
+  setlistsRemovePiece,
+} from "@/app/invokers";
 import { Piece, Tag } from "@/app/types";
 import { cn, isWindows } from "@/app/utils";
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuPortal,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   mdiArrowDown,
   mdiArrowUp,
-  mdiClose,
-  mdiDotsHorizontal,
-  mdiEraser
+  mdiDotsHorizontal
 } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import {
@@ -37,39 +61,12 @@ import {
   useState,
 } from "react";
 import {
-  clearDifficulty,
-  clearInstruments,
-  clearRole,
-  clearYearPublished,
-  pushTag,
-  removeTag,
-  resetFilter
-} from "../reducers/filterSlice";
-import { setPieces } from "../reducers/piecesSlice";
-import { clearPiece, setPiece } from "../reducers/previewSlice";
-import { mainSortMachine } from "./mainSortMachine";
-import { clearSetlist } from "../reducers/setlistSlice";
-
-const sortOptions = [
-  { id: "main", label: "Title" },
-  { id: "composers", label: "Composers" },
-  { id: "yearPublished", label: "Year" },
-  { id: "updatedAt", label: "Updated" },
-];
-
-const initialFilterState = {
-  tags: [],
-  yearPublishedMin: undefined,
-  yearPublishedMax: undefined,
-  difficultyMin: undefined,
-  difficultyMax: undefined,
-  instruments: [],
-  composers: [],
-  arrangers: [],
-  lyricists: [],
-  orchestrators: [],
-  transcribers: [],
-};
+  pushTag
+} from "../../reducers/filterSlice";
+import { setPieces } from "../../reducers/piecesSlice";
+import { clearPiece, setPiece } from "../../reducers/previewSlice";
+import { mainSortMachine } from "../mainSortMachine";
+import { FilterBar } from "../FilterBar";
 
 export function Table() {
   const [filteredPieces, setFilteredPieces] = useState<Piece[]>([]);
@@ -116,7 +113,7 @@ export function Table() {
 
     window.addEventListener("click", handleClick);
 
-    const unlistenRefresh = listen("refresh_dashboard", () => fetchPieces())
+    const unlistenRefresh = listen("refresh_dashboard", () => fetchPieces());
 
     return () => {
       window.removeEventListener("click", handleClick);
@@ -147,7 +144,10 @@ export function Table() {
       });
     }
 
-    if (filter.yearPublishedMin !== undefined || filter.yearPublishedMax !== undefined) {
+    if (
+      filter.yearPublishedMin !== undefined ||
+      filter.yearPublishedMax !== undefined
+    ) {
       filteringPieces = filteringPieces.filter((piece) => {
         return (
           piece.year_published &&
@@ -157,7 +157,10 @@ export function Table() {
       });
     }
 
-    if (filter.yearPublishedMin !== undefined || filter.yearPublishedMax !== undefined) {
+    if (
+      filter.yearPublishedMin !== undefined ||
+      filter.yearPublishedMax !== undefined
+    ) {
       filteringPieces = filteringPieces.filter((piece) => {
         return (
           piece.difficulty &&
@@ -172,7 +175,7 @@ export function Table() {
         return filter.instruments.every((instrument) => {
           return piece.parts.some((piecePart) => {
             return piecePart.instruments.some(
-              (piecePartInstrument) => piecePartInstrument.id === instrument.id
+              (piecePartInstrument) => piecePartInstrument.id === instrument.id,
             );
           });
         });
@@ -183,7 +186,7 @@ export function Table() {
       filteringPieces = filteringPieces.filter((piece) => {
         return filter.composers.every((composer) => {
           return piece.composers.some(
-            (pieceComposer) => pieceComposer.id === composer.id
+            (pieceComposer) => pieceComposer.id === composer.id,
           );
         });
       });
@@ -193,7 +196,7 @@ export function Table() {
       filteringPieces = filteringPieces.filter((piece) => {
         return filter.arrangers.every((arranger) => {
           return piece.arrangers.some(
-            (pieceArranger) => pieceArranger.id === arranger.id
+            (pieceArranger) => pieceArranger.id === arranger.id,
           );
         });
       });
@@ -203,7 +206,7 @@ export function Table() {
       filteringPieces = filteringPieces.filter((piece) => {
         return filter.orchestrators.every((orchestrator) => {
           return piece.orchestrators.some(
-            (pieceOrchestrator) => pieceOrchestrator.id === orchestrator.id
+            (pieceOrchestrator) => pieceOrchestrator.id === orchestrator.id,
           );
         });
       });
@@ -213,7 +216,7 @@ export function Table() {
       filteringPieces = filteringPieces.filter((piece) => {
         return filter.transcribers.every((transcriber) => {
           return piece.transcribers.some(
-            (pieceTranscriber) => pieceTranscriber.id === transcriber.id
+            (pieceTranscriber) => pieceTranscriber.id === transcriber.id,
           );
         });
       });
@@ -223,7 +226,7 @@ export function Table() {
       filteringPieces = filteringPieces.filter((piece) => {
         return filter.lyricists.every((lyricist) => {
           return piece.lyricists.some(
-            (pieceLyricist) => pieceLyricist.id === lyricist.id
+            (pieceLyricist) => pieceLyricist.id === lyricist.id,
           );
         });
       });
@@ -249,9 +252,10 @@ export function Table() {
                 </span>
                 <span className="text-body-small-default">
                   {info.row.original.composers
-                    .map((composer) => composer.last_name
-                      ? `${composer.first_name} ${composer.last_name}`
-                      : `${composer.first_name}`
+                    .map((composer) =>
+                      composer.last_name
+                        ? `${composer.first_name} ${composer.last_name}`
+                        : `${composer.first_name}`,
                     )
                     .join(", ")}
                 </span>
@@ -275,19 +279,23 @@ export function Table() {
                   <Icon
                     path={mdiDotsHorizontal}
                     size={1}
-                    className="shrink-0" />
+                    className="shrink-0"
+                  />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>{isPieceInCurrentSetlist(info.row.original) && (
-                <DropdownMenuItem
-                  onClick={() => handleClickRemoveFromSetlist(
-                    info.row.original.id,
-                    setlist.setlist!.id
-                  )}
-                >
-                  Remove from setlist
-                </DropdownMenuItem>
-              )}
+              <DropdownMenuContent>
+                {isPieceInCurrentSetlist(info.row.original) && (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handleClickRemoveFromSetlist(
+                        info.row.original.id,
+                        setlist.setlist!.id,
+                      )
+                    }
+                  >
+                    Remove from setlist
+                  </DropdownMenuItem>
+                )}
                 {isAvailableToAddToSetlist(info.row.original) && (
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger>
@@ -297,17 +305,20 @@ export function Table() {
                       <DropdownMenuSubContent>
                         {setlists
                           .filter(
-                            (sl) => !info.row.original.setlists.some(
-                              (pieceSl) => pieceSl.id === sl.id
-                            )
+                            (sl) =>
+                              !info.row.original.setlists.some(
+                                (pieceSl) => pieceSl.id === sl.id,
+                              ),
                           )
                           .map((sl) => (
                             <DropdownMenuItem
                               key={sl.id}
-                              onClick={() => handleClickAddToSetlist(
-                                info.row.original.id,
-                                sl.id
-                              )}
+                              onClick={() =>
+                                handleClickAddToSetlist(
+                                  info.row.original.id,
+                                  sl.id,
+                                )
+                              }
                             >
                               {sl.name}
                             </DropdownMenuItem>
@@ -317,7 +328,9 @@ export function Table() {
                   </DropdownMenuSub>
                 )}
                 <DropdownMenuItem
-                  onClick={async () => handleClickOpenFolder(info.row.original.path)}
+                  onClick={async () =>
+                    handleClickOpenFolder(info.row.original.path)
+                  }
                 >
                   Open folder
                 </DropdownMenuItem>
@@ -333,7 +346,7 @@ export function Table() {
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <AlertDialog>
-                    <AlertDialogTrigger onClick={e => e.stopPropagation()}>
+                    <AlertDialogTrigger onClick={(e) => e.stopPropagation()}>
                       Delete
                     </AlertDialogTrigger>
                     <AlertDialogContent>
@@ -346,11 +359,11 @@ export function Table() {
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>
-                          Cancel
-                        </AlertDialogCancel>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <Button
-                          onClick={() => handleClickDeletePiece(info.row.original.id)}
+                          onClick={() =>
+                            handleClickDeletePiece(info.row.original.id)
+                          }
                         >
                           Delete
                         </Button>
@@ -371,7 +384,7 @@ export function Table() {
             .map((composer) =>
               composer.last_name
                 ? `${composer.last_name}, ${composer.first_name}`
-                : `${composer.first_name}`
+                : `${composer.first_name}`,
             )
             .join(", ");
         },
@@ -410,7 +423,7 @@ export function Table() {
         size: 80,
       },
     ],
-    [setlist.setlist, setlists]
+    [setlist.setlist, setlists],
   );
 
   const table = useReactTable({
@@ -436,7 +449,7 @@ export function Table() {
 
   async function handleClickSelect(
     event: MouseEvent<HTMLTableRowElement>,
-    index: number
+    index: number,
   ) {
     if ((await isWindows()) ? event.ctrlKey : event.metaKey) {
       if (selected.includes(index)) {
@@ -459,7 +472,7 @@ export function Table() {
       setAnchor(index);
     }
     dispatch(
-      setPiece({ piece: table.getRowModel().rows[index].original as Piece })
+      setPiece({ piece: table.getRowModel().rows[index].original as Piece }),
     );
   }
 
@@ -541,32 +554,12 @@ export function Table() {
     }
   }
 
-  function handleClickDropdownSelect(optionId: string) {
-    if (optionId !== sorting[0].id) {
-      setSorting([{ id: optionId, desc: true }]);
-    } else {
-      setSorting([{ id: optionId, desc: !sorting[0].desc }]);
-    }
-
-    if (optionId === "composers") {
-      setIsMainTitle(false);
-    } else {
-      setIsMainTitle(true);
-    }
-  }
-
-  function handleClickResetFilters() {
-    setSorting([{ id: "updatedAt", desc: true }]);
-    dispatch(clearSetlist())
-    dispatch(resetFilter());
-  }
-
   async function handleClickOpenFolder(path: string) {
     await openFolder({ path });
   }
 
   async function handleClickEditPiece(piece: Piece) {
-    await openWizard({ pieceId: piece.id })
+    await openWizard({ pieceId: piece.id });
   }
 
   function handleClickPrintPiece(pieceId: number) {
@@ -581,30 +574,17 @@ export function Table() {
     await fetchPieces();
   }
 
-  async function handleClickAddToSetlist(
-    pieceId: number,
-    setlistId: number
-  ) {
+  async function handleClickAddToSetlist(pieceId: number, setlistId: number) {
     await setlistsAddPiece({ pieceId, setlistId });
     await fetchPieces();
   }
 
   async function handleClickRemoveFromSetlist(
     pieceId: number,
-    setlistId: number
+    setlistId: number,
   ) {
     await setlistsRemovePiece({ pieceId, setlistId });
     await fetchPieces();
-  }
-
-  function parseNumberRange(num1?: number, num2?: number) {
-    if (num1 === undefined) {
-      return `...${num2}`;
-    } else if (num2 === undefined) {
-      return `${num1}...`;
-    } else {
-      return `${num1} - ${num2}`;
-    }
   }
 
   const isPieceInCurrentSetlist = useCallback(
@@ -612,7 +592,7 @@ export function Table() {
       if (!setlist.setlist) return false;
       return piece.setlists.some((sl) => sl.id === setlist.setlist!.id);
     },
-    [setlist.setlist, setlists]
+    [setlist.setlist, setlists],
   );
 
   const isAvailableToAddToSetlist = useCallback(
@@ -624,7 +604,7 @@ export function Table() {
       }
       return false;
     },
-    [setlist.setlist, setlists]
+    [setlist.setlist, setlists],
   );
 
   const fuse = new Fuse(pieces, {
@@ -648,227 +628,12 @@ export function Table() {
 
   return (
     <div className="flex flex-col flex-grow">
-      <div className="flex gap-[14px] items-center text-fg.1 flex-wrap px-[14px] py-[8px]">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="main">
-              {sortOptions.find((option) => option.id === sorting[0].id)?.label}
-              {sorting[0].desc ? (
-                <Icon path={mdiArrowDown} size={0.667} className="shrink-0" />
-              ) : (
-                <Icon path={mdiArrowUp} size={0.667} className="shrink-0" />
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            {sortOptions.map((option) => (
-              <DropdownMenuItem key={option.id}
-                className="justify-between"
-                onClick={() => handleClickDropdownSelect(option.id)}
-              >
-                {option.label}
-                {sorting[0].id === option.id ? (
-                  <Icon
-                    path={sorting[0].desc ? mdiArrowDown : mdiArrowUp}
-                    size={0.667}
-                    className=""
-                  />
-                ) : (
-                  <span className="w-[14px]" />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-        {filter.tags.length > 0 &&
-          filter.tags.map((tag) => (
-            <Badge key={tag.id} variant="outline" className="gap-[14px]">
-              <span className="flex items-center gap-[4px]">
-                {tag.name}
-              </span>
-              <Button
-                onClick={() => dispatch(removeTag(tag.id))}
-                variant="link"
-              >
-                <Icon path={mdiClose} size={0.667} />
-              </Button>
-            </Badge>
-          ))}
-        {(filter.yearPublishedMin !== undefined ||
-          filter.yearPublishedMax !== undefined) && (
-            <Badge variant="outline" className="gap-[14px]">
-              <span className="flex gap-[4px]">
-                <span className="text-fg.1">Published:</span>
-                <span className="text-fg.0">
-                  {parseNumberRange(
-                    filter.yearPublishedMin,
-                    filter.yearPublishedMax
-                  )}
-                </span>
-              </span>
-              <Button
-                onClick={() => dispatch(clearYearPublished())}
-                variant="link"
-              >
-                <Icon path={mdiClose} size={0.667} />
-              </Button>
-            </Badge>
-          )}
-        {(filter.difficultyMin !== undefined ||
-          filter.difficultyMax !== undefined) && (
-            <Badge variant="outline" className="gap-[14px]">
-              <span className="flex gap-[4px]">
-                <span className="text-fg.1">Difficulty:</span>
-                <span className="text-fg.0">
-                  {parseNumberRange(filter.difficultyMin, filter.difficultyMax)}
-                </span>
-              </span>
-              <Button
-                onClick={() => dispatch(clearDifficulty())}
-                variant="link"
-              >
-                <Icon path={mdiClose} size={0.667} />
-              </Button>
-            </Badge>
-          )}
-        {filter.instruments.length > 0 && (
-          <Badge variant="outline" className="gap-[14px]">
-            <span className="flex gap-[4px]">
-              <span className="text-fg.1">Instruments:</span>
-              <span className="text-fg.0">
-                {filter.instruments
-                  .map((instrument) => instrument.name)
-                  .join(", ")}
-              </span>
-            </span>
-            <Button
-              onClick={() => dispatch(clearInstruments())}
-              variant="link"
-            >
-              <Icon path={mdiClose} size={0.667} />
-            </Button>
-          </Badge>
-        )}
-        {filter.composers.length > 0 && (
-          <Badge variant="outline" className="gap-[14px]">
-            <span className="flex gap-[4px]">
-              <span className="text-fg.1">Composers:</span>
-              <span className="text-fg.0">
-                {filter.composers
-                  .map((musician) =>
-                    musician.last_name
-                      ? `${musician.first_name} ${musician.last_name}`
-                      : musician.first_name
-                  )
-                  .join(", ")}
-              </span>
-            </span>
-            <Button
-              onClick={() => dispatch(clearRole("composers"))}
-              variant="link"
-            >
-              <Icon path={mdiClose} size={0.667} />
-            </Button>
-          </Badge>
-        )}
-        {filter.arrangers.length > 0 && (
-          <Badge variant="outline" className="gap-[14px]">
-            <span className="flex gap-[4px]">
-              <span className="text-fg.1">Arrangers:</span>
-              <span className="text-fg.0">
-                {filter.arrangers
-                  .map((musician) =>
-                    musician.last_name
-                      ? `${musician.first_name} ${musician.last_name}`
-                      : musician.first_name
-                  )
-                  .join(", ")}
-              </span>
-            </span>
-            <Button
-              onClick={() => dispatch(clearRole("arrangers"))}
-              variant="link"
-            >
-              <Icon path={mdiClose} size={0.667} />
-            </Button>
-          </Badge>
-        )}
-        {filter.orchestrators.length > 0 && (
-          <Badge variant="outline" className="gap-[14px]">
-            <span className="flex gap-[4px]">
-              <span className="text-fg.1">orchestrators:</span>
-              <span className="text-fg.0">
-                {filter.orchestrators
-                  .map((musician) =>
-                    musician.last_name
-                      ? `${musician.first_name} ${musician.last_name}`
-                      : musician.first_name
-                  )
-                  .join(", ")}
-              </span>
-            </span>
-            <Button
-              onClick={() => dispatch(clearRole("orchestrators"))}
-              variant="link"
-            >
-              <Icon path={mdiClose} size={0.667} />
-            </Button>
-          </Badge>
-        )}
-        {filter.transcribers.length > 0 && (
-          <Badge variant="outline" className="gap-[14px]">
-            <span className="flex gap-[4px]">
-              <span className="text-fg.1">transcribers:</span>
-              <span className="text-fg.0">
-                {filter.transcribers
-                  .map((musician) =>
-                    musician.last_name
-                      ? `${musician.first_name} ${musician.last_name}`
-                      : musician.first_name
-                  )
-                  .join(", ")}
-              </span>
-            </span>
-            <Button
-              onClick={() => dispatch(clearRole("transcribers"))}
-              variant="link"
-            >
-              <Icon path={mdiClose} size={0.667} />
-            </Button>
-          </Badge>
-        )}
-        {filter.lyricists.length > 0 && (
-          <Badge variant="outline" className="gap-[14px]">
-            <span className="flex gap-[4px]">
-              <span className="text-fg.1">lyricists:</span>
-              <span className="text-fg.0">
-                {filter.lyricists
-                  .map((musician) =>
-                    musician.last_name
-                      ? `${musician.first_name} ${musician.last_name}`
-                      : musician.first_name
-                  )
-                  .join(", ")}
-              </span>
-            </span>
-            <Button
-              onClick={() => dispatch(clearRole("lyricists"))}
-              variant="link"
-            >
-              <Icon path={mdiClose} size={0.667} />
-            </Button>
-          </Badge>
-        )}
-        {(JSON.stringify(filter) !== JSON.stringify(initialFilterState) || setlist.setlist) && <Button onClick={handleClickResetFilters} className='gap-1'>
-          <Icon path={mdiEraser} size={0.667} className="shrink-0" />
-          <span>Reset filters</span>
-        </Button>}
-      </div>
+      <FilterBar setIsMainTitle={setIsMainTitle}/>
       <table
         ref={tableRef}
-        className="flex flex-col flex-grow h-0 overflow-y-auto scrollbar-default"
+        className="flex flex-col flex-grow h-0 overflow-y-auto scrollbar-default border-t border-divider.default"
       >
-        <thead className="px-[14px] py-[8px] border-b border-divider.default">
+        <thead className="px-[14px] py-[8px]">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} className="flex gap-[14px]">
               {headerGroup.headers.map((header) => (
@@ -888,7 +653,7 @@ export function Table() {
                     {header.id !== "main" || isMainTitle
                       ? flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )
                       : "Composers"}
 
@@ -929,7 +694,9 @@ export function Table() {
               key={row.original.id}
               className={cn(
                 "flex items-center gap-[14px] px-[14px] py-[4px]",
-                selected.includes(index) ? "bg-main-bg.focus" : "hover:bg-main-bg.hover"
+                selected.includes(index)
+                  ? "bg-main-bg.focus"
+                  : "hover:bg-main-bg.hover",
               )}
               onClick={(event) => handleClickSelect(event, index)}
             >
@@ -950,6 +717,6 @@ export function Table() {
           ))}
         </tbody>
       </table>
-    </div >
+    </div>
   );
 }

@@ -1,0 +1,443 @@
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  mdiArrowDown,
+  mdiArrowUp,
+  mdiClose,
+  mdiEraser,
+  mdiTune
+} from "@mdi/js";
+import { Icon } from "@mdi/react";
+import { SortingState } from "@tanstack/react-table";
+import { Dispatch, SetStateAction, useState } from "react";
+import {
+  clearDifficultyMax,
+  clearDifficultyMin,
+  clearInstruments,
+  clearRole,
+  clearTags,
+  clearYearPublishedMax,
+  clearYearPublishedMin,
+  resetFilter
+} from "../../reducers/filterSlice";
+import { clearSetlist } from "../../reducers/setlistSlice";
+import { AdvancedFilters } from "./AdvancedFilters";
+import { FilterBadge } from "./FilterBadge";
+
+const sortOptions = [
+  { id: "main", label: "Title" },
+  { id: "composers", label: "Composers" },
+  { id: "yearPublished", label: "Year" },
+  { id: "updatedAt", label: "Updated" },
+];
+
+const initialFilterState = {
+  tags: [],
+  yearPublishedMin: undefined,
+  yearPublishedMax: undefined,
+  difficultyMin: undefined,
+  difficultyMax: undefined,
+  instruments: [],
+  composers: [],
+  arrangers: [],
+  lyricists: [],
+  orchestrators: [],
+  transcribers: [],
+};
+
+export function FilterBar(props: {
+  setIsMainTitle: Dispatch<SetStateAction<boolean>>
+}) {
+  const { setIsMainTitle } = props;
+
+  const [isFiltersOpen, setFiltersOpen] = useState(false);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "updatedAt", desc: true },
+  ]);
+  const filter = useAppSelector((state) => state.filter);
+  const setlist = useAppSelector((state) => state.setlist);
+
+  const dispatch = useAppDispatch();
+
+  function handleClickDropdownSelect(optionId: string) {
+    if (optionId !== sorting[0].id) {
+      setSorting([{ id: optionId, desc: true }]);
+    } else {
+      setSorting([{ id: optionId, desc: !sorting[0].desc }]);
+    }
+
+    if (optionId === "composers") {
+      setIsMainTitle(false);
+    } else {
+      setIsMainTitle(true);
+    }
+  }
+
+  function handleClickResetFilters() {
+    setSorting([{ id: "updatedAt", desc: true }]);
+    dispatch(clearSetlist());
+    dispatch(resetFilter());
+  }
+
+  return (
+    <div className="flex gap-[14px] items-start text-fg.1 px-[14px] py-[8px]">
+      <div className="flex gap-[8px] w-full flex-wrap">
+        <Popover open={isFiltersOpen} onOpenChange={setFiltersOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="secondary" className="flex gap-[4px]">
+              <Icon path={mdiTune} size={2 / 3} className="shrink-0" />
+              <span>Filters</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full max-w-lg p-0" align="start">
+            <AdvancedFilters onOpenChange={setFiltersOpen} />
+          </PopoverContent>
+        </Popover>
+        {filter.tags.length > 0 &&
+          <FilterBadge name="Tags" onClose={() => dispatch(clearTags())}>
+            <Tooltip>
+              <TooltipTrigger>
+                {filter.tags.length > 1 ? (
+                  <span className="flex gap-[4px]">
+                    <span className="text-fg.0">
+                      {filter.tags.length}
+                    </span>
+                    selected
+                  </span>
+                ) : (
+                  <span className="text-fg.0">{filter.tags.map((tag) => tag.name)}</span>
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                {filter.tags.map((tag) => tag.name).join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </FilterBadge>
+        }
+        {(filter.yearPublishedMin !== undefined ||
+          filter.yearPublishedMax !== undefined) && (
+            <Badge variant="outline" className="p-0">
+              <span className="text-fg.1 p-[4px]">Published</span>
+              {filter.yearPublishedMin && (
+                <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
+                  <span>From</span>
+                  <span className="text-fg.0">{filter.yearPublishedMin}</span>
+                  <Button
+                    onClick={() => dispatch(clearYearPublishedMin())}
+                    variant="link"
+                  >
+                    <Icon path={mdiClose} size={0.667} />
+                  </Button>
+                </span>
+              )}
+              {filter.yearPublishedMax && (
+                <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
+                  <span>To</span>
+                  <span className="text-fg.0">{filter.yearPublishedMax}</span>
+                  <Button
+                    onClick={() => dispatch(clearYearPublishedMax())}
+                    variant="link"
+                  >
+                    <Icon path={mdiClose} size={0.667} />
+                  </Button>
+                </span>
+              )}
+            </Badge>
+          )}
+        {(filter.difficultyMin !== undefined ||
+          filter.difficultyMax !== undefined) && (
+            <Badge variant="outline" className="p-0">
+              <span className="text-fg.1 p-[4px]">Grade</span>
+              {filter.difficultyMin && (
+                <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
+                  <span>From</span>
+                  <span className="text-fg.0">{filter.difficultyMin}</span>
+                  <Button
+                    onClick={() => dispatch(clearDifficultyMin())}
+                    variant="link"
+                  >
+                    <Icon path={mdiClose} size={0.667} />
+                  </Button>
+                </span>
+              )}
+              {filter.difficultyMax && (
+                <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
+                  <span>To</span>
+                  <span className="text-fg.0">{filter.difficultyMax}</span>
+                  <Button
+                    onClick={() => dispatch(clearDifficultyMax())}
+                    variant="link"
+                  >
+                    <Icon path={mdiClose} size={0.667} />
+                  </Button>
+                </span>
+              )}
+            </Badge>
+          )}
+        {filter.instruments.length > 0 && (
+          <FilterBadge name="Instruments" onClose={() => dispatch(clearInstruments())}>
+            <Tooltip>
+              <TooltipTrigger>
+                {filter.instruments.length > 1 ? (
+                  <span className="flex gap-[4px]">
+                    <span className="text-fg.0">
+                      {filter.instruments.length}
+                    </span>
+                    selected
+                  </span>
+                ) : (
+                  <span className="text-fg.0">{filter.instruments.map((instrument) => instrument.name)}</span>
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                {filter.instruments
+                  .map((instrument) => instrument.name)
+                  .join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </FilterBadge>
+        )}
+        {filter.composers.length > 0 && (
+          <FilterBadge name="Composers" onClose={() => dispatch(clearRole("composers"))}>
+            <Tooltip>
+              <TooltipTrigger>
+                {filter.composers.length > 1 ? (
+                  <span className="flex gap-[4px]">
+                    <span className="text-fg.0">
+                      {filter.composers.length}
+                    </span>
+                    selected
+                  </span>
+                ) : (
+                  <span className="text-fg.0">
+                    {filter.composers
+                      .map((musician) =>
+                        musician.last_name
+                          ? `${musician.first_name} ${musician.last_name}`
+                          : musician.first_name,
+                      )
+                      .join(", ")}
+                  </span>
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                {filter.composers
+                  .map((musician) =>
+                    musician.last_name
+                      ? `${musician.first_name} ${musician.last_name}`
+                      : musician.first_name,
+                  )
+                  .join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </FilterBadge>
+        )}
+        {filter.arrangers.length > 0 && (
+          <FilterBadge name="Arrangers" onClose={() => dispatch(clearRole("arrangers"))}>
+            <Tooltip>
+              <TooltipTrigger>
+                {filter.arrangers.length > 1 ? (
+                  <span className="flex gap-[4px]">
+                    <span className="text-fg.0">
+                      {filter.arrangers.length}
+                    </span>
+                    selected
+                  </span>
+                ) : (
+                  <span className="text-fg.0">
+                    {filter.arrangers
+                      .map((musician) =>
+                        musician.last_name
+                          ? `${musician.first_name} ${musician.last_name}`
+                          : musician.first_name,
+                      )
+                      .join(", ")}
+                  </span>
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                {filter.arrangers
+                  .map((musician) =>
+                    musician.last_name
+                      ? `${musician.first_name} ${musician.last_name}`
+                      : musician.first_name,
+                  )
+                  .join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </FilterBadge>
+        )}
+        {filter.orchestrators.length > 0 && (
+          <FilterBadge name="Orchestrators" onClose={() => dispatch(clearRole("orchestrators"))}>
+            <Tooltip>
+              <TooltipTrigger>
+                {filter.orchestrators.length > 1 ? (
+                  <span className="flex gap-[4px]">
+                    <span className="text-fg.0">
+                      {filter.orchestrators.length}
+                    </span>
+                    selected
+                  </span>
+                ) : (
+                  <span className="text-fg.0">
+                    {filter.orchestrators
+                      .map((musician) =>
+                        musician.last_name
+                          ? `${musician.first_name} ${musician.last_name}`
+                          : musician.first_name,
+                      )
+                      .join(", ")}
+                  </span>
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                {filter.orchestrators
+                  .map((musician) =>
+                    musician.last_name
+                      ? `${musician.first_name} ${musician.last_name}`
+                      : musician.first_name,
+                  )
+                  .join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </FilterBadge>
+        )}
+        {filter.transcribers.length > 0 && (
+          <FilterBadge name="Transcribers" onClose={() => dispatch(clearRole("transcribers"))}>
+            <Tooltip>
+              <TooltipTrigger>
+                {filter.transcribers.length > 1 ? (
+                  <span className="flex gap-[4px]">
+                    <span className="text-fg.0">
+                      {filter.transcribers.length}
+                    </span>
+                    selected
+                  </span>
+                ) : (
+                  <span className="text-fg.0">
+                    {filter.transcribers
+                      .map((musician) =>
+                        musician.last_name
+                          ? `${musician.first_name} ${musician.last_name}`
+                          : musician.first_name,
+                      )
+                      .join(", ")}
+                  </span>
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                {filter.transcribers
+                  .map((musician) =>
+                    musician.last_name
+                      ? `${musician.first_name} ${musician.last_name}`
+                      : musician.first_name,
+                  )
+                  .join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </FilterBadge>
+        )}
+        {filter.lyricists.length > 0 && (
+          <FilterBadge name="Lyricists" onClose={() => dispatch(clearRole("lyricists"))}>
+            <Tooltip>
+              <TooltipTrigger>
+                {filter.lyricists.length > 1 ? (
+                  <span className="flex gap-[4px]">
+                    <span className="text-fg.0">
+                      {filter.lyricists.length}
+                    </span>
+                    selected
+                  </span>
+                ) : (
+                  <span className="text-fg.0">
+                    {filter.lyricists
+                      .map((musician) =>
+                        musician.last_name
+                          ? `${musician.first_name} ${musician.last_name}`
+                          : musician.first_name,
+                      )
+                      .join(", ")}
+                  </span>
+                )}
+              </TooltipTrigger>
+              <TooltipContent>
+                {filter.lyricists
+                  .map((musician) =>
+                    musician.last_name
+                      ? `${musician.first_name} ${musician.last_name}`
+                      : musician.first_name,
+                  )
+                  .join(", ")}
+              </TooltipContent>
+            </Tooltip>
+          </FilterBadge>
+        )}
+      </div>
+      <div className="flex gap-[8px] border-l border-divider.default pl-[14px] items-center">
+        {(JSON.stringify(filter) !== JSON.stringify(initialFilterState) ||
+          setlist.setlist) && (
+            <Button
+              onClick={handleClickResetFilters}
+              className="gap-[4px]"
+              variant="secondary"
+            >
+              <Icon path={mdiEraser} size={0.667} className="shrink-0" />
+              <span>Clear filters</span>
+            </Button>
+          )}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="link" className="flex gap-[4px] h-[26px]">
+              {
+                sortOptions.find((option) => option.id === sorting[0].id)
+                  ?.label
+              }
+              {sorting[0].desc ? (
+                <Icon path={mdiArrowDown} size={0.667} className="shrink-0" />
+              ) : (
+                <Icon path={mdiArrowUp} size={0.667} className="shrink-0" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            {sortOptions.map((option) => (
+              <DropdownMenuItem
+                key={option.id}
+                className="justify-between"
+                onClick={() => handleClickDropdownSelect(option.id)}
+              >
+                {option.label}
+                {sorting[0].id === option.id ? (
+                  <Icon
+                    path={sorting[0].desc ? mdiArrowDown : mdiArrowUp}
+                    size={0.667}
+                    className=""
+                  />
+                ) : (
+                  <span className="w-[14px]" />
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  )
+}
