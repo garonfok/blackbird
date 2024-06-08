@@ -46,7 +46,8 @@ export const filterSlice = createSlice({
       }
     },
     removeTag: (state, action: PayloadAction<number>) => {
-      const index = state.tags.findIndex((tag) => tag.id === action.payload);
+      const { payload } = action;
+      const index = state.tags.findIndex((tag) => tag.id === payload);
       if (index !== -1) {
         state.tags.splice(index, 1);
       }
@@ -55,12 +56,6 @@ export const filterSlice = createSlice({
       return {
         ...state,
         tags: [],
-      };
-    },
-    setFilter: (state, action: PayloadAction<Filter>) => {
-      return {
-        ...state,
-        ...action.payload,
       };
     },
     clearYearPublishedMin: (state) => {
@@ -99,17 +94,97 @@ export const filterSlice = createSlice({
         difficultyMax: undefined,
       };
     },
+    setDifficultyMin: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        difficultyMin: action.payload,
+      };
+    },
+    setDifficultyMax: (state, action: PayloadAction<number>) => {
+      return {
+        ...state,
+        difficultyMax: action.payload,
+      };
+    },
     clearParts: (state) => {
       return {
         ...state,
         parts: [],
       };
     },
+    pushInstrument: (state, action: PayloadAction<Instrument>) => {
+      const { payload } = action;
+      if (
+        state.instruments.find((instrument) => instrument.id === payload.id)
+      ) {
+        return;
+      }
+
+      const index = state.instruments.findIndex(
+        (instrument) => instrument.id > payload.id,
+      );
+      if (index === -1) {
+        state.instruments.push(payload);
+      } else {
+        state.instruments.splice(index, 0, payload);
+      }
+    },
+    removeInstrument: (state, action: PayloadAction<number>) => {
+      const { payload } = action;
+      const index = state.instruments.findIndex(
+        (instrument) => instrument.id === payload,
+      );
+      if (index !== -1) {
+        state.instruments.splice(index, 1);
+      }
+    },
     clearInstruments: (state) => {
       return {
         ...state,
         instruments: [],
       };
+    },
+    pushRole: (
+      state,
+      action: PayloadAction<{
+        musician: Musician;
+        role:
+          | "composers"
+          | "arrangers"
+          | "orchestrators"
+          | "transcribers"
+          | "lyricists";
+      }>,
+    ) => {
+      const { musician, role } = action.payload;
+      if (state[role].find((m) => m.id === musician.id)) {
+        return;
+      }
+
+      const index = state[role].findIndex((m) => m.id > musician.id);
+      if (index === -1) {
+        state[role].push(musician);
+      } else {
+        state[role].splice(index, 0, musician);
+      }
+    },
+    removeRole: (
+      state,
+      action: PayloadAction<{
+        musician: Musician;
+        role:
+          | "composers"
+          | "arrangers"
+          | "orchestrators"
+          | "transcribers"
+          | "lyricists";
+      }>,
+    ) => {
+      const { musician, role } = action.payload;
+      const index = state[role].findIndex((m) => m.id === musician.id);
+      if (index !== -1) {
+        state[role].splice(index, 1);
+      }
     },
     clearRole: (
       state,
@@ -119,7 +194,7 @@ export const filterSlice = createSlice({
         | "orchestrators"
         | "transcribers"
         | "lyricists"
-      >
+      >,
     ) => {
       switch (action.payload) {
         case "composers":
@@ -161,15 +236,20 @@ export const {
   pushTag,
   removeTag,
   clearTags,
-  setFilter,
   clearYearPublishedMin,
   clearYearPublishedMax,
   setYearPublishedMin,
   setYearPublishedMax,
   clearDifficultyMin,
   clearDifficultyMax,
+  setDifficultyMin,
+  setDifficultyMax,
   clearParts,
+  pushInstrument,
+  removeInstrument,
   clearInstruments,
+  pushRole,
+  removeRole,
   clearRole,
   resetFilter,
 } = filterSlice.actions;
