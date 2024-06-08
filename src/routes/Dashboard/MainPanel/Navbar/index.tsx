@@ -35,15 +35,15 @@ export function Navbar() {
             isSearchFocused && "text-fg.0"
           )}
         />
-        <input
-          ref={inputRef}
-          className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
-          type="text"
-          placeholder={`Type ${window.navigator.userAgent.includes("Windows") ? "Ctrl" : "Cmd"} + K to search`}
-          onFocus={() => setSearchFocused(true)}
-          onBlur={() => setSearchFocused(false)}
-          onChange={handleChangeDebounced}
-        />
+          <input
+            ref={inputRef}
+            className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
+            placeholder={`Type ${window.navigator.userAgent.includes("Windows") ? "Ctrl" : "⌘"} K to search`}
+            type="text"
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+            onChange={handleChangeDebounced}
+          />
       </span>
     </div>
   );
