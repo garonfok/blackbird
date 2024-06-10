@@ -158,8 +158,8 @@ export function Table() {
     }
 
     if (
-      filter.yearPublishedMin !== undefined ||
-      filter.yearPublishedMax !== undefined
+      filter.difficultyMin !== undefined ||
+      filter.difficultyMax !== undefined
     ) {
       filteringPieces = filteringPieces.filter((piece) => {
         return (
@@ -628,7 +628,7 @@ export function Table() {
 
   return (
     <div className="flex flex-col flex-grow">
-      <FilterBar setIsMainTitle={setIsMainTitle}/>
+      <FilterBar setIsMainTitle={setIsMainTitle} />
       <table
         ref={tableRef}
         className="flex flex-col flex-grow h-0 overflow-y-auto scrollbar-default border-t border-divider.default"
