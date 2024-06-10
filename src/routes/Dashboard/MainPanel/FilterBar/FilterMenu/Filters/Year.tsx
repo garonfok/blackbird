@@ -20,7 +20,8 @@ import { z } from "zod";
 
 const yearParser = z
   .string()
-  .transform((val) => (val.length > 0 ? parseInt(val) : undefined));
+  .transform((val) => (val.length > 0 ? parseInt(val) : undefined))
+  .optional();
 
 const yearFormSchema = z.object({
   minimum: yearParser,
