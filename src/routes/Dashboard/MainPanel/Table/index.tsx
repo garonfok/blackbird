@@ -260,7 +260,7 @@ export function Table() {
                     .join(", ")}
                 </span>
               </div>
-              <ol>
+              <ol className="flex gap-[4px]">
                 {info.row.original.tags.map((tag) => (
                   <Badge
                     key={tag.id}
