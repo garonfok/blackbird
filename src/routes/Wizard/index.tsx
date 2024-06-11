@@ -225,7 +225,7 @@ export function Wizard() {
         <div className="w-36 flex item-center gap-[4px] p-[4px] bg-float-bg.default float-shadow rounded-default">
           <Icon
             path={mdiFile}
-            size={0.667}
+            size={2 / 3}
             className="shrink-0 self-center"
           />
           <span className="text-body-small-default text-fg.2 self-center grow break-all">
@@ -318,7 +318,7 @@ export function Wizard() {
                             </span>
                             <Icon
                               path={mdiUnfoldMoreHorizontal}
-                              size={0.667}
+                              size={2 / 3}
                               className="group-hover:text-fg.0"
                             />
                           </Button>

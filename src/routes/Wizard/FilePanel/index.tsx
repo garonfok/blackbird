@@ -167,12 +167,12 @@ export function FilePanel(props: {
               {uploadedFiles.map((file, index) => (
                 <SortableItem key={file.id} id={`f${file.id}`}>
                   <>
-                    <Icon path={mdiFile} size={0.667} className="shrink-0 self-center" />
+                    <Icon path={mdiFile} size={2 / 3} className="shrink-0 self-center" />
                     <span className="text-body-small-default text-fg.2 self-center grow break-all">
                       {file.name}
                     </span>
                     <Button type="button" variant="main" className="p-1 h-fit" onClick={() => handleClickRemoveFile(index)}>
-                      <Icon path={mdiClose} size={0.667} className="shrink-0" />
+                      <Icon path={mdiClose} size={2 / 3} className="shrink-0" />
                     </Button>
                   </>
                 </SortableItem>

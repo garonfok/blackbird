@@ -23,6 +23,10 @@ const buttonVariants = cva(
           "hover:bg-sidebar-bg.focus hover:text-fg.0",
         ),
         sidebarCollapisble: cn(
+          "text-sm justify-start gap-[4px] text-fg.0 py-[4px]",
+          "hover:bg-sidebar-bg.focus",
+        ),
+        sidebarCollapsibleItem: cn(
           "text-sm justify-start gap-[4px] text-fg.2 py-[4px]",
           "hover:bg-sidebar-bg.focus",
         ),

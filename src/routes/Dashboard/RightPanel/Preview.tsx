@@ -111,7 +111,7 @@ export function Preview(props: { piece: Piece }) {
                   <span className="flex items-center gap-[4px]">
                     <Icon
                       path={!score.path ? mdiCircleOutline : mdiCircle}
-                      size={0.667}
+                      size={2 / 3}
                     />
                     <span>{score.name}</span>
                   </span>
@@ -129,7 +129,7 @@ export function Preview(props: { piece: Piece }) {
                           <span className="flex items-center gap-[4px]">
                             <Icon
                               path={!part.path ? mdiCircleOutline : mdiCircle}
-                              size={0.667}
+                              size={2 / 3}
                             />
                             <span>{part.name}</span>
                             <Icon

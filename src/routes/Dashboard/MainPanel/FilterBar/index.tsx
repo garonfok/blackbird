@@ -121,7 +121,7 @@ export function FilterBar(props: {
                   onClick={() => dispatch(clearYearPublishedMin())}
                   variant="link"
                 >
-                  <Icon path={mdiClose} size={0.667} />
+                  <Icon path={mdiClose} size={2 / 3} />
                 </Button>
               </span>
             )}
@@ -133,7 +133,7 @@ export function FilterBar(props: {
                   onClick={() => dispatch(clearYearPublishedMax())}
                   variant="link"
                 >
-                  <Icon path={mdiClose} size={0.667} />
+                  <Icon path={mdiClose} size={2 / 3} />
                 </Button>
               </span>
             )}
@@ -151,7 +151,7 @@ export function FilterBar(props: {
                   onClick={() => dispatch(clearDifficultyMin())}
                   variant="link"
                 >
-                  <Icon path={mdiClose} size={0.667} />
+                  <Icon path={mdiClose} size={2 / 3} />
                 </Button>
               </span>
             )}
@@ -163,7 +163,7 @@ export function FilterBar(props: {
                   onClick={() => dispatch(clearDifficultyMax())}
                   variant="link"
                 >
-                  <Icon path={mdiClose} size={0.667} />
+                  <Icon path={mdiClose} size={2 / 3} />
                 </Button>
               </span>
             )}
@@ -390,7 +390,7 @@ export function FilterBar(props: {
             className="gap-[4px]"
             variant="secondary"
           >
-            <Icon path={mdiEraser} size={0.667} className="shrink-0" />
+            <Icon path={mdiEraser} size={2 / 3} className="shrink-0" />
             <span>Clear filters</span>
           </Button>
         )}
@@ -399,9 +399,9 @@ export function FilterBar(props: {
             <Button variant="link" className="flex gap-[4px] h-[26px]">
               {sortOptions.find((option) => option.id === sorting[0].id)?.label}
               {sorting[0].desc ? (
-                <Icon path={mdiArrowDown} size={0.667} className="shrink-0" />
+                <Icon path={mdiArrowDown} size={2 / 3} className="shrink-0" />
               ) : (
-                <Icon path={mdiArrowUp} size={0.667} className="shrink-0" />
+                <Icon path={mdiArrowUp} size={2 / 3} className="shrink-0" />
               )}
             </Button>
           </DropdownMenuTrigger>
@@ -416,7 +416,7 @@ export function FilterBar(props: {
                 {sorting[0].id === option.id ? (
                   <Icon
                     path={sorting[0].desc ? mdiArrowDown : mdiArrowUp}
-                    size={0.667}
+                    size={2 / 3}
                     className=""
                   />
                 ) : (

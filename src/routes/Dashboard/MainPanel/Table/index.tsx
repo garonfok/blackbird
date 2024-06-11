@@ -662,14 +662,14 @@ export function Table() {
                         asc: (
                           <Icon
                             path={mdiArrowUp}
-                            size={0.667}
+                            size={2 / 3}
                             className="shrink-0"
                           />
                         ),
                         desc: (
                           <Icon
                             path={mdiArrowDown}
-                            size={0.667}
+                            size={2 / 3}
                             className="shrink-0"
                           />
                         ),

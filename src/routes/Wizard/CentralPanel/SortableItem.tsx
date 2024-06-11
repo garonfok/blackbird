@@ -133,7 +133,7 @@ export function SortableItem(props: {
       >
         <Icon
           path={mdiDragVertical}
-          size={0.667}
+          size={2 / 3}
           className="shrink-0 self-center"
         />
       </Button>
@@ -181,7 +181,7 @@ export function SortableItem(props: {
                       >
                         <Icon
                           path={mdiCheck}
-                          size={0.667}
+                          size={2 / 3}
                           className={cn(
                             "mr-2 shrink-0",
                             item.file?.id === file.id ? "opacity-100" : "opacity-0",
@@ -190,7 +190,7 @@ export function SortableItem(props: {
                         <span className="flex gap-[8px] items-center">
                           <Icon
                             path={mdiFile}
-                            size={0.667}
+                            size={2 / 3}
                             className="shrink-0"
                           />
                           {file.name}
@@ -210,7 +210,7 @@ export function SortableItem(props: {
         className="p-1 h-fit self-center"
         onClick={handleClickRemoveItem}
       >
-        <Icon path={mdiClose} size={0.667} className="shrink-0 self-center" />
+        <Icon path={mdiClose} size={2 / 3} className="shrink-0 self-center" />
       </Button>
     </div>
   );

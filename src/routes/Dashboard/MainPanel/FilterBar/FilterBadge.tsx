@@ -15,7 +15,7 @@ export function FilterBadge(props: { name: string, children: ReactNode, onClose:
           onClick={() => onClose()}
           variant="link"
         >
-          <Icon path={mdiClose} size={0.667} />
+          <Icon path={mdiClose} size={2 / 3} />
         </Button>
       </span>
     </Badge>

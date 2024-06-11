@@ -123,7 +123,7 @@ export const SelectMusicians = forwardRef((props: {
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
             <Button type="button" className="flex items-center gap-[4px] p-1" variant='main'>
-              <Icon path={mdiPlus} size={0.667} />
+              <Icon path={mdiPlus} size={2 / 3} />
             </Button>
           </DialogTrigger>
           <DialogContent>
@@ -174,7 +174,7 @@ export const SelectMusicians = forwardRef((props: {
                               handleClickRemoveMusician(musician.id)
                             }}
                           >
-                            <Icon path={mdiClose} size={0.667} className="text-fg.2 hover:text-fg.0" />
+                            <Icon path={mdiClose} size={2 / 3} className="text-fg.2 hover:text-fg.0" />
                           </Button>
                         </>
                       </SortableItem>
