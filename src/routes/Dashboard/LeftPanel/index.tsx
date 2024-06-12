@@ -1,38 +1,38 @@
 import { useAppDispatch, useAppSelector } from "@/app/hooks";
-import { getWorkingDirectory, openFolder, openWizard, setlistsAdd, setlistsDelete, setlistsGetAll, setlistsUpdate, tagsAdd, tagsDelete, tagsGetAll, tagsUpdate } from "@/app/invokers";
-import { Tag } from "@/app/types";
+import { getWorkingDirectory, openFolder, openWizard, setlistsAdd, setlistsGetAll, tagsAdd, tagsGetAll } from "@/app/invokers";
 import { cn } from "@/app/utils";
-import { EditTagDialog } from "@/components/EditTagDialog";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ResizableHandle, ResizablePanel } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  mdiBookOpenVariantOutline,
   mdiBookshelf,
   mdiChevronDown,
-  mdiDotsHorizontal,
   mdiMenuDown,
   mdiPlus,
   mdiTextBoxPlusOutline
 } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
-import { pushTag, removeTag } from "../reducers/filterSlice";
-import { clearSetlist, setSetlist } from "../reducers/setlistSlice";
+import { clearSetlist } from "../reducers/setlistSlice";
 import { setSetlists } from "../reducers/setlistsSlice";
 import { setTags } from "../reducers/tagsSlice";
+import { SetlistItem } from "./SetlistItem";
+import { TagItem } from "./TagItem";
+
+const tagFormSchema = z.object({
+  name: z.string().min(1)
+})
 
 const setlistFormSchema = z.object({
-  name: z.string()
+  name: z.string().min(1)
 });
 
 export function LeftPanel() {
@@ -44,11 +44,23 @@ export function LeftPanel() {
     }
   });
 
+  const tagForm = useForm<z.infer<typeof tagFormSchema>>({
+    resolver: zodResolver(tagFormSchema),
+    defaultValues: {
+      name: ""
+    }
+  });
+
   const [setlistCollapsibleOpen, setSetlistCollapsibleOpen] = useState(true);
   const [tagsCollapsibleOpen, setTagsCollapsibleOpen] = useState(true);
   const [directoryPath, setDirectoryPath] = useState("Blackbird Library");
+  const [isNewTagOpen, setIsNewTagOpen] = useState(false);
+  const [isNewSetlistOpen, setIsNewSetlistOpen] = useState(false);
 
-  const [isTagDialogOpen, setIsTagDialogOpen] = useState(false);
+  const newTagRef = useRef<HTMLFormElement>(null);
+  const newTagPlusRef = useRef<HTMLButtonElement>(null);
+  const newSetlistRef = useRef<HTMLFormElement>(null);
+  const newSetlistPlusRef = useRef<HTMLButtonElement>(null);
 
   const dispatch = useAppDispatch();
   const tags = useAppSelector((state) => state.tags);
@@ -58,7 +70,20 @@ export function LeftPanel() {
   useEffect(() => {
     fetchTags();
     fetchSetlists();
-    fetchDirectoryName()
+    fetchDirectoryName();
+
+    function handleClickOutside(e: globalThis.MouseEvent) {
+      if (newTagRef.current && !newTagRef.current.contains(e.target as Node) && newTagPlusRef.current && !newTagPlusRef.current.contains(e.target as Node)) {
+        setIsNewTagOpen(false);
+        tagForm.reset();
+      }
+      if (newSetlistRef.current && !newSetlistRef.current.contains(e.target as Node) && newSetlistPlusRef.current && !newSetlistPlusRef.current.contains(e.target as Node)) {
+        setIsNewSetlistOpen(false);
+        setlistForm.reset();
+      }
+    };
+    document.addEventListener("mouseup", handleClickOutside);
+    return () => document.removeEventListener("mouseup", handleClickOutside);
   }, []);
 
   async function fetchDirectoryName() {
@@ -80,42 +105,34 @@ export function LeftPanel() {
     dispatch(setSetlists({ setlists }));
   }
 
-  async function handleConfirmDeleteSetlist(id: number) {
-    await setlistsDelete({ id });
-    dispatch(clearSetlist());
-    await fetchSetlists();
-  }
-
-  async function handleClickPushTag(tag: Tag) {
-    dispatch(pushTag(tag));
-  }
-
-  async function handleConfirmDeleteTag(id: number) {
-    await tagsDelete({ id });
-    dispatch(removeTag(id));
+  async function onSubmitTagForm(data: z.infer<typeof tagFormSchema>) {
+    const { name } = data;
+    setIsNewTagOpen(false);
+    tagForm.reset();
+    await tagsAdd({ name });
     await fetchTags();
   }
 
-  async function onSubmitSetlistForm(data: z.infer<typeof setlistFormSchema>, setlistId?: number) {
-    if (setlistId) {
-      await setlistsUpdate({ id: setlistId, name: data.name });
-    } else {
-      await setlistsAdd({ name: data.name });
-    }
+  async function onSubmitSetlistForm(data: z.infer<typeof setlistFormSchema>) {
+    const { name } = data;
+    setIsNewSetlistOpen(false);
+    setlistForm.reset();
+    await setlistsAdd({ name });
     await fetchSetlists();
-  }
-
-  async function onSubmitTagForm(name: string, tagId?: number) {
-    if (tagId) {
-      await tagsUpdate({ id: tagId, name });
-    } else {
-      await tagsAdd({ name });
-    }
-    await fetchTags();
   }
 
   async function openWizardWindow() {
     await openWizard({ pieceId: undefined });
+  }
+
+  function handleClickNewTag(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    setIsNewTagOpen(true);
+  }
+
+  function handleClickNewSetlist(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    setIsNewSetlistOpen(true)
   }
 
   return (
@@ -164,165 +181,39 @@ export function LeftPanel() {
 
             <div className="flex flex-col gap-[4px]">
               <Collapsible open={setlistCollapsibleOpen} onOpenChange={setSetlistCollapsibleOpen} className="flex flex-col gap-[4px]">
-                <span className="flex items-center">
+                <span className="flex items-center gap-[4px]">
                   <CollapsibleTrigger asChild className="w-full">
-                    <Button variant="sidebarCollapisble" className="w-full flex gap-[4px]">
+                    <Button ref={newSetlistPlusRef} variant="sidebarCollapisble" className="w-full flex gap-[4px]">
                       <Icon path={mdiMenuDown} size={1} className={cn(setlistCollapsibleOpen && "rotate-180")} />
                       <span>Setlists</span>
                     </Button>
                   </CollapsibleTrigger>
-                  <Dialog onOpenChange={() => setlistForm.reset({ name: "" })}>
-                    <DialogTrigger asChild>
-                      <Button variant="sidebar" className="p-1 justify-center">
-                        <Icon path={mdiPlus} size={1} />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Create a new setlist</DialogTitle>
-                      </DialogHeader>
-                      <Form {...setlistForm}>
-                        <form onSubmit={setlistForm.handleSubmit(() => onSubmitSetlistForm(setlistForm.getValues()))} className="space-y-[14px] text-fg.1">
-                          <FormField
-                            control={setlistForm.control}
-                            name="name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                  <Input {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <DialogFooter>
-                            <DialogClose asChild>
-                              <Button
-                                variant="link"
-                              >
-                                Cancel
-                              </Button>
-                            </DialogClose>
-                            <DialogClose asChild>
-                              <Button type="submit" onClick={() => onSubmitSetlistForm(setlistForm.getValues())}>
-                                Create
-                              </Button>
-                            </DialogClose>
-                          </DialogFooter>
-                        </form>
-                      </Form>
-                    </DialogContent>
-                  </Dialog>
+                  <Button ref={newTagPlusRef} variant="sidebar" className="p-1 justify-center" onClick={handleClickNewSetlist}>
+                    <Icon path={mdiPlus} size={1} />
+                  </Button>
                 </span>
                 <CollapsibleContent className="flex flex-col gap-[2px]">
+                  {isNewSetlistOpen && (
+                    <Form {...setlistForm}>
+                      <form ref={newSetlistRef} onSubmit={setlistForm.handleSubmit(onSubmitSetlistForm)} className="flex gap-[4px]">
+                        <FormField control={setlistForm.control} name="name" render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )} />
+                        <Button type="submit" variant="secondary" className="leading-3">Create</Button>
+                      </form>
+                    </Form>
+                  )}
                   {setlists.map((sl) => (
-                    <div key={sl.id} className="flex gap-[4px] w-full">
-                      <Button
-                        asChild
-                        variant="sidebarCollapsibleItem"
-                        className={cn("w-full group", sl.id === setlist.setlist?.id && "bg-sidebar-bg.focus")}
-                        onClick={() => dispatch(setSetlist({ setlist: sl }))}>
-                        <div className="flex w-full gap-[4px]">
-                          <span className="flex gap-[8px] w-full items-center pl-[3px]">
-                            <Icon path={mdiBookOpenVariantOutline} size={2 / 3} />
-                            <span>{sl.name}</span>
-                          </span>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="link" className="invisible group-hover:visible">
-                                <Icon path={mdiDotsHorizontal} size={1} />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                              <Form {...setlistForm}>
-                                <Dialog onOpenChange={() => setlistForm.reset({ name: sl.name })}>
-                                  <DialogTrigger asChild>
-                                    <DropdownMenuItem onSelect={(e) => {
-                                      e.preventDefault()
-                                      setlistForm.reset({ name: sl.name })
-                                    }}>
-                                      Edit
-                                    </DropdownMenuItem>
-                                  </DialogTrigger>
-                                  <DialogContent>
-                                    <DialogHeader>
-                                      <DialogTitle>Edit setlist</DialogTitle>
-                                    </DialogHeader>
-                                    <form onSubmit={setlistForm.handleSubmit(() => onSubmitSetlistForm(setlistForm.getValues(), sl.id))} className="space-y-[14px] text-fg.1">
-                                      <FormField
-                                        control={setlistForm.control}
-                                        name="name"
-                                        render={({ field }) => (
-                                          <FormItem>
-                                            <FormLabel>Name</FormLabel>
-                                            <FormControl>
-                                              <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                          </FormItem>
-                                        )}
-                                      />
-                                      <DialogFooter>
-                                        <DialogClose asChild>
-                                          <Button
-                                            variant="link"
-                                            type="reset"
-                                          >
-                                            Cancel
-                                          </Button>
-                                        </DialogClose>
-                                        <DialogClose asChild>
-                                          <Button type="submit" onClick={() => onSubmitSetlistForm(setlistForm.getValues(), sl.id)}>
-                                            Save
-                                          </Button>
-                                        </DialogClose>
-                                      </DialogFooter>
-                                    </form>
-                                  </DialogContent>
-                                </Dialog>
-                              </Form>
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-error.default focus:text-error.focus">
-                                    Delete
-                                  </DropdownMenuItem>
-                                </DialogTrigger>
-                                <DialogContent>
-                                  <DialogHeader>
-                                    <DialogTitle>Are you sure you want to delete this setlist?</DialogTitle>
-                                    <DialogDescription>
-                                      Pieces in this setlist will not be deleted.
-                                    </DialogDescription>
-                                    <DialogFooter>
-                                      <DialogClose asChild>
-                                        <Button
-                                          variant="link"
-                                          type="reset"
-                                        >
-                                          Cancel
-                                        </Button>
-                                      </DialogClose>
-                                      <DialogClose asChild>
-                                        <Button
-                                          onClick={() => handleConfirmDeleteSetlist(sl.id)}
-                                        >
-                                          Delete
-                                        </Button>
-                                      </DialogClose>
-                                    </DialogFooter>
-                                  </DialogHeader>
-                                </DialogContent>
-                              </Dialog>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </Button>
-                    </div>
+                    <SetlistItem key={sl.id} setlist={sl} selected={sl.id === setlist.setlist?.id} />
                   ))}
                 </CollapsibleContent>
               </Collapsible>
-              <Collapsible open={tagsCollapsibleOpen} onOpenChange={setTagsCollapsibleOpen}>
+
+              <Collapsible open={tagsCollapsibleOpen} onOpenChange={setTagsCollapsibleOpen} className="flex flex-col gap-[4px]">
                 <span className="flex items-center gap-[4px]">
                   <CollapsibleTrigger asChild>
                     <Button variant="sidebarCollapisble" className="w-full flex gap-[4px]">
@@ -330,82 +221,27 @@ export function LeftPanel() {
                       <span>Tags</span>
                     </Button>
                   </CollapsibleTrigger>
-                  <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button variant="sidebar" className="p-1 justify-center">
-                        <Icon path={mdiPlus} size={1} />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <EditTagDialog onConfirm={onSubmitTagForm} onClose={setIsTagDialogOpen} />
-                    </DialogContent>
-                  </Dialog>
+                  <Button ref={newTagPlusRef} variant="sidebar" className="p-1 justify-center" onClick={handleClickNewTag}>
+                    <Icon path={mdiPlus} size={1} />
+                  </Button>
                 </span>
                 <CollapsibleContent className="flex flex-col gap-[2px] ml-7">
+                  {isNewTagOpen && (
+                    <Form {...tagForm}>
+                      <form ref={newTagRef} onSubmit={tagForm.handleSubmit(onSubmitTagForm)} className="flex gap-[4px]">
+                        <FormField control={tagForm.control} name="name" render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )} />
+                        <Button type="submit" variant="secondary" className="leading-3">Create</Button>
+                      </form>
+                    </Form>
+                  )}
                   {tags.map((tag) => (
-                    <Button
-                      asChild
-                      key={tag.id}
-                      variant="sidebarCollapsibleItem"
-                      className="w-full group"
-                      onClick={() => handleClickPushTag(tag)}>
-                      <span>
-                        <span className="flex gap-[4px] w-full items-center">
-                          <span>{tag.name}</span>
-                        </span>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="link" className="invisible group-hover:visible">
-                              <Icon path={mdiDotsHorizontal} size={1} />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                                  Edit
-                                </DropdownMenuItem>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <EditTagDialog defaultTag={tag} onConfirm={onSubmitTagForm} onClose={setIsTagDialogOpen} />
-                              </DialogContent>
-                            </Dialog>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-error.default focus:text-error.focus">
-                                  Delete
-                                </DropdownMenuItem>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Are you sure you want to delete this tag?</DialogTitle>
-                                  <DialogDescription>
-                                    Pieces with this tag will not be deleted.
-                                  </DialogDescription>
-                                  <DialogFooter>
-                                    <DialogClose asChild>
-                                      <Button
-                                        variant="link"
-                                        type="reset"
-                                      >
-                                        Cancel
-                                      </Button>
-                                    </DialogClose>
-                                    <DialogClose asChild>
-                                      <Button
-                                        onClick={() => handleConfirmDeleteTag(tag.id)}
-                                      >
-                                        Delete
-                                      </Button>
-                                    </DialogClose>
-                                  </DialogFooter>
-                                </DialogHeader>
-                              </DialogContent>
-                            </Dialog>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </span>
-                    </Button>
+                    <TagItem key={tag.id} tag={tag} />
                   ))}
                 </CollapsibleContent>
               </Collapsible>
