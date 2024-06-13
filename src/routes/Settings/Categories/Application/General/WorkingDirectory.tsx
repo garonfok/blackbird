@@ -112,7 +112,7 @@ export function WorkingDirectory() {
             <Button onClick={() => sendChangeDir("FINISH")}>Okay</Button>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog>``
       <AlertDialog open={changeDirState.matches("restarting")}>
         <AlertDialogContent>
           <AlertDialogHeader>
