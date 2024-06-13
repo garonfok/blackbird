@@ -49,7 +49,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { listen } from "@tauri-apps/api/event";
-import { useMachine } from "@xstate/react";
 import dayjs from "dayjs";
 import Fuse from "fuse.js";
 import {
@@ -65,8 +64,8 @@ import {
 } from "../../reducers/filterSlice";
 import { setPieces } from "../../reducers/piecesSlice";
 import { clearPiece, setPiece } from "../../reducers/previewSlice";
-import { mainSortMachine } from "../mainSortMachine";
 import { FilterBar } from "../FilterBar";
+import { clickMain, clickUpdatedAt, clickYearPublished, resetSorting } from "../sortSlice";
 
 export function Table() {
   const [filteredPieces, setFilteredPieces] = useState<Piece[]>([]);
@@ -74,11 +73,9 @@ export function Table() {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "updatedAt", desc: true },
   ]);
-  const [isMainTitle, setIsMainTitle] = useState(true);
+
   const [selected, setSelected] = useState<number[]>([]);
   const [anchor, setAnchor] = useState(0);
-
-  const [mainSortState, sendMainSortState] = useMachine(mainSortMachine);
 
   const setlists = useAppSelector((state) => state.setlists);
   const filter = useAppSelector((state) => state.filter);
@@ -87,6 +84,7 @@ export function Table() {
   const pieces = useAppSelector((state) => state.pieces);
   const setlist = useAppSelector((state) => state.setlist);
   const preview = useAppSelector((state) => state.preview);
+  const sortingStore = useAppSelector((state) => state.sorting);
   const dispatch = useAppDispatch();
 
   const tableRef = useRef<HTMLTableElement>(null);
@@ -234,6 +232,14 @@ export function Table() {
 
     setFilteredPieces(filteringPieces);
   }, [query, filter, pieces]);
+
+  useEffect(() => {
+    if (["title", "composers"].find((id) => id === sortingStore.id)) {
+      setSorting([{ id: "main", desc: sortingStore.descending }])
+    } else {
+      setSorting([{ id: sortingStore.id, desc: sortingStore.descending }])
+    }
+  }, [sortingStore])
 
   const columns = useMemo<ColumnDef<Piece>[]>(
     () => [
@@ -487,70 +493,14 @@ export function Table() {
   }
 
   function handleClickSortColumn(headerColumn: Column<Piece, unknown>) {
-    if (headerColumn.id !== "main") {
-      if (
-        !sorting[0].desc &&
-        sorting[0].id !== "main" &&
-        sorting[0].id !== "composers"
-      ) {
-        setSorting([{ id: "updatedAt", desc: true }]);
-      } else {
-        headerColumn.toggleSorting();
-      }
-      sendMainSortState("RESET");
-      setIsMainTitle(true);
+    if (headerColumn.id === "main") {
+      dispatch(clickMain())
+    } else if (headerColumn.id === "yearPublished") {
+      dispatch(clickYearPublished())
+    } else if (headerColumn.id === "updatedAt") {
+      dispatch(clickUpdatedAt())
     } else {
-      const mainColumn = table.getColumn("main");
-      const composersColumn = table.getColumn("composers");
-
-      if (isMainTitle) {
-        if (
-          sorting.length === 1 &&
-          sorting[0].id === "main" &&
-          !sorting[0].desc
-        ) {
-          setIsMainTitle(false);
-          composersColumn?.toggleSorting();
-        } else {
-          mainColumn?.toggleSorting();
-        }
-      } else {
-        if (
-          sorting.length === 1 &&
-          sorting[0].id === "composers" &&
-          !sorting[0].desc
-        ) {
-          setIsMainTitle(true);
-          setSorting([{ id: "updatedAt", desc: true }]);
-        } else {
-          composersColumn?.toggleSorting();
-        }
-      }
-
-      switch (mainSortState.value) {
-        case "updatedDesc":
-          setIsMainTitle(true);
-          mainColumn?.toggleSorting(false);
-          break;
-        case "titleAsc":
-          setIsMainTitle(true);
-          mainColumn?.toggleSorting(true);
-          break;
-        case "titleDesc":
-          setIsMainTitle(false);
-          composersColumn?.toggleSorting(false);
-          break;
-        case "composersAsc":
-          setIsMainTitle(false);
-          composersColumn?.toggleSorting(true);
-          break;
-        case "composersDesc":
-          setIsMainTitle(true);
-          setSorting([{ id: "updatedAt", desc: true }]);
-          break;
-      }
-
-      sendMainSortState("CLICK");
+      dispatch(resetSorting())
     }
   }
 
@@ -628,7 +578,7 @@ export function Table() {
 
   return (
     <div className="flex flex-col flex-grow">
-      <FilterBar setIsMainTitle={setIsMainTitle} />
+      <FilterBar />
       <table
         ref={tableRef}
         className="flex flex-col flex-grow h-0 overflow-y-auto scrollbar-default border-t border-divider.default"
@@ -650,7 +600,7 @@ export function Table() {
                     onClick={() => handleClickSortColumn(header.column)}
                     className="w-full flex items-center gap-[8px]"
                   >
-                    {header.id !== "main" || isMainTitle
+                    {header.id !== "main" || sortingStore.id !== "composers"
                       ? flexRender(
                         header.column.columnDef.header,
                         header.getContext(),
@@ -674,7 +624,7 @@ export function Table() {
                           />
                         ),
                       }[
-                      header.id !== "main" || isMainTitle
+                      header.id !== "main" || ["title", "composers"].includes(sortingStore.id)
                         ? (header.column.getIsSorted() as string)
                         : (table
                           .getColumn("composers")

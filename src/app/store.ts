@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import queryReducer from "../routes/Dashboard/MainPanel/querySlice";
+import sortingReducer from "../routes/Dashboard/MainPanel/sortSlice";
 import filterReducer from "../routes/Dashboard/reducers/filterSlice";
 import piecesReducer from "../routes/Dashboard/reducers/piecesSlice";
 import previewReducer from "../routes/Dashboard/reducers/previewSlice";
@@ -16,6 +17,7 @@ const store = configureStore({
     pieces: piecesReducer,
     setlist: setlistReducer,
     setlists: setlistsReducer,
+    sorting: sortingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

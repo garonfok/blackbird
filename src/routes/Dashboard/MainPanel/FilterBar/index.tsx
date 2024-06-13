@@ -14,8 +14,6 @@ import {
 } from "@/components/ui/tooltip";
 import { mdiArrowDown, mdiArrowUp, mdiClose, mdiEraser } from "@mdi/js";
 import { Icon } from "@mdi/react";
-import { SortingState } from "@tanstack/react-table";
-import { Dispatch, SetStateAction, useState } from "react";
 import {
   clearDifficultyMax,
   clearDifficultyMin,
@@ -27,11 +25,12 @@ import {
   resetFilter,
 } from "../../reducers/filterSlice";
 import { clearSetlist } from "../../reducers/setlistSlice";
+import { clickComposers, clickTitle, clickUpdatedAt, clickYearPublished, resetSorting } from "../sortSlice";
 import { FilterBadge } from "./FilterBadge";
 import { FilterMenu } from "./FilterMenu";
 
 const sortOptions = [
-  { id: "main", label: "Title" },
+  { id: "title", label: "Title" },
   { id: "composers", label: "Composers" },
   { id: "yearPublished", label: "Year" },
   { id: "updatedAt", label: "Updated" },
@@ -51,35 +50,32 @@ const initialFilterState = {
   transcribers: [],
 };
 
-export function FilterBar(props: {
-  setIsMainTitle: Dispatch<SetStateAction<boolean>>;
-}) {
-  const { setIsMainTitle } = props;
-
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: "updatedAt", desc: true },
-  ]);
+export function FilterBar() {
   const filter = useAppSelector((state) => state.filter);
   const setlist = useAppSelector((state) => state.setlist);
 
   const dispatch = useAppDispatch();
+  const sorting = useAppSelector((state) => state.sorting);
 
   function handleClickDropdownSelect(optionId: string) {
-    if (optionId !== sorting[0].id) {
-      setSorting([{ id: optionId, desc: true }]);
-    } else {
-      setSorting([{ id: optionId, desc: !sorting[0].desc }]);
-    }
-
-    if (optionId === "composers") {
-      setIsMainTitle(false);
-    } else {
-      setIsMainTitle(true);
+    switch (optionId) {
+      case "title":
+        dispatch(clickTitle());
+        break;
+      case "composers":
+        dispatch(clickComposers());
+        break;
+      case "yearPublished":
+        dispatch(clickYearPublished());
+        break;
+      case "updatedAt":
+        dispatch(clickUpdatedAt());
+        break;
     }
   }
 
   function handleClickResetFilters() {
-    setSorting([{ id: "updatedAt", desc: true }]);
+    dispatch(resetSorting())
     dispatch(clearSetlist());
     dispatch(resetFilter());
   }
@@ -111,64 +107,68 @@ export function FilterBar(props: {
         )}
         {(filter.yearPublishedMin !== undefined ||
           filter.yearPublishedMax !== undefined) && (
-          <Badge variant="outline" className="p-0">
-            <span className="text-fg.1 p-[4px]">Published</span>
-            {filter.yearPublishedMin && (
-              <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
-                <span>From</span>
-                <span className="text-fg.0">{filter.yearPublishedMin}</span>
-                <Button
-                  onClick={() => dispatch(clearYearPublishedMin())}
-                  variant="link"
-                >
-                  <Icon path={mdiClose} size={2 / 3} />
-                </Button>
-              </span>
-            )}
-            {filter.yearPublishedMax && (
-              <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
-                <span>To</span>
-                <span className="text-fg.0">{filter.yearPublishedMax}</span>
-                <Button
-                  onClick={() => dispatch(clearYearPublishedMax())}
-                  variant="link"
-                >
-                  <Icon path={mdiClose} size={2 / 3} />
-                </Button>
-              </span>
-            )}
-          </Badge>
-        )}
+            <Badge variant="outline" className="p-0">
+              <span className="text-fg.1 p-[4px]">Published</span>
+              {filter.yearPublishedMin && (
+                <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
+                  <span>From</span>
+                  <span className="text-fg.0">{filter.yearPublishedMin}</span>
+                  <Button
+                    onClick={() => dispatch(clearYearPublishedMin())}
+                    variant="link"
+                    className="p-0"
+                  >
+                    <Icon path={mdiClose} size={2 / 3} />
+                  </Button>
+                </span>
+              )}
+              {filter.yearPublishedMax && (
+                <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
+                  <span>To</span>
+                  <span className="text-fg.0">{filter.yearPublishedMax}</span>
+                  <Button
+                    onClick={() => dispatch(clearYearPublishedMax())}
+                    variant="link"
+                    className="p-0"
+                  >
+                    <Icon path={mdiClose} size={2 / 3} />
+                  </Button>
+                </span>
+              )}
+            </Badge>
+          )}
         {(filter.difficultyMin !== undefined ||
           filter.difficultyMax !== undefined) && (
-          <Badge variant="outline" className="p-0">
-            <span className="text-fg.1 p-[4px]">Grade</span>
-            {filter.difficultyMin && (
-              <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
-                <span>From</span>
-                <span className="text-fg.0">{filter.difficultyMin}</span>
-                <Button
-                  onClick={() => dispatch(clearDifficultyMin())}
-                  variant="link"
-                >
-                  <Icon path={mdiClose} size={2 / 3} />
-                </Button>
-              </span>
-            )}
-            {filter.difficultyMax && (
-              <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
-                <span>To</span>
-                <span className="text-fg.0">{filter.difficultyMax}</span>
-                <Button
-                  onClick={() => dispatch(clearDifficultyMax())}
-                  variant="link"
-                >
-                  <Icon path={mdiClose} size={2 / 3} />
-                </Button>
-              </span>
-            )}
-          </Badge>
-        )}
+            <Badge variant="outline" className="p-0">
+              <span className="text-fg.1 p-[4px]">Grade</span>
+              {filter.difficultyMin && (
+                <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
+                  <span>From</span>
+                  <span className="text-fg.0">{filter.difficultyMin}</span>
+                  <Button
+                    onClick={() => dispatch(clearDifficultyMin())}
+                    variant="link"
+                    className="p-0"
+                  >
+                    <Icon path={mdiClose} size={2 / 3} />
+                  </Button>
+                </span>
+              )}
+              {filter.difficultyMax && (
+                <span className="flex gap-[4px] bg-bg.2 h-full w-full items-center border-l border-divider.default px-[4px]">
+                  <span>To</span>
+                  <span className="text-fg.0">{filter.difficultyMax}</span>
+                  <Button
+                    onClick={() => dispatch(clearDifficultyMax())}
+                    variant="link"
+                    className="p-0"
+                  >
+                    <Icon path={mdiClose} size={2 / 3} />
+                  </Button>
+                </span>
+              )}
+            </Badge>
+          )}
         {filter.instruments.length > 0 && (
           <FilterBadge
             name="Instruments"
@@ -384,21 +384,22 @@ export function FilterBar(props: {
       </div>
       <div className="flex gap-[8px] border-l border-divider.default pl-[14px] items-center">
         {(JSON.stringify(filter) !== JSON.stringify(initialFilterState) ||
-          setlist.setlist) && (
-          <Button
-            onClick={handleClickResetFilters}
-            className="gap-[4px]"
-            variant="secondary"
-          >
-            <Icon path={mdiEraser} size={2 / 3} className="shrink-0" />
-            <span>Clear filters</span>
-          </Button>
-        )}
+          setlist.setlist || (sorting.id !== "updatedAt" || !sorting.descending)) && (
+            <Button
+              onClick={handleClickResetFilters}
+              className="gap-[4px]"
+              variant="secondary"
+            >
+              <Icon path={mdiEraser} size={2 / 3} className="shrink-0" />
+              <span>Clear filters</span>
+            </Button>
+          )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="link" className="flex gap-[4px] h-[26px]">
-              {sortOptions.find((option) => option.id === sorting[0].id)?.label}
-              {sorting[0].desc ? (
+            <Button variant="link"
+              className="flex gap-[4px] h-[26px]">
+              {sortOptions.find((option) => option.id === sorting.id)?.label}
+              {sorting.descending ? (
                 <Icon path={mdiArrowDown} size={2 / 3} className="shrink-0" />
               ) : (
                 <Icon path={mdiArrowUp} size={2 / 3} className="shrink-0" />
@@ -413,11 +414,10 @@ export function FilterBar(props: {
                 onClick={() => handleClickDropdownSelect(option.id)}
               >
                 {option.label}
-                {sorting[0].id === option.id ? (
+                {sorting.id === option.id ? (
                   <Icon
-                    path={sorting[0].desc ? mdiArrowDown : mdiArrowUp}
+                    path={sorting.descending ? mdiArrowDown : mdiArrowUp}
                     size={2 / 3}
-                    className=""
                   />
                 ) : (
                   <span className="w-[14px]" />

@@ -119,7 +119,7 @@ export function SetlistItem(props: { setlist: Setlist, selected?: boolean }) {
         </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="link" className="invisible group-hover:visible">
+            <Button variant="link" className="invisible group-hover:visible p-0">
               <Icon path={mdiDotsHorizontal} size={1} />
             </Button>
           </DropdownMenuTrigger>

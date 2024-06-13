@@ -116,7 +116,7 @@ export function TagItem(props: {
         </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="link" className="invisible group-hover:visible">
+            <Button variant="link" className="invisible group-hover:visible p-0">
               <Icon path={mdiDotsHorizontal} size={1} />
             </Button>
           </DropdownMenuTrigger>
