@@ -160,7 +160,7 @@ export function FilePanel(props: {
         strategy={verticalListSortingStrategy}
       >
         <div
-          className="bg-sidebar-bg.default rounded-default p-[4px] flex flex-col h-full scrollbar scrollbar-track-bg.0"
+          className="bg-sidebar-bg.default rounded-default p-[4px] flex flex-col h-full"
         >
           <ScrollArea className="h-0 grow">
             <div className="flex flex-col gap-[4px]">
