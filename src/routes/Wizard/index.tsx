@@ -227,9 +227,9 @@ export function Wizard() {
 
     if (prefix === "f") {
       return (
-        <div className="w-36 flex item-center gap-[4px] p-[4px] bg-float-bg.default float-shadow rounded-default">
+        <div className="w-full flex item-center gap-[4px] p-[4px] bg-float-bg.default border border-divider.default float-shadow rounded-default">
           <Icon path={mdiFile} size={2 / 3} className="shrink-0 self-center" />
-          <span className="text-body-small-default text-fg.2 self-center grow break-all">
+          <span className="text-body-small-default text-fg.2 self-center grow truncate">
             {uploadedFiles.find((file) => `f${file.id}` === activeId)!.name}
           </span>
         </div>

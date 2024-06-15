@@ -160,21 +160,21 @@ export function FilePanel(props: {
         strategy={verticalListSortingStrategy}
       >
         <div
-          className="bg-sidebar-bg.default rounded-default p-[4px] flex flex-col h-full"
+          className="bg-sidebar-bg.default rounded-default p-[4px] flex flex-col h-full scrollbar scrollbar-track-bg.0"
         >
           <ScrollArea className="h-0 grow">
             <div className="flex flex-col gap-[4px]">
               {uploadedFiles.map((file, index) => (
                 <SortableItem key={file.id} id={`f${file.id}`}>
-                  <>
+                  <div className="absolute w-full flex items-center gap-[4px] p-[4px]">
                     <Icon path={mdiFile} size={2 / 3} className="shrink-0 self-center" />
-                    <span className="text-body-small-default text-fg.2 self-center grow break-all">
+                    <span className="text-body-small-default text-fg.2 self-center grow truncate">
                       {file.name}
                     </span>
                     <Button type="button" variant="main" className="p-1 h-fit" onClick={() => handleClickRemoveFile(index)}>
                       <Icon path={mdiClose} size={2 / 3} className="shrink-0" />
                     </Button>
-                  </>
+                  </div>
                 </SortableItem>
               ))}
             </div>
