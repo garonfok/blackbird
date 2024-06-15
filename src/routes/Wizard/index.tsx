@@ -34,11 +34,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -51,7 +46,7 @@ import {
   UniqueIdentifier,
   closestCorners,
   useSensor,
-  useSensors
+  useSensors,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -67,6 +62,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLoaderData } from "react-router-dom";
 import { z } from "zod";
+import { Sidebar } from "../../components/Sidebar";
 import { CentralPanel } from "./CentralPanel";
 import { FilePanel } from "./FilePanel";
 import { SelectMusicians } from "./SelectMusicians";
@@ -74,7 +70,11 @@ import { SelectTags } from "./SelectTags";
 import { pieceFormSchema } from "./types";
 
 export function Wizard() {
-  const { piece, files, pieceId } = useLoaderData() as { piece?: z.infer<typeof pieceFormSchema>, files?: ByteFile[], pieceId?: number };
+  const { piece, files, pieceId } = useLoaderData() as {
+    piece?: z.infer<typeof pieceFormSchema>;
+    files?: ByteFile[];
+    pieceId?: number;
+  };
 
   const pieceForm = useForm<z.infer<typeof pieceFormSchema>>({
     resolver: zodResolver(pieceFormSchema),
@@ -110,24 +110,26 @@ export function Wizard() {
     }),
   );
 
-  async function onSubmitPieceForm(submittedPiece: z.infer<typeof pieceFormSchema>) {
+  async function onSubmitPieceForm(
+    submittedPiece: z.infer<typeof pieceFormSchema>,
+  ) {
     try {
       if (piece) {
-        await updatePiece(submittedPiece, pieceId!)
+        await updatePiece(submittedPiece, pieceId!);
       } else {
-        await createPiece(submittedPiece)
+        await createPiece(submittedPiece);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
 
-    await emit("refresh_dashboard")
+    await emit("refresh_dashboard");
 
-    await closeWindow({ windowLabel: "wizard" })
+    await closeWindow({ windowLabel: "wizard" });
   }
 
   async function handleClickCancel() {
-    await closeWindow({ windowLabel: "wizard" })
+    await closeWindow({ windowLabel: "wizard" });
   }
 
   function handleDragStart(event: DragStartEvent) {
@@ -143,23 +145,26 @@ export function Wizard() {
       return;
     }
 
-    const activeContainer = active.data.current?.sortable?.containerId
-    const overContainer = over.data.current?.sortable?.containerId
+    const activeContainer = active.data.current?.sortable?.containerId;
+    const overContainer = over.data.current?.sortable?.containerId;
 
     if (activeContainer !== overContainer) {
+      if (activeContainer !== "file-list") return;
 
-      if (activeContainer !== "file-list") return
-
-      const file = uploadedFiles.find((file) => `f${file.id}` === active.id)!
+      const file = uploadedFiles.find((file) => `f${file.id}` === active.id)!;
 
       if (overContainer === "part-list") {
-        const part = pieceForm.getValues("parts").find((part) => `p${part.id}` === over.id)!
-        part.file = file
-        pieceForm.setValue("parts", pieceForm.getValues("parts"))
+        const part = pieceForm
+          .getValues("parts")
+          .find((part) => `p${part.id}` === over.id)!;
+        part.file = file;
+        pieceForm.setValue("parts", pieceForm.getValues("parts"));
       } else if (overContainer === "score-list") {
-        const score = pieceForm.getValues("scores").find((score) => `s${score.id}` === over.id)!
-        score.file = file
-        pieceForm.setValue("scores", pieceForm.getValues("scores"))
+        const score = pieceForm
+          .getValues("scores")
+          .find((score) => `s${score.id}` === over.id)!;
+        score.file = file;
+        pieceForm.setValue("scores", pieceForm.getValues("scores"));
       }
 
       setActiveId(null);
@@ -179,12 +184,12 @@ export function Wizard() {
         const newFiles = arrayMove(uploadedFiles, oldIndex, newIndex);
         setUploadedFiles(newFiles);
       } else if (containerType === "p") {
-        const oldIndex = pieceForm.getValues("parts").findIndex(
-          (part) => `p${part.id}` === active.id,
-        );
-        const newIndex = pieceForm.getValues("parts").findIndex(
-          (part) => `p${part.id}` === over.id,
-        );
+        const oldIndex = pieceForm
+          .getValues("parts")
+          .findIndex((part) => `p${part.id}` === active.id);
+        const newIndex = pieceForm
+          .getValues("parts")
+          .findIndex((part) => `p${part.id}` === over.id);
         const newParts = arrayMove(
           pieceForm.getValues("parts"),
           oldIndex,
@@ -193,12 +198,12 @@ export function Wizard() {
         pieceForm.setValue("parts", newParts);
         formatPartNumbers(pieceForm);
       } else if (containerType === "s") {
-        const oldIndex = pieceForm.getValues("scores").findIndex(
-          (score) => `s${score.id}` === active.id,
-        );
-        const newIndex = pieceForm.getValues("scores").findIndex(
-          (score) => `s${score.id}` === over.id,
-        );
+        const oldIndex = pieceForm
+          .getValues("scores")
+          .findIndex((score) => `s${score.id}` === active.id);
+        const newIndex = pieceForm
+          .getValues("scores")
+          .findIndex((score) => `s${score.id}` === over.id);
         const newScores = arrayMove(
           pieceForm.getValues("scores"),
           oldIndex,
@@ -216,50 +221,45 @@ export function Wizard() {
   }
 
   function DragOverlayItem() {
-    if (!activeId) return
+    if (!activeId) return;
 
-    const prefix = activeId.toString()[0]
+    const prefix = activeId.toString()[0];
 
     if (prefix === "f") {
       return (
         <div className="w-36 flex item-center gap-[4px] p-[4px] bg-float-bg.default float-shadow rounded-default">
-          <Icon
-            path={mdiFile}
-            size={2 / 3}
-            className="shrink-0 self-center"
-          />
+          <Icon path={mdiFile} size={2 / 3} className="shrink-0 self-center" />
           <span className="text-body-small-default text-fg.2 self-center grow break-all">
-            {
-              uploadedFiles.find((file) => `f${file.id}` === activeId)!
-                .name
-            }
+            {uploadedFiles.find((file) => `f${file.id}` === activeId)!.name}
           </span>
         </div>
-      )
+      );
     }
     if (prefix === "p") {
       return (
         <div className="w-36 flex item-center gap-[4px] p-[4px] bg-float-bg.default float-shadow rounded-default">
           <span className="text-body-small-default text-fg.2 self-center grow break-all">
             {
-              pieceForm.getValues("parts").find((part) => `p${part.id}` === activeId)!
-                .name
+              pieceForm
+                .getValues("parts")
+                .find((part) => `p${part.id}` === activeId)!.name
             }
           </span>
         </div>
-      )
+      );
     }
     if (prefix === "s") {
       return (
         <div className="w-36 flex item-center gap-[4px] p-[4px] bg-float-bg.default float-shadow rounded-default">
           <span className="text-body-small-default text-fg.2 self-center grow break-all">
             {
-              pieceForm.getValues("scores").find((score) => `s${score.id}` === activeId)!
-                .name
+              pieceForm
+                .getValues("scores")
+                .find((score) => `s${score.id}` === activeId)!.name
             }
           </span>
         </div>
-      )
+      );
     }
   }
 
@@ -483,7 +483,7 @@ export function Wizard() {
           </Popover>
         </div>
         <Separator />
-        <ResizablePanelGroup direction="horizontal">
+        <div className="flex h-full">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCorners}
@@ -491,47 +491,49 @@ export function Wizard() {
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
           >
-            <ResizablePanel defaultSize={30} minSize={15}>
+            <Sidebar direction="left">
               <FilePanel
                 uploadedFiles={uploadedFiles}
                 setUploadedFiles={setUploadedFiles}
                 pieceForm={pieceForm}
               />
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel minSize={15}>
-              <CentralPanel pieceForm={pieceForm} uploadedFiles={uploadedFiles} />
-            </ResizablePanel>
-            <DragOverlay>
-              <DragOverlayItem />
-            </DragOverlay>
+            </Sidebar>
+            <div className="flex grow">
+              <CentralPanel
+                pieceForm={pieceForm}
+                uploadedFiles={uploadedFiles}
+              />
+              <DragOverlay>
+                <DragOverlayItem />
+              </DragOverlay>
+            </div>
           </DndContext>
-          <ResizableHandle />
-          <ResizablePanel
-            defaultSize={30}
-            minSize={15}
-            className="p-[14px] flex flex-col gap-[14px]"
-          >
-            <FormField
-              control={pieceForm.control}
-              name="tags"
-              render={({ field }) => <SelectTags {...field} />}
-            />
-            <FormField
-              control={pieceForm.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem className="flex flex-col gap-[4px] h-full">
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} className="grow p-1 resize-none" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+          <Sidebar direction="right">
+            <div className="flex flex-col gap-[14px] p-4 h-full ">
+              <FormField
+                control={pieceForm.control}
+                name="tags"
+                render={({ field }) => <SelectTags {...field} />}
+              />
+              <FormField
+                control={pieceForm.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col gap-[4px] h-full">
+                    <FormLabel>Notes</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className="grow p-1 resize-none h-full"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </Sidebar>
+        </div>
         <Separator />
         <div className="p-[14px] flex-row-reverse flex gap-[14px]">
           <Button type="submit" variant="default">
