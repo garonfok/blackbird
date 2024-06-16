@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { mdiClose, mdiFile, mdiUploadMultipleOutline } from "@mdi/js";
+import { mdiUploadMultipleOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { open } from "@tauri-apps/api/dialog";
 import { Event, listen } from "@tauri-apps/api/event";
@@ -95,7 +96,7 @@ export function FilePanel(props: {
     }, 5000);
   }
 
-  function handleClickRemoveFile(index: number) {
+  function onRemoveFile(index: number) {
     const newFiles = [...uploadedFiles];
     newFiles.splice(index, 1);
     setUploadedFiles(newFiles);
@@ -159,26 +160,25 @@ export function FilePanel(props: {
         items={uploadedFiles.map((file) => `f${file.id}`)}
         strategy={verticalListSortingStrategy}
       >
-        <div
-          className="bg-sidebar-bg.default rounded-default p-[4px] flex flex-col h-full"
-        >
+        <div className="bg-sidebar-bg.default rounded-default p-[4px] flex flex-col h-full">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="text-fg.1">Name</TableHead>
+                <TableHead className="text-fg.1 w-[75px]">Size</TableHead>
+              </TableRow>
+            </TableHeader>
+          </Table>
           <ScrollArea className="h-0 grow">
-            <div className="flex flex-col gap-[4px]">
-              {uploadedFiles.map((file, index) => (
-                <SortableItem key={file.id} id={`f${file.id}`}>
-                  <div className="absolute w-full flex items-center gap-[4px] p-[4px]">
-                    <Icon path={mdiFile} size={2 / 3} className="shrink-0 self-center" />
-                    <span className="text-body-small-default text-fg.2 self-center grow truncate">
-                      {file.name}
-                    </span>
-                    <Button type="button" variant="main" className="p-1 h-fit" onClick={() => handleClickRemoveFile(index)}>
-                      <Icon path={mdiClose} size={2 / 3} className="shrink-0" />
-                    </Button>
-                  </div>
-                </SortableItem>
-              ))}
-            </div>
+            <Table>
+              <TableBody>
+                {uploadedFiles.map((file, index) => (
+                  <SortableItem key={file.id} file={file} onRemoveFile={() => onRemoveFile(index)} />
+                ))}
+              </TableBody>
+            </Table>
           </ScrollArea>
+
         </div>
       </SortableContext>
     </div >

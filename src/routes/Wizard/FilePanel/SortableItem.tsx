@@ -1,16 +1,18 @@
+import { ByteFile } from '@/app/types';
 import { Button } from '@/components/ui/button';
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from '@/components/ui/context-menu';
+import { TableCell, TableRow } from '@/components/ui/table';
 import { UniqueIdentifier } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { mdiDragVertical } from '@mdi/js';
 import Icon from '@mdi/react';
-import { ReactNode } from 'react';
 
 export function SortableItem(props: {
-  id: UniqueIdentifier;
-  children: ReactNode;
+  file: ByteFile;
+  onRemoveFile: () => void
 }) {
-  const { id, children } = props;
+  const { file, onRemoveFile } = props;
 
   const {
     attributes,
@@ -20,7 +22,7 @@ export function SortableItem(props: {
     transform,
     transition,
   } = useSortable({
-    id
+    id: `f${file.id}` as UniqueIdentifier,
   });
 
   const style = {
@@ -29,14 +31,42 @@ export function SortableItem(props: {
     opacity: isDragging ? 0.5 : undefined,
   };
 
+  function getFileSize(byteArray: Uint8Array) {
+    // parse bytes to nearest unit
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (byteArray.length === 0) return '0 Byte';
+    const i = Math.floor(Math.log(byteArray.length) / Math.log(1024));
+    return `${Math.round(byteArray.length / Math.pow(1024, i))} ${sizes[i]}`;
+  }
+
+  function handleClickOpen() {
+
+  }
+
+  function handleClickDelete() {
+    onRemoveFile();
+  }
+
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-[4px] p-[4px] bg-float-bg.default float-shadow rounded-default">
-      <Button type="button" variant="main" className="p-1 h-fit self-center"  {...attributes} {...listeners}>
-        <Icon path={mdiDragVertical} size={2 / 3} className="shrink-0 self-center" />
-      </Button>
-      <div className="relative w-full flex items-center">
-      {children}
-      </div>
-    </div>
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <TableRow ref={setNodeRef} style={style} className="text-xs border-none hover:bg-transparent">
+          <TableCell className="flex items-center gap-[4px]">
+            <Button variant='sidebar' className="p-1" {...attributes} {...listeners}>
+              <Icon path={mdiDragVertical} size={2 / 3} />
+            </Button>
+            <div className="relative flex w-full items-center">
+              <div className="absolute truncate w-full pr-2">
+                {file.name}
+              </div></div>
+          </TableCell>
+          <TableCell className="whitespace-nowrap w-[75px] text-fg.2">{getFileSize(file.bytearray)}</TableCell>
+        </TableRow>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+      <ContextMenuItem onClick={handleClickOpen}>Open</ContextMenuItem>
+      <ContextMenuItem onClick={handleClickDelete}>Delete</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
