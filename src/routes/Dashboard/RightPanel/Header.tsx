@@ -16,8 +16,8 @@ export function Header(props: { piece: Piece }) {
   }
 
   return (
-    <span className="flex justify-between items-start py-[14px] gap-[8px] px-[14px]">
-      <span className="flex flex-wrap text-body-bold text-fg.0">
+    <span className="flex items-center py-[14px] gap-[8px] px-[14px]">
+      <span className="flex flex-wrap text-body-bold text-fg.0 grow">
         {piece.composers
           .map((composer) =>
             [composer.first_name, composer.last_name].join(" ")

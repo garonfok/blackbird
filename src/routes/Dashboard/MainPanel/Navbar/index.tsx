@@ -25,7 +25,7 @@ export function Navbar() {
   return (
     <div className="px-[14px] pt-[8px] w-full flex gap-[8px] items-center">
       <span
-        className="bg-bg.2 gap-[4px] py-[2px] px-[4px] rounded-default flex w-full text-fg.2 items-center transition-default"
+        className="bg-bg.2 gap-[4px] py-[2px] px-[4px] border border-divider.default rounded-default flex w-full text-fg.2 items-center transition-default"
       >
         <Icon
           path={mdiMagnify}
