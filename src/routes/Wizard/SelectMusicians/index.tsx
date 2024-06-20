@@ -115,14 +115,14 @@ export const SelectMusicians = forwardRef((props: {
   }
 
   return (
-    <FormItem className="flex flex-col gap-[4px]" ref={ref}>
-      <span className="flex gap-[8px] items-center">
+    <FormItem className="flex flex-col space-y-1" ref={ref}>
+      <span className="flex gap-[4px] items-center">
         <FormLabel htmlFor={role}>
           {role.charAt(0).toUpperCase() + role.slice(1)}
         </FormLabel>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
-            <Button type="button" className="flex items-center gap-[4px] p-1" variant='main'>
+            <Button type="button" className="flex items-center p-0" variant='main'>
               <Icon path={mdiPlus} size={2 / 3} />
             </Button>
           </DialogTrigger>
@@ -140,7 +140,7 @@ export const SelectMusicians = forwardRef((props: {
               role="combobox"
               aria-expanded={popoverOpen}
               onClick={() => setPopoverOpen(!open)}
-              className={cn("w-full justify-between border-divider.default bg-bg.2")}
+              className={cn("w-full justify-between border-divider.default bg-bg.2 px-[4px] py-[2px] text-sm")}
             >
               <DndContext
                 sensors={sensors}
@@ -161,6 +161,7 @@ export const SelectMusicians = forwardRef((props: {
                           <Button
                             type="button"
                             variant="link"
+                            className="p-0"
                             onKeyDown={e => {
                               if (e.key === "Enter") {
                                 e.preventDefault();
@@ -189,10 +190,10 @@ export const SelectMusicians = forwardRef((props: {
                   ) : null}
                 </DragOverlay>
               </DndContext>
-              <Icon path={mdiChevronDown} size={1} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", popoverOpen && "rotate-180")} />
+              <Icon path={mdiChevronDown} size={2 / 3} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", popoverOpen && "rotate-180")} />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-full p-0">
+          <PopoverContent className="w-full p-0" align="start">
             <Command>
               <CommandInput placeholder="Search for a musician" />
               <CommandList>
@@ -211,7 +212,7 @@ export const SelectMusicians = forwardRef((props: {
                         >
                           <Icon
                             path={mdiCheck}
-                            size={1}
+                            size={2 / 3}
                             className={cn(
                               "mr-2",
                               value.map(m => m.id).includes(musician.id) ?

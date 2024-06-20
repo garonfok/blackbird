@@ -23,7 +23,8 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex w-full items-center justify-between whitespace-nowrap text-fg.0 rounded-default border border-divider.default bg-bg.2 px-[8px] py-[4px] text-sm",
+      "group",
+      "flex w-full items-center justify-between whitespace-nowrap text-fg.0 rounded-default border border-divider.default bg-bg.2 px-[4px] py-[2px] text-sm",
       "placeholder:text-fg.2",
       "ring-offset-fg.0",
       "focus:outline-none focus:ring-1 focus:ring-fg.0",
@@ -37,7 +38,7 @@ const SelectTrigger = React.forwardRef<
       <Icon
         path={mdiChevronDown}
         size={2 / 3}
-        className="opacity-50 text-fg.2"
+        className="opacity-50 text-fg.2 group-data-[state=open]:rotate-180 transition-transform group-hover:text-fg.1"
       />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>

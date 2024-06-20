@@ -12,14 +12,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
   Form,
   FormControl,
   FormField,
@@ -34,6 +26,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -51,10 +44,8 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  mdiCheck,
   mdiChevronDown,
-  mdiFile,
-  mdiUnfoldMoreHorizontal,
+  mdiFile
 } from "@mdi/js";
 import Icon from "@mdi/react";
 import { emit } from "@tauri-apps/api/event";
@@ -99,7 +90,6 @@ export function Wizard() {
     },
   });
 
-  const [selectDifficultyOpen, setSelectDifficultyOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<ByteFile[]>(files || []);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
@@ -269,20 +259,19 @@ export function Wizard() {
         onSubmit={pieceForm.handleSubmit(onSubmitPieceForm)}
         className="bg-main-bg.default h-screen w-screen flex flex-col"
       >
-        <div className="px-[14px] pt-[14px] pb-[8px] flex flex-col gap-[4px] bg-sidebar-bg.default">
-          <div className="flex flex-col gap-[14px]">
-            <div className="flex gap-[14px]">
+        <div className="px-[14px] py-[8px] flex flex-col gap-[4px] bg-sidebar-bg.default">
+          <div className="flex flex-col gap-[4px]">
+            <div className="flex gap-[8px]">
               <FormField
                 control={pieceForm.control}
                 name="title"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-[4px] w-full">
+                  <FormItem className="flex flex-col w-full space-y-1">
                     <FormLabel>Title</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Required"
                         {...field}
-                        className="h-fit p-1"
                       />
                     </FormControl>
                     <FormMessage />
@@ -293,88 +282,24 @@ export function Wizard() {
                 control={pieceForm.control}
                 name="difficulty"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-[4px]">
+                  <FormItem className="flex flex-col space-y-1">
                     <FormLabel>Difficulty</FormLabel>
                     <FormControl>
-                      <Popover
-                        open={selectDifficultyOpen}
-                        onOpenChange={setSelectDifficultyOpen}
-                      >
-                        <PopoverTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="group w-[100px] p-1 text-fg.2 bg-bg.2 h-[24px]"
-                          >
-                            <span
-                              className={cn(
-                                "w-full text-left",
-                                field.value
-                                  ? "text-fg.0"
-                                  : "group-hover:text-fg.2",
-                              )}
-                            >
-                              {field.value ? field.value : " Select"}
-                            </span>
-                            <Icon
-                              path={mdiUnfoldMoreHorizontal}
-                              size={2 / 3}
-                              className="group-hover:text-fg.0"
-                            />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <Command>
-                            <CommandInput />
-                            <CommandList>
-                              <CommandEmpty>No results found.</CommandEmpty>
-                              <CommandGroup>
-                                <CommandItem
-                                  onSelect={() => {
-                                    field.onChange(undefined);
-                                    setSelectDifficultyOpen(false);
-                                  }}
-                                  className="flex gap-[8px]"
-                                >
-                                  <Icon
-                                    path={mdiCheck}
-                                    size={1}
-                                    className={cn(
-                                      field.value === undefined
-                                        ? "opacity-100"
-                                        : "opacity-0",
-                                    )}
-                                  />
-                                  <span>None</span>
-                                </CommandItem>
-                                {Array.from({ length: 6 }, (_, i) => i + 1).map(
-                                  (difficulty) => (
-                                    <CommandItem
-                                      key={difficulty}
-                                      onSelect={() => {
-                                        field.onChange(difficulty);
-                                        setSelectDifficultyOpen(false);
-                                      }}
-                                      className="flex gap-[8px]"
-                                    >
-                                      <Icon
-                                        path={mdiCheck}
-                                        size={1}
-                                        className={cn(
-                                          field.value === difficulty
-                                            ? "opacity-100"
-                                            : "opacity-0",
-                                        )}
-                                      />
-                                      <span>{difficulty}</span>
-                                    </CommandItem>
-                                  ),
-                                )}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
+                      <Select value={field.value ? field.value.toString() : "none"} onValueChange={(val) => field.onChange(val === "none" ? undefined : Number(val))}>
+                        <SelectTrigger
+                          className={cn(!field.value && "text-fg.2", "w-32")}>
+                          <SelectValue placeholder="Select a difficulty" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          <SelectSeparator />
+                          {Array.from({ length: 6 }, (_, i) => (
+                            <SelectItem key={i + 1} value={(i + 1).toString()}>
+                              Grade {i + 1}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -384,12 +309,21 @@ export function Wizard() {
                 control={pieceForm.control}
                 name="yearPublished"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col gap-[4px]">
+                  <FormItem className="flex flex-col space-y-1">
                     <FormLabel className="whitespace-nowrap">
                       Year Published
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} className="h-fit p-1" />
+                      <Input
+                        onBeforeInput={(e) => {
+                          if (e.data && !/[\d]/.test(e.data)) {
+                            e.preventDefault();
+                          }
+                        }}
+                        maxLength={4}
+                        className="w-32"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -410,76 +344,61 @@ export function Wizard() {
             />
           </div>
           <Popover>
-            <PopoverAnchor>
-              <PopoverContent className="flex flex-col gap-[8px] pb-[8px] w-screen bg-sidebar-bg.default">
-                <FormField
-                  control={pieceForm.control}
-                  name="arrangers"
-                  render={({ field }) => (
-                    <SelectMusicians
-                      role={field.name}
-                      key={field.name}
-                      {...field}
-                    />
-                  )}
-                />
-                <FormField
-                  control={pieceForm.control}
-                  name="orchestrators"
-                  render={({ field }) => (
-                    <SelectMusicians
-                      role={field.name}
-                      key={field.name}
-                      {...field}
-                    />
-                  )}
-                />
-                <FormField
-                  control={pieceForm.control}
-                  name="transcribers"
-                  render={({ field }) => (
-                    <SelectMusicians
-                      role={field.name}
-                      key={field.name}
-                      {...field}
-                    />
-                  )}
-                />
-                <FormField
-                  control={pieceForm.control}
-                  name="lyricists"
-                  render={({ field }) => (
-                    <SelectMusicians
-                      role={field.name}
-                      key={field.name}
-                      {...field}
-                    />
-                  )}
-                />
-                <PopoverTrigger asChild className="group">
-                  <Button
-                    variant="main"
-                    type="button"
-                    className="w-full flex items-center justify-center"
-                  >
-                    <Icon
-                      path={mdiChevronDown}
-                      size={1}
-                      className="group-data-[state=open]:rotate-180"
-                    />
-                  </Button>
-                </PopoverTrigger>
-              </PopoverContent>
-            </PopoverAnchor>
-            <PopoverTrigger asChild className="data-[state=open]:hidden">
+            <PopoverTrigger asChild className="group">
               <Button
                 variant="main"
                 type="button"
-                className="w-full flex items-center justify-center"
+                className="w-full flex items-center justify-center p-1"
               >
-                <Icon path={mdiChevronDown} size={1} />
+                <Icon path={mdiChevronDown} size={1} className="group-data-[state=open]:rotate-180 transition-transform" />
               </Button>
             </PopoverTrigger>
+            <PopoverContent className="flex flex-col gap-[4px] pt-[0px] border-none w-screen bg-sidebar-bg.default">
+              <FormField
+                control={pieceForm.control}
+                name="arrangers"
+                render={({ field }) => (
+                  <SelectMusicians
+                    role={field.name}
+                    key={field.name}
+                    {...field}
+                  />
+                )}
+              />
+              <FormField
+                control={pieceForm.control}
+                name="orchestrators"
+                render={({ field }) => (
+                  <SelectMusicians
+                    role={field.name}
+                    key={field.name}
+                    {...field}
+                  />
+                )}
+              />
+              <FormField
+                control={pieceForm.control}
+                name="transcribers"
+                render={({ field }) => (
+                  <SelectMusicians
+                    role={field.name}
+                    key={field.name}
+                    {...field}
+                  />
+                )}
+              />
+              <FormField
+                control={pieceForm.control}
+                name="lyricists"
+                render={({ field }) => (
+                  <SelectMusicians
+                    role={field.name}
+                    key={field.name}
+                    {...field}
+                  />
+                )}
+              />
+            </PopoverContent>
           </Popover>
         </div>
         <Separator />
@@ -562,6 +481,6 @@ export function Wizard() {
           </AlertDialog>
         </div>
       </form>
-    </Form>
+    </Form >
   );
 }

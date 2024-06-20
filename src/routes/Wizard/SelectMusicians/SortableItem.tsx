@@ -30,8 +30,8 @@ export function SortableItem(props: {
 
   return (
     <div ref={setNodeRef} style={style}>
-      <Badge className="gap-2">
-        <Button type="button" variant="main" className="p-1 h-fit self-center"  {...attributes} {...listeners}>
+      <Badge className="gap-2 px-[4px] py-[2px]">
+        <Button type="button" variant="main" className="p-0 h-fit self-center"  {...attributes} {...listeners}>
           <Icon path={mdiDragVertical} size={2 / 3} className="shrink-0 self-center" />
         </Button>
         {children}
