@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectContent,
   SelectValue,
+  SelectSeparator,
 } from "@/components/ui/select";
 import {
   clearDifficultyMax,
@@ -61,6 +62,7 @@ export function Difficulty() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="none">None</SelectItem>
+            <SelectSeparator />
             {Array.from({ length: 6 }, (_, i) => (
               <SelectItem key={i + 1} value={(i + 1).toString()}>
                 Grade {i + 1}

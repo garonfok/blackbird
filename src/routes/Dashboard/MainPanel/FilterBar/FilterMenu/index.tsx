@@ -36,7 +36,7 @@ export function FilterMenu() {
                   Tags
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px]">
+              <PopoverContent side="right" align="start" className="p-[4px]">
                 <Tags />
               </PopoverContent>
             </Popover>
@@ -46,7 +46,7 @@ export function FilterMenu() {
                   Year Published
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px] w-fit">
+              <PopoverContent side="right" align="start" className="p-[4px] w-fit">
                 <Year />
               </PopoverContent>
             </Popover>
@@ -56,7 +56,7 @@ export function FilterMenu() {
                   Difficulty
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px] w-fit">
+              <PopoverContent side="right" align="start" className="p-[4px] w-fit">
                 <Difficulty />
               </PopoverContent>
             </Popover>
@@ -66,7 +66,7 @@ export function FilterMenu() {
                   Instruments
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px]">
+              <PopoverContent side="right" align="start" className="p-[4px]">
                 <Instruments />
               </PopoverContent>
             </Popover>
@@ -79,7 +79,7 @@ export function FilterMenu() {
                   Composers
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px]">
+              <PopoverContent side="right" align="start" className="p-[4px]">
                 <Composers />
               </PopoverContent>
             </Popover>
@@ -89,7 +89,7 @@ export function FilterMenu() {
                   Arrangers
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px]">
+              <PopoverContent side="right" align="start" className="p-[4px]">
                 <Arrangers />
               </PopoverContent>
             </Popover>
@@ -99,7 +99,7 @@ export function FilterMenu() {
                   Orchestrators
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px]">
+              <PopoverContent side="right" align="start" className="p-[4px]">
                 <Orchestrators />
               </PopoverContent>
             </Popover>
@@ -109,7 +109,7 @@ export function FilterMenu() {
                   Transcribers
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px]">
+              <PopoverContent side="right" align="start" className="p-[4px]">
                 <Transcribers />
               </PopoverContent>
             </Popover>
@@ -119,7 +119,7 @@ export function FilterMenu() {
                   Lyricists
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" className="p-[4px]">
+              <PopoverContent side="right" align="start" className="p-[4px]">
                 <Lyricists />
               </PopoverContent>
             </Popover>
