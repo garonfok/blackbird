@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { mdiUploadMultipleOutline } from "@mdi/js";
+import { mdiUpload } from "@mdi/js";
 import Icon from "@mdi/react";
 import { open } from "@tauri-apps/api/dialog";
 import { Event, listen } from "@tauri-apps/api/event";
@@ -151,7 +151,7 @@ export function FilePanel(props: {
         <span className="flex gap-[8px] justify-between items-center">
           <Label>Uploaded Files</Label>
           <Button onClick={handleClickUpload} type="button" variant="main" className="p-1">
-            <Icon path={mdiUploadMultipleOutline} size={1} />
+            <Icon path={mdiUpload} size={1} />
           </Button>
         </span >
       )}

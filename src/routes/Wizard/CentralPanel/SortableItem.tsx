@@ -1,14 +1,13 @@
 import { ByteFile } from "@/app/types";
-import { formatPartNumbers } from "@/app/utils";
+import { cn, formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/app/utils";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { mdiCheck, mdiChevronDown, mdiClose, mdiDragVertical, mdiFile } from "@mdi/js";
+import { mdiCheck, mdiChevronDown, mdiClose, mdiDotsHorizontal, mdiDragVertical, mdiFile } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -122,7 +121,7 @@ export function SortableItem(props: {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex item-center gap-[4px] p-[4px] border border-divider.default rounded-default bg-main-bg.default"
+      className="flex item-center gap-[4px] px-[8px] py-[2px] border border-divider.default rounded-default bg-main-bg.default"
     >
       <Button
         type="button"
@@ -137,7 +136,16 @@ export function SortableItem(props: {
           className="shrink-0 self-center"
         />
       </Button>
-      <span className="grow self-center">{item.name}</span>
+      <span className="gap-[8px] flex grow w-36 items-center">
+        <span className="w-full truncate">
+          {item.name}
+        </span>
+        <div>
+          <Button variant="link" className="p-1" type="button">
+            <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
+          </Button>
+        </div>
+      </span>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -145,12 +153,18 @@ export function SortableItem(props: {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn("w-64 justify-between border-divider.default bg-bg.2", (isOver && active?.id.toString().startsWith("f")) && "border-divider.focus")}
+            className={cn("max-w-64 w-full self-center h-fit px-[4px] py-[2px] justify-between border-divider.default bg-bg.2", (isOver && active?.id.toString().startsWith("f")) && "border-divider.focus")}
           >
-            <div className="flex gap-1 flex-wrap truncate">
-              {item.file ? item.file.name : (<span className="text-fg.2">Select file</span>)}
+            <div className="flex gap-1 flex-wrap w-full">
+              {item.file ? (
+                <span className="flex w-full items-center relative">
+                  <span className="absolute w-full truncate text-start">
+                    {item.file.name}
+                  </span>
+                </span>
+              ) : (<span className="text-fg.2">Select file</span>)}
             </div>
-            <Icon path={mdiChevronDown} size={1} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", open && "rotate-180")} />
+            <Icon path={mdiChevronDown} size={2 / 3} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", open && "rotate-180")} />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 p-0">
@@ -166,10 +180,8 @@ export function SortableItem(props: {
                       className="text-fg.2">
                       <Icon
                         path={mdiCheck}
-                        size={1}
-                        className={cn(
-                          "mr-2 opacity-0",
-                        )}
+                        size={2 / 3}
+                        className="mr-2 shrink-0 opacity-0"
                       />
                       None
                     </CommandItem>
@@ -187,13 +199,15 @@ export function SortableItem(props: {
                             item.file?.id === file.id ? "opacity-100" : "opacity-0",
                           )}
                         />
-                        <span className="flex gap-[8px] items-center">
+                        <span className="flex gap-[8px] items-center w-full">
                           <Icon
                             path={mdiFile}
                             size={2 / 3}
                             className="shrink-0"
                           />
-                          {file.name}
+                          <div className="relative flex w-full items-center">
+                            <span className="absolute truncate w-full">{file.name}</span>
+                          </div>
                         </span>
                       </CommandItem>
                     ))}
