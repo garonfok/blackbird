@@ -22,9 +22,8 @@ import {
 import { Input } from "@/components/ui/input";
 import {
   Popover,
-  PopoverAnchor,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
@@ -259,7 +258,7 @@ export function Wizard() {
         onSubmit={pieceForm.handleSubmit(onSubmitPieceForm)}
         className="bg-main-bg.default h-screen w-screen flex flex-col"
       >
-        <div className="px-[14px] py-[8px] flex flex-col gap-[4px] bg-sidebar-bg.default">
+        <div className="px-[14px] pt-[8px] pb-[4px] flex flex-col gap-[4px] bg-sidebar-bg.default">
           <div className="flex flex-col gap-[4px]">
             <div className="flex gap-[8px]">
               <FormField
@@ -344,13 +343,13 @@ export function Wizard() {
             />
           </div>
           <Popover>
-            <PopoverTrigger asChild className="group">
+            <PopoverTrigger asChild className="group/popover-trigger">
               <Button
                 variant="main"
                 type="button"
                 className="w-full flex items-center justify-center p-1"
               >
-                <Icon path={mdiChevronDown} size={1} className="group-data-[state=open]:rotate-180 transition-transform" />
+                <Icon path={mdiChevronDown} size={1} className="group-data-[state=open]/popover-trigger:rotate-180 transition-transform" />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="flex flex-col gap-[4px] pt-[0px] border-none w-screen bg-sidebar-bg.default">
