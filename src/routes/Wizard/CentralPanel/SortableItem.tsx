@@ -1,6 +1,7 @@
 import { ByteFile } from "@/app/types";
 import { cn, formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -136,10 +137,15 @@ export function SortableItem(props: {
           className="shrink-0 self-center"
         />
       </Button>
+      <div
+        className="flex items-center pr-[8px]"
+      >
+        <Checkbox id={item.id.toString()} />
+      </div>
       <span className="gap-[8px] flex grow w-36 items-center">
-        <span className="w-full truncate">
+        <label htmlFor={item.id.toString()} className="w-full truncate">
           {item.name}
-        </span>
+        </label>
         <div>
           <Button variant="link" className="p-1" type="button">
             <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
