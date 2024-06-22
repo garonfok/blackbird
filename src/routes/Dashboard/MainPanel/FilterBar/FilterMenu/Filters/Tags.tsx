@@ -56,7 +56,7 @@ export function Tags() {
                       onCheckedChange={(checked) => handleChange(checked, tag)}
                       checked={filter.tags.some((t) => t.id === tag.id)}
                     />
-                    <span>{tag.name}</span>
+                    <span className="text-fg.1">{tag.name}</span>
                   </label>
                 </CommandItem>
               ))}
