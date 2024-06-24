@@ -1,7 +1,7 @@
 import { ByteFile } from "@/app/types";
 import { cn, formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Checkbox, CheckedState } from "@/components/ui/checkbox";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -10,7 +10,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { mdiCheck, mdiChevronDown, mdiClose, mdiDotsHorizontal, mdiDragVertical, mdiFile } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useState } from "react";
+import { useState, Dispatch, SetStateAction, MouseEventHandler } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { partFormSchema, pieceFormSchema, scoreFormSchema } from "../types";
@@ -20,12 +20,17 @@ export function SortableItem(props: {
   pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>;
   item: z.infer<typeof partFormSchema> | z.infer<typeof scoreFormSchema>;
   uploadedFiles: ByteFile[];
+  checkedMap: Map<string, CheckedState>;
+  setCheckedMap: Dispatch<SetStateAction<Map<string, CheckedState>>>
+  handleClickCheck: MouseEventHandler<HTMLButtonElement>
 }) {
-  const { id, pieceForm, item, uploadedFiles } = props;
+  const { id, pieceForm, item, uploadedFiles, checkedMap, setCheckedMap, handleClickCheck } = props;
 
   const [open, setOpen] = useState(false);
 
   const type = item.hasOwnProperty("instruments") ? "parts" : "scores";
+
+  const checked = checkedMap.get(id.toString())!
 
   const {
     attributes,
@@ -52,6 +57,8 @@ export function SortableItem(props: {
       type,
       pieceForm.getValues(type).filter((item) => item.id.toString() !== id.toString().slice(1)),
     );
+    checkedMap.delete(id.toString());
+    setCheckedMap(new Map(checkedMap));
     formatPartNumbers(pieceForm);
   }
 
@@ -118,6 +125,11 @@ export function SortableItem(props: {
     setOpen(false)
   }
 
+  // function handleCheckedChange(state: CheckedState) {
+  //   checkedMap.set(id.toString(), state);
+  //   setCheckedMap(new Map(checkedMap));
+  // }
+
   return (
     <div
       ref={setNodeRef}
@@ -140,7 +152,7 @@ export function SortableItem(props: {
       <div
         className="flex items-center pr-[8px]"
       >
-        <Checkbox id={item.id.toString()} />
+        <Checkbox id={item.id.toString()} checked={checked} onClick={handleClickCheck} />
       </div>
       <span className="gap-[8px] flex grow w-36 items-center">
         <label htmlFor={item.id.toString()} className="w-full truncate">

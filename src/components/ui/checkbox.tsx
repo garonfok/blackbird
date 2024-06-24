@@ -5,6 +5,8 @@ import { cn } from "@/app/utils"
 import { mdiCheckBold, mdiMinusThick } from "@mdi/js"
 import Icon from "@mdi/react"
 
+export type CheckedState = boolean | "indeterminate"
+
 const Checkbox = React.forwardRef<
   React.ElementRef<typeof CheckboxPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
