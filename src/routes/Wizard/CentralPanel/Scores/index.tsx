@@ -1,6 +1,6 @@
 import { ByteFile } from "@/app/types";
 import { Button } from "@/components/ui/button";
-import { CheckedState } from "@/components/ui/checkbox";
+import { Checkbox, CheckedState } from "@/components/ui/checkbox";
 import { FormField } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -8,7 +8,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { mdiPlus } from "@mdi/js";
+import { mdiDotsHorizontal, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
 import { MouseEvent, useState } from "react";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
@@ -69,23 +69,62 @@ export function Scores(props: {
     setAnchor(index);
   }
 
+  function getHeaderCheckedState() {
+    if (checkedMap.size === 0) {
+      return false;
+    }
+
+    if (Array.from(checkedMap.values()).every((value) => value)) {
+      return true;
+    }
+    if (Array.from(checkedMap.values()).every((value) => !value)) {
+      return false;
+    }
+    return "indeterminate";
+  }
+
+  function handleCheckHeader() {
+    const newCheckedMap = new Map<string, CheckedState>();
+
+    const values = Array.from(checkedMap.values());
+
+    if (values.every((value) => !value)) {
+      for (const key of checkedMap.keys()) {
+        newCheckedMap.set(key, true);
+      }
+    } else {
+      for (const key of checkedMap.keys()) {
+        newCheckedMap.set(key, false);
+      }
+    }
+
+    setCheckedMap(newCheckedMap);
+  }
+
   return (
     <FormField
       control={pieceForm.control}
       name="scores"
       render={({ field }) => (
         <div className="flex flex-col gap-[8px] h-full">
-          <span className="flex gap-[14px] items-center">
+          <Separator />
+          <div className="flex items-center px-[10px] gap-[4px] h-[27px]">
             <Button
               type="button"
               variant="main"
+              className="p-1"
               onClick={() => handleClickAddScore(field)}
             >
               <Icon path={mdiPlus} size={2 / 3} />
-              Add score
             </Button>
-          </span>
-          <Separator />
+            <Checkbox
+              checked={getHeaderCheckedState()}
+              onCheckedChange={handleCheckHeader}
+            />
+            <Button variant="link" className="p-1" type="button">
+              <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
+            </Button>
+          </div>
           <SortableContext
             id="score-list"
             items={field.value.map((score) => `s${score.id}`)}

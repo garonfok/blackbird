@@ -2,7 +2,7 @@ import { instrumentsGetAll } from "@/app/invokers";
 import { ByteFile, Instrument } from "@/app/types";
 import { formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
-import { CheckedState } from "@/components/ui/checkbox";
+import { Checkbox, CheckedState } from "@/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -23,7 +23,12 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { mdiContentSaveOutline, mdiPlus, mdiTextBoxOutline } from "@mdi/js";
+import {
+  mdiContentSaveOutline,
+  mdiDotsHorizontal,
+  mdiPlus,
+  mdiTextBoxOutline,
+} from "@mdi/js";
 import Icon from "@mdi/react";
 import { MouseEvent, useEffect, useState } from "react";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
@@ -125,6 +130,38 @@ export function Parts(props: {
     setAnchor(index);
   }
 
+  function getHeaderCheckedState() {
+    if (checkedMap.size === 0) {
+      return false;
+    }
+
+    if (Array.from(checkedMap.values()).every((value) => value)) {
+      return true;
+    }
+    if (Array.from(checkedMap.values()).every((value) => !value)) {
+      return false;
+    }
+    return "indeterminate";
+  }
+
+  function handleCheckHeader() {
+    const newCheckedMap = new Map<string, CheckedState>();
+
+    const values = Array.from(checkedMap.values());
+
+    if (values.every((value) => !value)) {
+      for (const key of checkedMap.keys()) {
+        newCheckedMap.set(key, true);
+      }
+    } else {
+      for (const key of checkedMap.keys()) {
+        newCheckedMap.set(key, false);
+      }
+    }
+
+    setCheckedMap(newCheckedMap);
+  }
+
   return (
     <FormField
       control={pieceForm.control}
@@ -136,17 +173,25 @@ export function Parts(props: {
               <Icon path={mdiTextBoxOutline} size={2 / 3} />
               Load from template
             </Button>
+            {field.value.length > 0 && (
+              <Button type="button" variant="main">
+                <Icon path={mdiContentSaveOutline} size={2 / 3} />
+                Save as template
+              </Button>
+            )}
+          </span>
+          <Separator />
+          <div className="flex items-center px-[10px] gap-[4px] h-[27px]">
             <Popover
               open={selectInstrumentOpen}
               onOpenChange={setSelectInstrumentOpen}
             >
               <PopoverTrigger asChild>
-                <Button type="button" variant="main">
+                <Button type="button" variant="main" className="p-1">
                   <Icon path={mdiPlus} size={2 / 3} />
-                  Add part
                 </Button>
               </PopoverTrigger>
-              <PopoverContent>
+              <PopoverContent align="start">
                 <Command>
                   <CommandInput placeholder="Search for an instrument" />
                   <CommandList>
@@ -174,14 +219,14 @@ export function Parts(props: {
                 </Command>
               </PopoverContent>
             </Popover>
-            {field.value.length > 0 && (
-              <Button type="button" variant="main">
-                <Icon path={mdiContentSaveOutline} size={2 / 3} />
-                Save as template
-              </Button>
-            )}
-          </span>
-          <Separator />
+            <Checkbox
+              checked={getHeaderCheckedState()}
+              onCheckedChange={handleCheckHeader}
+            />
+            <Button variant="link" className="p-1" type="button">
+              <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
+            </Button>
+          </div>
           <SortableContext
             id="part-list"
             items={field.value.map((part) => `p${part.id}`)}

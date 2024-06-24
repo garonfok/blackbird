@@ -139,7 +139,7 @@ export function SortableItem(props: {
       <Button
         type="button"
         variant="main"
-        className="p-1 h-fit self-center"
+        className="p-[4px] h-fit self-center"
         {...attributes}
         {...listeners}
       >
