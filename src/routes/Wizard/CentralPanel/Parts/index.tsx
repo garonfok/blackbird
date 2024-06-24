@@ -73,7 +73,16 @@ export function Parts(props: {
       setInstruments(groupedInstruments);
     }
 
+    function resetCheckboxStates() {
+      const newCheckedMap = new Map<string, CheckedState>();
+      pieceForm.getValues("parts").forEach((part) => {
+        newCheckedMap.set(`p${part.id}`, false);
+      });
+      setCheckedMap(newCheckedMap);
+    }
+
     fetchInstruments();
+    resetCheckboxStates();
   }, []);
 
   function handleSelectInstrument(

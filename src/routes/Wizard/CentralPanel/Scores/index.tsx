@@ -10,7 +10,7 @@ import {
 } from "@dnd-kit/sortable";
 import { mdiDotsHorizontal, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { pieceFormSchema } from "../../types";
@@ -24,6 +24,18 @@ export function Scores(props: {
 
   const [anchor, setAnchor] = useState(0);
   const [checkedMap, setCheckedMap] = useState(new Map<string, CheckedState>());
+
+  useEffect(() => {
+    function resetCheckboxStates() {
+      const newCheckedMap = new Map<string, CheckedState>();
+      pieceForm.getValues("scores").forEach((score) => {
+        newCheckedMap.set(`s${score.id}`, false);
+      });
+      setCheckedMap(newCheckedMap);
+    }
+
+    resetCheckboxStates();
+  }, [])
 
   function handleClickAddScore(
     field: ControllerRenderProps<z.infer<typeof pieceFormSchema>, "scores">,
