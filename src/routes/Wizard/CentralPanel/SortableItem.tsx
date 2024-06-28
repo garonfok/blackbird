@@ -3,6 +3,7 @@ import { cn, formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox, CheckedState } from "@/components/ui/checkbox";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { UniqueIdentifier } from "@dnd-kit/core";
@@ -14,7 +15,7 @@ import { Dispatch, MouseEventHandler, SetStateAction, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { partFormSchema, pieceFormSchema, scoreFormSchema } from "../types";
-import { removeItem } from "./menuUtils";
+import { clearFile, duplicate, moveAbove, moveBelow, removeItem } from "./menuUtils";
 
 export function SortableItem(props: {
   id: UniqueIdentifier;
@@ -90,6 +91,10 @@ export function SortableItem(props: {
     setOpen(false)
   }
 
+  function handleClickRename() {
+
+  }
+
   function handleClearFile() {
     if (type === "parts") {
       pieceForm.setValue(
@@ -121,6 +126,26 @@ export function SortableItem(props: {
     setOpen(false)
   }
 
+  function handleClickClearFile() {
+    clearFile(parseInt(id.toString().slice(1)), type, pieceForm);
+  }
+
+
+  function handleClickDuplicate() {
+    duplicate(parseInt(id.toString().slice(1)), type, pieceForm);
+    if (type === "parts") {
+      formatPartNumbers(pieceForm);
+    }
+  }
+
+  function handleClickMoveAbove() {
+    moveAbove([parseInt(id.toString().slice(1))], type, pieceForm);
+  }
+
+  function handleClickMoveBelow() {
+    moveBelow([parseInt(id.toString().slice(1))], type, pieceForm);
+  }
+
   return (
     <div
       ref={setNodeRef}
@@ -150,9 +175,36 @@ export function SortableItem(props: {
           {item.name}
         </label>
         <div>
-          <Button variant="link" className="p-1" type="button">
-            <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="link" className="p-0" type="button">
+                <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={handleClickRename}>
+                Rename
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleClickClearFile}>
+                Clear file
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleClickMoveAbove}>
+                Move above
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleClickMoveBelow}>
+                Move below
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleClickDuplicate}>
+                Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleClickRemoveItem}>
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </span>
       <Popover open={open} onOpenChange={setOpen}>
