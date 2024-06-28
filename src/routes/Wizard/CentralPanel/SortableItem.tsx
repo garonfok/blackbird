@@ -10,10 +10,11 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { mdiCheck, mdiChevronDown, mdiClose, mdiDotsHorizontal, mdiDragVertical, mdiFile } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useState, Dispatch, SetStateAction, MouseEventHandler } from "react";
+import { Dispatch, MouseEventHandler, SetStateAction, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { partFormSchema, pieceFormSchema, scoreFormSchema } from "../types";
+import { removeItem } from "./menuUtils";
 
 export function SortableItem(props: {
   id: UniqueIdentifier;
@@ -53,12 +54,7 @@ export function SortableItem(props: {
   };
 
   function handleClickRemoveItem() {
-    pieceForm.setValue(
-      type,
-      pieceForm.getValues(type).filter((item) => item.id.toString() !== id.toString().slice(1)),
-    );
-    checkedMap.delete(id.toString());
-    setCheckedMap(new Map(checkedMap));
+    removeItem(parseInt(id.toString().slice(1)), type, pieceForm, checkedMap, setCheckedMap);
     formatPartNumbers(pieceForm);
   }
 
@@ -124,11 +120,6 @@ export function SortableItem(props: {
     }
     setOpen(false)
   }
-
-  // function handleCheckedChange(state: CheckedState) {
-  //   checkedMap.set(id.toString(), state);
-  //   setCheckedMap(new Map(checkedMap));
-  // }
 
   return (
     <div

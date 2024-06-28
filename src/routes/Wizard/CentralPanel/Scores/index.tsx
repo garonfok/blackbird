@@ -1,6 +1,7 @@
 import { ByteFile } from "@/app/types";
 import { Button } from "@/components/ui/button";
 import { Checkbox, CheckedState } from "@/components/ui/checkbox";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { FormField } from "@/components/ui/form";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -15,6 +16,7 @@ import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { pieceFormSchema } from "../../types";
 import { SortableItem } from "../SortableItem";
+import { clearFile, duplicate, moveAbove, moveBelow, removeItem } from "../menuUtils";
 
 export function Scores(props: {
   pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>;
@@ -113,6 +115,45 @@ export function Scores(props: {
     setCheckedMap(newCheckedMap);
   }
 
+  function handleClickClearFile() {
+    for (const [key, value] of checkedMap.entries()) {
+      if (value) {
+        clearFile(parseInt(key.slice(1)), "scores", pieceForm);
+      }
+    }
+  }
+
+  function handleClickDuplicate() {
+    for (const [key, value] of checkedMap.entries()) {
+      if (value) {
+        duplicate(parseInt(key.slice(1)), "scores", pieceForm);
+      }
+    }
+  }
+
+  function handleClickMoveAbove() {
+    const selectedIds = Array.from(checkedMap.entries())
+      .filter((entry) => entry[1])
+      .map((entry) => parseInt(entry[0].slice(1)));
+    moveAbove(selectedIds, "scores", pieceForm);
+  }
+
+  function handleClickMoveBelow() {
+    const selectedIds = Array.from(checkedMap.entries())
+      .filter((entry) => entry[1])
+      .map((entry) => parseInt(entry[0].slice(1)));
+    moveBelow(selectedIds, "scores", pieceForm);
+  }
+
+  function handleClickRemoveItem() {
+    for (const [key, value] of checkedMap.entries()) {
+      if (value) {
+        removeItem(parseInt(key.slice(1)), "scores", pieceForm, checkedMap, setCheckedMap);
+      }
+    }
+  }
+
+
   return (
     <FormField
       control={pieceForm.control}
@@ -120,7 +161,7 @@ export function Scores(props: {
       render={({ field }) => (
         <div className="flex flex-col gap-[8px] h-full">
           <Separator />
-          <div className="flex items-center px-[10px] gap-[4px] h-[27px]">
+          <div className="flex items-center px-[10px] gap-[4px]">
             <Button
               type="button"
               variant="main"
@@ -133,9 +174,35 @@ export function Scores(props: {
               checked={getHeaderCheckedState()}
               onCheckedChange={handleCheckHeader}
             />
-            <Button variant="link" className="p-1" type="button">
-              <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
-            </Button>
+            {Array.from(checkedMap.values()).filter((val) => val).length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="link" className="p-0" type="button">
+                    <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem onClick={handleClickClearFile}>
+                    Clear file
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleClickMoveAbove}>
+                    Move above
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleClickMoveBelow}>
+                    Move below
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleClickDuplicate}>
+                    Duplicate
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleClickRemoveItem}>
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
           <SortableContext
             id="score-list"
