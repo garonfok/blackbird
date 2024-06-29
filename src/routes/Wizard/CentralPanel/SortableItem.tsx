@@ -174,38 +174,36 @@ export function SortableItem(props: {
         <label htmlFor={item.id.toString()} className="w-full truncate">
           {item.name}
         </label>
-        <div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="link" className="p-0" type="button">
-                <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem onClick={handleClickRename}>
-                Rename
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleClickClearFile}>
-                Clear file
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleClickMoveAbove}>
-                Move above
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleClickMoveBelow}>
-                Move below
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleClickDuplicate}>
-                Duplicate
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleClickRemoveItem}>
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="link" className="p-0" type="button">
+              <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem onClick={handleClickRename}>
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleClickClearFile}>
+              Clear file
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleClickMoveAbove}>
+              Move above
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleClickMoveBelow}>
+              Move below
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleClickDuplicate}>
+              Duplicate
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleClickRemoveItem}>
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </span>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
