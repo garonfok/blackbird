@@ -22,8 +22,8 @@ export const pieceFormSchema = z.object({
   title: z.string().min(1, {
     message: "Title is required",
   }),
-  yearPublished: z.number().nullish(),
-  difficulty: z.number().nullish(),
+  yearPublished: z.number().optional(),
+  difficulty: z.number().optional(),
   notes: z.string(),
   tags: z.array(tagSchema),
   composers: z.array(musicianSchema).nonempty({
