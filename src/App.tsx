@@ -36,7 +36,7 @@ async function loadWizard({ params }: { params: Params<string> }) {
   const { pieceId } = params;
   if (!pieceId) return
 
-  const dbPiece = await piecesGet({ id: Number(pieceId) })
+  const dbPiece = await piecesGet({ id: parseInt(pieceId) })
 
   const { piece, files } = await getPieceFromDb(dbPiece)
 

@@ -284,7 +284,7 @@ export function Wizard() {
                   <FormItem className="flex flex-col space-y-1">
                     <FormLabel>Difficulty</FormLabel>
                     <FormControl>
-                      <Select value={field.value ? field.value.toString() : "none"} onValueChange={(val) => field.onChange(val === "none" ? undefined : Number(val))}>
+                      <Select value={field.value ? field.value.toString() : "none"} onValueChange={(val) => field.onChange(val === "none" ? undefined : parseInt(val))}>
                         <SelectTrigger
                           className={cn(!field.value && "text-fg.2", "w-32")}>
                           <SelectValue placeholder="Select a difficulty" />

@@ -32,7 +32,7 @@ export function formatPartNumbers(pieceForm: UseFormReturn<z.infer<typeof pieceF
     const lastSpaceIndex = part.name.lastIndexOf(" ");
     let partName = part.name.substring(0, lastSpaceIndex);
     const partNumber = part.name.substring(lastSpaceIndex + 1);
-    if (lastSpaceIndex === -1 || isNaN(Number(partNumber))) {
+    if (lastSpaceIndex === -1 || isNaN(parseInt(partNumber))) {
       partName = part.name;
     }
 
@@ -54,7 +54,7 @@ export function formatPartNumbers(pieceForm: UseFormReturn<z.infer<typeof pieceF
     const lastSpaceIndex = pieceForm.getValues("parts")[i].name.lastIndexOf(" ");
     let partName = pieceForm.getValues("parts")[i].name.substring(0, lastSpaceIndex);
     const partNumber = pieceForm.getValues("parts")[i].name.substring(lastSpaceIndex + 1);
-    if (lastSpaceIndex === -1 || isNaN(Number(partNumber))) {
+    if (lastSpaceIndex === -1 || isNaN(parseInt(partNumber))) {
       partName = pieceForm.getValues("parts")[i].name;
     }
 
@@ -374,7 +374,7 @@ export async function getPieceFromDb(piece: Piece) {
         bytearray: value.file
       }
     }),
-    pieceId: Number(piece.id)
+    pieceId: parseInt(piece.id)
   }
 
 }
