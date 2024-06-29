@@ -8,5 +8,5 @@ export function General() {
       <OpenOnStartup />
       <WorkingDirectory />
     </ContentWrapper>
-  )
+  );
 }

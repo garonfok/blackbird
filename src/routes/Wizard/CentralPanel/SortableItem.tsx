@@ -2,20 +2,50 @@ import { ByteFile } from "@/app/types";
 import { cn, formatPartNumbers } from "@/app/utils";
 import { Button } from "@/components/ui/button";
 import { Checkbox, CheckedState } from "@/components/ui/checkbox";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { mdiCheck, mdiChevronDown, mdiClose, mdiDotsHorizontal, mdiDragVertical, mdiFile } from "@mdi/js";
+import {
+  mdiCheck,
+  mdiChevronDown,
+  mdiClose,
+  mdiDotsHorizontal,
+  mdiDragVertical,
+  mdiFile,
+} from "@mdi/js";
 import Icon from "@mdi/react";
 import { Dispatch, MouseEventHandler, SetStateAction, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { partFormSchema, pieceFormSchema, scoreFormSchema } from "../types";
-import { clearFile, duplicate, moveAbove, moveBelow, removeItem } from "./menuUtils";
+import {
+  clearFile,
+  duplicate,
+  moveAbove,
+  moveBelow,
+  removeItem,
+} from "./menuUtils";
 
 export function SortableItem(props: {
   id: UniqueIdentifier;
@@ -23,16 +53,24 @@ export function SortableItem(props: {
   item: z.infer<typeof partFormSchema> | z.infer<typeof scoreFormSchema>;
   uploadedFiles: ByteFile[];
   checkedMap: Map<string, CheckedState>;
-  setCheckedMap: Dispatch<SetStateAction<Map<string, CheckedState>>>
-  handleClickCheck: MouseEventHandler<HTMLButtonElement>
+  setCheckedMap: Dispatch<SetStateAction<Map<string, CheckedState>>>;
+  handleClickCheck: MouseEventHandler<HTMLButtonElement>;
 }) {
-  const { id, pieceForm, item, uploadedFiles, checkedMap, setCheckedMap, handleClickCheck } = props;
+  const {
+    id,
+    pieceForm,
+    item,
+    uploadedFiles,
+    checkedMap,
+    setCheckedMap,
+    handleClickCheck,
+  } = props;
 
   const [open, setOpen] = useState(false);
 
   const type = item.hasOwnProperty("instruments") ? "parts" : "scores";
 
-  const checked = checkedMap.get(id.toString())!
+  const checked = checkedMap.get(id.toString())!;
 
   const {
     attributes,
@@ -55,7 +93,13 @@ export function SortableItem(props: {
   };
 
   function handleClickRemoveItem() {
-    removeItem(parseInt(id.toString().slice(1)), type, pieceForm, checkedMap, setCheckedMap);
+    removeItem(
+      parseInt(id.toString().slice(1)),
+      type,
+      pieceForm,
+      checkedMap,
+      setCheckedMap,
+    );
     formatPartNumbers(pieceForm);
   }
 
@@ -88,12 +132,10 @@ export function SortableItem(props: {
       );
     }
 
-    setOpen(false)
+    setOpen(false);
   }
 
-  function handleClickRename() {
-
-  }
+  function handleClickRename() {}
 
   function handleClearFile() {
     if (type === "parts") {
@@ -123,13 +165,12 @@ export function SortableItem(props: {
         }),
       );
     }
-    setOpen(false)
+    setOpen(false);
   }
 
   function handleClickClearFile() {
     clearFile(parseInt(id.toString().slice(1)), type, pieceForm);
   }
-
 
   function handleClickDuplicate() {
     duplicate(parseInt(id.toString().slice(1)), type, pieceForm);
@@ -165,10 +206,12 @@ export function SortableItem(props: {
           className="shrink-0 self-center"
         />
       </Button>
-      <div
-        className="flex items-center pr-[8px]"
-      >
-        <Checkbox id={item.id.toString()} checked={checked} onClick={handleClickCheck} />
+      <div className="flex items-center pr-[8px]">
+        <Checkbox
+          id={item.id.toString()}
+          checked={checked}
+          onClick={handleClickCheck}
+        />
       </div>
       <span className="gap-[8px] flex grow w-36 items-center">
         <label htmlFor={item.id.toString()} className="w-full truncate">
@@ -212,7 +255,12 @@ export function SortableItem(props: {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className={cn("max-w-64 w-full self-center h-fit px-[4px] py-[2px] justify-between border-divider.default bg-bg.2", (isOver && active?.id.toString().startsWith("f")) && "border-divider.focus")}
+            className={cn(
+              "max-w-64 w-full self-center h-fit px-[4px] py-[2px] justify-between border-divider.default bg-bg.2",
+              isOver &&
+                active?.id.toString().startsWith("f") &&
+                "border-divider.focus",
+            )}
           >
             <div className="flex gap-1 flex-wrap w-full">
               {item.file ? (
@@ -221,9 +269,18 @@ export function SortableItem(props: {
                     {item.file.name}
                   </span>
                 </span>
-              ) : (<span className="text-fg.2">Select file</span>)}
+              ) : (
+                <span className="text-fg.2">Select file</span>
+              )}
             </div>
-            <Icon path={mdiChevronDown} size={2 / 3} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", open && "rotate-180")} />
+            <Icon
+              path={mdiChevronDown}
+              size={2 / 3}
+              className={cn(
+                "shrink-0 opacity-50 rotate-0 transition-transform",
+                open && "rotate-180",
+              )}
+            />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-64 p-0">
@@ -236,7 +293,8 @@ export function SortableItem(props: {
                   <div className="max-h-60">
                     <CommandItem
                       onSelect={handleClearFile}
-                      className="text-fg.2">
+                      className="text-fg.2"
+                    >
                       <Icon
                         path={mdiCheck}
                         size={2 / 3}
@@ -255,7 +313,9 @@ export function SortableItem(props: {
                           size={2 / 3}
                           className={cn(
                             "mr-2 shrink-0",
-                            item.file?.id === file.id ? "opacity-100" : "opacity-0",
+                            item.file?.id === file.id
+                              ? "opacity-100"
+                              : "opacity-0",
                           )}
                         />
                         <span className="flex gap-[8px] items-center w-full">
@@ -265,7 +325,9 @@ export function SortableItem(props: {
                             className="shrink-0"
                           />
                           <div className="relative flex w-full items-center">
-                            <span className="absolute truncate w-full">{file.name}</span>
+                            <span className="absolute truncate w-full">
+                              {file.name}
+                            </span>
                           </div>
                         </span>
                       </CommandItem>

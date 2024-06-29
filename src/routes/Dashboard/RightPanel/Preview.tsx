@@ -3,8 +3,18 @@ import { openFolder } from "@/app/invokers";
 import { Piece, Tag } from "@/app/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -45,8 +55,8 @@ export function Preview(props: { piece: Piece }) {
     {
       name: "Lyrics By",
       musicians: piece.lyricists,
-    }
-  ]
+    },
+  ];
 
   return (
     piece && (
@@ -68,11 +78,15 @@ export function Preview(props: { piece: Piece }) {
         <div className="flex flex-col gap-[14px] px-[14px]">
           <div className="flex flex-col gap-[4px]">
             {piece.difficulty && (
-              <span className="text-fg.1 text-body-small-default">Grade {piece.difficulty}</span>
+              <span className="text-fg.1 text-body-small-default">
+                Grade {piece.difficulty}
+              </span>
             )}
             <span className="text-heading-default">{piece.title}</span>
             {piece.year_published && (
-              <span className="text-fg.1 text-body-small-default">{piece.year_published}</span>
+              <span className="text-fg.1 text-body-small-default">
+                {piece.year_published}
+              </span>
             )}
           </div>
           <Dialog>
@@ -86,18 +100,20 @@ export function Preview(props: { piece: Piece }) {
                 <DialogTitle>Credits</DialogTitle>
               </DialogHeader>
               <div className="flex flex-col gap-[14px]">
-                {roles.filter(role => role.musicians.length > 0).map((role) => (
-                  <div key={role.name}>
-                    <Label htmlFor={role.name}>{role.name}</Label>
-                    <span className="flex flex-wrap text-fg.2">
-                      {role.musicians
-                        .map((musician) =>
-                          [musician.first_name, musician.last_name].join(" ")
-                        )
-                        .join(", ")}
-                    </span>
-                  </div>
-                ))}
+                {roles
+                  .filter((role) => role.musicians.length > 0)
+                  .map((role) => (
+                    <div key={role.name}>
+                      <Label htmlFor={role.name}>{role.name}</Label>
+                      <span className="flex flex-wrap text-fg.2">
+                        {role.musicians
+                          .map((musician) =>
+                            [musician.first_name, musician.last_name].join(" "),
+                          )
+                          .join(", ")}
+                      </span>
+                    </div>
+                  ))}
               </div>
             </DialogContent>
           </Dialog>
@@ -107,7 +123,10 @@ export function Preview(props: { piece: Piece }) {
           <div className="flex flex-col gap-[14px] px-[14px]">
             <div className="flex flex-col">
               {piece.scores.map((score) => (
-                <div key={score.id} className="text-sm justify-between gap-[4px] text-fg.2 px-2 py-1 flex items-center group">
+                <div
+                  key={score.id}
+                  className="text-sm justify-between gap-[4px] text-fg.2 px-2 py-1 flex items-center group"
+                >
                   <span className="flex items-center gap-[4px]">
                     <Icon
                       path={!score.path ? mdiCircleOutline : mdiCircle}
@@ -115,7 +134,15 @@ export function Preview(props: { piece: Piece }) {
                     />
                     <span>{score.name}</span>
                   </span>
-                  {score.path && <Button variant='link' className="invisible group-hover:visible" onClick={() => handleClickOpenDirectory(score.path!)}>Open file</Button>}
+                  {score.path && (
+                    <Button
+                      variant="link"
+                      className="invisible group-hover:visible"
+                      onClick={() => handleClickOpenDirectory(score.path!)}
+                    >
+                      Open file
+                    </Button>
+                  )}
                 </div>
               ))}
             </div>
@@ -124,7 +151,11 @@ export function Preview(props: { piece: Piece }) {
                 <div key={part.id}>
                   <Collapsible>
                     <CollapsibleTrigger asChild>
-                      <Button variant="sidebarCollapisble" className="w-full justify-between gap-[4px] group cursor-pointer" asChild>
+                      <Button
+                        variant="sidebarCollapisble"
+                        className="w-full justify-between gap-[4px] group cursor-pointer"
+                        asChild
+                      >
                         <span>
                           <span className="flex items-center gap-[4px]">
                             <Icon
@@ -138,7 +169,17 @@ export function Preview(props: { piece: Piece }) {
                               className="group-data-[state=open]:rotate-180"
                             />
                           </span>
-                          {part.path && <Button variant='link' className="invisible group-hover:visible" onClick={() => handleClickOpenDirectory(part.path!)}>Open file</Button>}
+                          {part.path && (
+                            <Button
+                              variant="link"
+                              className="invisible group-hover:visible"
+                              onClick={() =>
+                                handleClickOpenDirectory(part.path!)
+                              }
+                            >
+                              Open file
+                            </Button>
+                          )}
                         </span>
                       </Button>
                     </CollapsibleTrigger>
@@ -154,17 +195,15 @@ export function Preview(props: { piece: Piece }) {
               ))}
             </div>
           </div>
-        </ScrollArea >
+        </ScrollArea>
         <Separator />
         {piece.notes.length > 0 && (
           <div className="break-words px-[14px] py-[8px]">
             <Label htmlFor="notes">Notes</Label>
-            <p>
-              {piece.notes}
-            </p>
+            <p>{piece.notes}</p>
           </div>
         )}
-      </div >
+      </div>
     )
   );
 }

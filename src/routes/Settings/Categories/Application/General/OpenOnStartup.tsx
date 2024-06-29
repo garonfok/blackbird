@@ -4,8 +4,7 @@ import { SettingsEntry } from "../../components/SettingsEntry";
 import { Switch } from "@/components/ui/switch";
 
 export function OpenOnStartup() {
-  const [checked, setChecked] =
-    useState(false);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     async function initSetting() {
@@ -24,7 +23,7 @@ export function OpenOnStartup() {
       }
     }
     updateSetting();
-  }, [checked])
+  }, [checked]);
 
   return (
     <SettingsEntry

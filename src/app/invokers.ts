@@ -2,282 +2,389 @@ import { invoke } from "@tauri-apps/api";
 import { WebviewWindow } from "@tauri-apps/api/window";
 import { Instrument, Musician, Piece, Setlist, Tag } from "./types";
 
-export async function piecesUpdate({ id, title, notes, yearPublished, path, difficulty }: { id: number, title: string, notes: string, yearPublished?: number, path?: string, difficulty?: number }) {
+export async function piecesUpdate({
+  id,
+  title,
+  notes,
+  yearPublished,
+  path,
+  difficulty,
+}: {
+  id: number;
+  title: string;
+  notes: string;
+  yearPublished?: number;
+  path?: string;
+  difficulty?: number;
+}) {
   await invoke("pieces_update", {
     id,
     title,
     notes,
     yearPublished,
     path,
-    difficulty
-  })
+    difficulty,
+  });
 }
 
-export async function piecesSetTags({ pieceId, tagIds }: { pieceId: number, tagIds: number[] }) {
+export async function piecesSetTags({
+  pieceId,
+  tagIds,
+}: {
+  pieceId: number;
+  tagIds: number[];
+}) {
   await invoke("pieces_set_tags", {
     pieceId,
-    tagIds
-  })
+    tagIds,
+  });
 }
 
-export async function piecesSetMusicians({ pieceId, musicianIds, role }: { pieceId: number, musicianIds: number[], role: "composer" | "arranger" | "orchestrator" | "transcriber" | "lyricist" }) {
+export async function piecesSetMusicians({
+  pieceId,
+  musicianIds,
+  role,
+}: {
+  pieceId: number;
+  musicianIds: number[];
+  role: "composer" | "arranger" | "orchestrator" | "transcriber" | "lyricist";
+}) {
   await invoke("pieces_set_musicians", {
     pieceId,
     musicianIds,
-    role
-  })
+    role,
+  });
 }
 
-export async function scoresAdd({ pieceId, name, path }: { pieceId: number, name: string, path?: string }): Promise<number> {
+export async function scoresAdd({
+  pieceId,
+  name,
+  path,
+}: {
+  pieceId: number;
+  name: string;
+  path?: string;
+}): Promise<number> {
   const scoreId: number = await invoke("scores_add", {
     pieceId,
     name,
-    path
-  })
+    path,
+  });
 
-  return scoreId
+  return scoreId;
 }
 
-export async function partsAdd({ pieceId, name, path }: { pieceId: number, name: string, path?: string }): Promise<number> {
+export async function partsAdd({
+  pieceId,
+  name,
+  path,
+}: {
+  pieceId: number;
+  name: string;
+  path?: string;
+}): Promise<number> {
   const partId: number = await invoke("parts_add", {
     pieceId,
     name,
-    path
-  })
+    path,
+  });
 
-  return partId
+  return partId;
 }
 
-export async function partsSetInstruments({ partId, instrumentIds }: { partId: number, instrumentIds: number[] }) {
+export async function partsSetInstruments({
+  partId,
+  instrumentIds,
+}: {
+  partId: number;
+  instrumentIds: number[];
+}) {
   await invoke("parts_set_instruments", {
     partId,
-    instrumentIds
-  })
+    instrumentIds,
+  });
 }
 
 export async function piecesGet({ id }: { id: number }): Promise<Piece> {
   const piece: Piece = await invoke("pieces_get_by_id", {
-    id
-  })
+    id,
+  });
 
-  return piece
+  return piece;
 }
 
 export async function getWorkingDirectory(): Promise<string> {
-  const workingDirectory: string = await invoke("get_working_directory")
+  const workingDirectory: string = await invoke("get_working_directory");
 
-  return workingDirectory
+  return workingDirectory;
 }
 
 export async function piecesDropScores({ id }: { id: number }) {
   await invoke("pieces_drop_scores", {
-    id
-  })
+    id,
+  });
 }
 
 export async function piecesDropParts({ id }: { id: number }) {
   await invoke("pieces_drop_parts", {
-    id
-  })
+    id,
+  });
 }
 
-export async function piecesAdd({ title, notes, yearPublished, difficulty, path }: { title: string, notes: string, yearPublished?: number, difficulty?: number, path?: string }): Promise<number> {
+export async function piecesAdd({
+  title,
+  notes,
+  yearPublished,
+  difficulty,
+  path,
+}: {
+  title: string;
+  notes: string;
+  yearPublished?: number;
+  difficulty?: number;
+  path?: string;
+}): Promise<number> {
   const pieceId: number = await invoke("pieces_add", {
     title,
     notes,
     yearPublished,
     difficulty,
-    path
-  })
+    path,
+  });
 
-  return pieceId
+  return pieceId;
 }
 
-export async function getDatabaseExists({ path }: { path: string }): Promise<boolean> {
+export async function getDatabaseExists({
+  path,
+}: {
+  path: string;
+}): Promise<boolean> {
   const databaseExists: boolean = await invoke("get_database_exists", {
-    path
-  })
+    path,
+  });
 
-  return databaseExists
+  return databaseExists;
 }
 
-export async function getDirEmpty({ path }: { path: string }): Promise<boolean> {
+export async function getDirEmpty({
+  path,
+}: {
+  path: string;
+}): Promise<boolean> {
   const isDirEmpty: boolean = await invoke("get_dir_empty", {
-    path
-  })
+    path,
+  });
 
-  return isDirEmpty
+  return isDirEmpty;
 }
 
 export async function changeWorkingDirectory({ path }: { path: string }) {
   await invoke("set_working_directory", {
-    path
-  })
+    path,
+  });
 }
 
 export async function openFolder({ path }: { path: string }) {
   await invoke("open", {
-    path
-  })
+    path,
+  });
 }
 
 export async function tagsGetAll(): Promise<Tag[]> {
-  const tags: Tag[] = await invoke("tags_get_all")
+  const tags: Tag[] = await invoke("tags_get_all");
 
-  return tags
+  return tags;
 }
 
 export async function setlistsGetAll(): Promise<Setlist[]> {
-  const setlists: Setlist[] = await invoke("setlists_get_all")
+  const setlists: Setlist[] = await invoke("setlists_get_all");
 
-  return setlists
+  return setlists;
 }
 
 export async function setlistsDelete({ id }: { id: number }) {
   await invoke("setlists_delete", {
-    id
-  })
+    id,
+  });
 }
 
 export async function tagsDelete({ id }: { id: number }) {
   await invoke("tags_delete", {
-    id
-  })
+    id,
+  });
 }
 
-export async function setlistsUpdate({ id, name }: { id: number, name: string }) {
+export async function setlistsUpdate({
+  id,
+  name,
+}: {
+  id: number;
+  name: string;
+}) {
   await invoke("setlists_update", {
     id,
-    name
-  })
+    name,
+  });
 }
 
 export async function setlistsAdd({ name }: { name: string }) {
   await invoke("setlists_add", {
-    name
-  })
+    name,
+  });
 }
 
 export async function tagsAdd({ name }: { name: string }) {
   const tagId: number = await invoke("tags_add", {
     name,
-  })
+  });
 
-  return tagId
+  return tagId;
 }
 
-export async function tagsUpdate({ id, name }: { id: number, name: string }) {
+export async function tagsUpdate({ id, name }: { id: number; name: string }) {
   await invoke("tags_update", {
     id,
     name,
-  })
+  });
 }
 
-export async function openWizard({ pieceId, filePaths }: { pieceId?: number, filePaths?: string[] }) {
+export async function openWizard({
+  pieceId,
+  filePaths,
+}: {
+  pieceId?: number;
+  filePaths?: string[];
+}) {
   if (pieceId) {
     await invoke("open_wizard", {
-      pieceId
-    })
+      pieceId,
+    });
   } else {
-    await invoke("open_wizard")
+    await invoke("open_wizard");
 
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     if (filePaths) {
-      const webviewWizard = WebviewWindow.getByLabel('wizard')!
-      await webviewWizard.emit("file-drop", filePaths)
+      const webviewWizard = WebviewWindow.getByLabel("wizard")!;
+      await webviewWizard.emit("file-drop", filePaths);
     }
   }
 }
 
 export async function piecesGetBySetlist({ setlistId }: { setlistId: number }) {
   const pieces: Piece[] = await invoke("pieces_get_by_setlist", {
-    setlistId
-  })
+    setlistId,
+  });
 
-  return pieces
+  return pieces;
 }
 
 export async function piecesGetAll() {
-  const pieces: Piece[] = await invoke("pieces_get_all")
+  const pieces: Piece[] = await invoke("pieces_get_all");
 
-  return pieces
+  return pieces;
 }
 
 export async function piecesDelete({ id }: { id: number }) {
   await invoke("pieces_delete", {
-    id
-  })
+    id,
+  });
 }
 
-export async function setlistsAddPiece({ setlistId, pieceId }: { setlistId: number, pieceId: number }) {
+export async function setlistsAddPiece({
+  setlistId,
+  pieceId,
+}: {
+  setlistId: number;
+  pieceId: number;
+}) {
   await invoke("setlists_add_piece", {
     setlistId,
-    pieceId
-  })
+    pieceId,
+  });
 }
 
-export async function setlistsRemovePiece({ setlistId, pieceId }: { setlistId: number, pieceId: number }) {
+export async function setlistsRemovePiece({
+  setlistId,
+  pieceId,
+}: {
+  setlistId: number;
+  pieceId: number;
+}) {
   await invoke("setlists_remove_piece", {
     setlistId,
-    pieceId
-  })
+    pieceId,
+  });
 }
 
 export async function instrumentsGetAll() {
-  const instruments: Instrument[] = await invoke("instruments_get_all")
+  const instruments: Instrument[] = await invoke("instruments_get_all");
 
-  return instruments
+  return instruments;
 }
 
 export async function musiciansGetAll() {
-  const musicians: Musician[] = await invoke("musicians_get_all")
+  const musicians: Musician[] = await invoke("musicians_get_all");
 
-  return musicians
+  return musicians;
 }
 
 export async function musiciansDelete({ id }: { id: number }) {
   await invoke("musicians_delete", {
-    id
-  })
+    id,
+  });
 }
 
-export async function musiciansAdd({ firstName, lastName }: { firstName: string, lastName?: string }) {
+export async function musiciansAdd({
+  firstName,
+  lastName,
+}: {
+  firstName: string;
+  lastName?: string;
+}) {
   const musicianId: number = await invoke("musicians_add", {
     firstName,
-    lastName
-  })
+    lastName,
+  });
 
-  return musicianId
+  return musicianId;
 }
 
-
-export async function musiciansUpdate({ id, firstName, lastName }: { id: number, firstName: string, lastName?: string }) {
+export async function musiciansUpdate({
+  id,
+  firstName,
+  lastName,
+}: {
+  id: number;
+  firstName: string;
+  lastName?: string;
+}) {
   await invoke("musicians_update", {
     id,
     firstName,
-    lastName
-  })
+    lastName,
+  });
 }
 
 export async function closeWindow({ windowLabel }: { windowLabel: string }) {
   await invoke("close_window", {
-    windowLabel
-  })
+    windowLabel,
+  });
 }
 
 export async function tagsGet({ id }: { id: number }) {
   const tag: Tag = await invoke("tags_get_by_id", {
-    id
-  })
+    id,
+  });
 
-  return tag
+  return tag;
 }
 
 export async function musiciansGet({ id }: { id: number }) {
   const musician: Musician = await invoke("musicians_get_by_id", {
-    id
-  })
+    id,
+  });
 
-  return musician
+  return musician;
 }

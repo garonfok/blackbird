@@ -35,8 +35,20 @@ import { ControllerRenderProps, UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { pieceFormSchema } from "../../types";
 import { SortableItem } from "../SortableItem";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { clearFile, duplicate, moveAbove, moveBelow, removeItem } from "../menuUtils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  clearFile,
+  duplicate,
+  moveAbove,
+  moveBelow,
+  removeItem,
+} from "../menuUtils";
 
 export function Parts(props: {
   pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>;
@@ -207,7 +219,13 @@ export function Parts(props: {
   function handleClickRemoveItem() {
     for (const [key, value] of checkedMap.entries()) {
       if (value) {
-        removeItem(parseInt(key.slice(1)), "parts", pieceForm, checkedMap, setCheckedMap);
+        removeItem(
+          parseInt(key.slice(1)),
+          "parts",
+          pieceForm,
+          checkedMap,
+          setCheckedMap,
+        );
       }
     }
     formatPartNumbers(pieceForm);
@@ -274,11 +292,16 @@ export function Parts(props: {
               checked={getHeaderCheckedState()}
               onCheckedChange={handleCheckHeader}
             />
-            {Array.from(checkedMap.values()).filter((val) => val).length > 0 && (
+            {Array.from(checkedMap.values()).filter((val) => val).length >
+              0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="link" className="p-0" type="button">
-                    <Icon path={mdiDotsHorizontal} size={1} className="shrink-0" />
+                    <Icon
+                      path={mdiDotsHorizontal}
+                      size={1}
+                      className="shrink-0"
+                    />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">

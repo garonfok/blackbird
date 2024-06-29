@@ -6,7 +6,6 @@ import { clearPiece } from "../reducers/previewSlice";
 import { Piece } from "@/app/types";
 
 export function Header(props: { piece: Piece }) {
-
   const { piece } = props;
 
   const dispatch = useAppDispatch();
@@ -20,13 +19,17 @@ export function Header(props: { piece: Piece }) {
       <span className="flex flex-wrap text-body-bold text-fg.0 grow">
         {piece.composers
           .map((composer) =>
-            [composer.first_name, composer.last_name].join(" ")
+            [composer.first_name, composer.last_name].join(" "),
           )
           .join(", ")}
       </span>
-      <Button onClick={handleClickClosePreview} variant="sidebar" className="p-1">
+      <Button
+        onClick={handleClickClosePreview}
+        variant="sidebar"
+        className="p-1"
+      >
         <Icon path={mdiClose} size={1} />
       </Button>
     </span>
-  )
+  );
 }

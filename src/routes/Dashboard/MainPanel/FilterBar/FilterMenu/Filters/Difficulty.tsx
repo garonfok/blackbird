@@ -50,7 +50,9 @@ export function Difficulty() {
   return (
     <div className="flex flex-col gap-[8px]">
       <div className="flex gap-[8px] items-center justify-between">
-        <span className="text-fg.2 select-none cursor-default text-sm">From</span>
+        <span className="text-fg.2 select-none cursor-default text-sm">
+          From
+        </span>
         <Select
           value={filter.difficultyMin?.toString() ?? "none"}
           onValueChange={handleChangeMin}

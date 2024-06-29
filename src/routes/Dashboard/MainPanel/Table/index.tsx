@@ -32,11 +32,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  mdiArrowDown,
-  mdiArrowUp,
-  mdiDotsHorizontal
-} from "@mdi/js";
+import { mdiArrowDown, mdiArrowUp, mdiDotsHorizontal } from "@mdi/js";
 import { Icon } from "@mdi/react";
 import {
   Column,
@@ -59,13 +55,16 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  pushTag
-} from "../../reducers/filterSlice";
+import { pushTag } from "../../reducers/filterSlice";
 import { setPieces } from "../../reducers/piecesSlice";
 import { clearPiece, setPiece } from "../../reducers/previewSlice";
 import { FilterBar } from "../FilterBar";
-import { clickMain, clickUpdatedAt, clickYearPublished, resetSorting } from "../sortSlice";
+import {
+  clickMain,
+  clickUpdatedAt,
+  clickYearPublished,
+  resetSorting,
+} from "../sortSlice";
 
 export function Table() {
   const [filteredPieces, setFilteredPieces] = useState<Piece[]>([]);
@@ -235,11 +234,11 @@ export function Table() {
 
   useEffect(() => {
     if (["title", "composers"].find((id) => id === sortingStore.id)) {
-      setSorting([{ id: "main", desc: sortingStore.descending }])
+      setSorting([{ id: "main", desc: sortingStore.descending }]);
     } else {
-      setSorting([{ id: sortingStore.id, desc: sortingStore.descending }])
+      setSorting([{ id: sortingStore.id, desc: sortingStore.descending }]);
     }
-  }, [sortingStore])
+  }, [sortingStore]);
 
   const columns = useMemo<ColumnDef<Piece>[]>(
     () => [
@@ -494,13 +493,13 @@ export function Table() {
 
   function handleClickSortColumn(headerColumn: Column<Piece, unknown>) {
     if (headerColumn.id === "main") {
-      dispatch(clickMain())
+      dispatch(clickMain());
     } else if (headerColumn.id === "yearPublished") {
-      dispatch(clickYearPublished())
+      dispatch(clickYearPublished());
     } else if (headerColumn.id === "updatedAt") {
-      dispatch(clickUpdatedAt())
+      dispatch(clickUpdatedAt());
     } else {
-      dispatch(resetSorting())
+      dispatch(resetSorting());
     }
   }
 
@@ -602,9 +601,9 @@ export function Table() {
                   >
                     {header.id !== "main" || sortingStore.id !== "composers"
                       ? flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )
                       : "Composers"}
 
                     {
@@ -624,11 +623,12 @@ export function Table() {
                           />
                         ),
                       }[
-                      header.id !== "main" || ["title", "composers"].includes(sortingStore.id)
-                        ? (header.column.getIsSorted() as string)
-                        : (table
-                          .getColumn("composers")
-                          ?.getIsSorted() as string)
+                        header.id !== "main" ||
+                        ["title", "composers"].includes(sortingStore.id)
+                          ? (header.column.getIsSorted() as string)
+                          : (table
+                              .getColumn("composers")
+                              ?.getIsSorted() as string)
                       ]
                     }
                   </button>

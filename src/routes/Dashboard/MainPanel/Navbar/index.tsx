@@ -14,7 +14,7 @@ export function Navbar() {
 
   useCmdOrCtrlHotkey("k", () => {
     inputRef.current?.focus();
-  })
+  });
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     dispatch(setQuery({ query: event.target.value }));
@@ -24,26 +24,24 @@ export function Navbar() {
 
   return (
     <div className="px-[14px] pt-[8px] w-full flex gap-[8px] items-center">
-      <span
-        className="bg-bg.2 gap-[4px] py-[2px] px-[4px] border border-divider.default rounded-default flex w-full text-fg.2 items-center transition-default"
-      >
+      <span className="bg-bg.2 gap-[4px] py-[2px] px-[4px] border border-divider.default rounded-default flex w-full text-fg.2 items-center transition-default">
         <Icon
           path={mdiMagnify}
           size={1}
           className={cn(
             "shrink-0 transition-default",
-            isSearchFocused && "text-fg.0"
+            isSearchFocused && "text-fg.0",
           )}
         />
-          <input
-            ref={inputRef}
-            className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
-            placeholder={`Type ${window.navigator.userAgent.includes("Windows") ? "Ctrl" : "⌘"} K to search`}
-            type="text"
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-            onChange={handleChangeDebounced}
-          />
+        <input
+          ref={inputRef}
+          className="bg-transparent outline-none w-full placeholder-fg.2 text-fg.0"
+          placeholder={`Type ${window.navigator.userAgent.includes("Windows") ? "Ctrl" : "⌘"} K to search`}
+          type="text"
+          onFocus={() => setSearchFocused(true)}
+          onBlur={() => setSearchFocused(false)}
+          onChange={handleChangeDebounced}
+        />
       </span>
     </div>
   );

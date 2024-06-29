@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./store";
 
-
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
@@ -13,13 +12,16 @@ export function useCmdOrCtrlHotkey(key: string, callback: () => void) {
   useEffect(() => {
     const getOsType = async () => {
       setOsType(await os.type());
-    }
+    };
     getOsType();
   }, []);
 
   useEffect(() => {
     document.addEventListener("keydown", (event) => {
-      if (event.key === key && (osType === "Windows NT" ? event.ctrlKey : event.metaKey)) {
+      if (
+        event.key === key &&
+        (osType === "Windows NT" ? event.ctrlKey : event.metaKey)
+      ) {
         callback();
       }
     });
@@ -31,7 +33,6 @@ export function useCmdOrCtrlHotkey(key: string, callback: () => void) {
         }
       });
     };
-
   }, [key, callback]);
 }
 
@@ -50,7 +51,5 @@ export function useHotkey(key: string, callback: () => void) {
         }
       });
     };
-
   }, [key, callback]);
 }
-

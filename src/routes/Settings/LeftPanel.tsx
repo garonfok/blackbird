@@ -3,6 +3,7 @@ import { mdiHomeOutline } from "@mdi/js";
 import Icon from "@mdi/react";
 import { List, Trigger } from "@radix-ui/react-tabs";
 import { Link } from "react-router-dom";
+
 export function LeftPanel() {
   return (
     <div className="bg-sidebar-bg.default p-[14px] flex flex-col gap-[14px]">

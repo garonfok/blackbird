@@ -3,14 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 type sortId = "title" | "composers" | "yearPublished" | "updatedAt";
 
 interface SortState {
-  id: sortId,
-  descending: boolean
+  id: sortId;
+  descending: boolean;
 }
 
 const initialState: SortState = {
   id: "updatedAt",
-  descending: true
-}
+  descending: true,
+};
 
 export const sortSlice = createSlice({
   name: "sort",
@@ -28,7 +28,7 @@ export const sortSlice = createSlice({
         if (!state.descending) {
           return { id: "composers", descending: true };
         }
-        return initialState
+        return initialState;
       }
       return { id: "title", descending: false };
     },
@@ -55,22 +55,22 @@ export const sortSlice = createSlice({
     clickYearPublished: (state) => {
       if (state.id === "yearPublished") {
         if (state.descending) {
-          return { id: "yearPublished", descending: false }
+          return { id: "yearPublished", descending: false };
         } else {
-          return initialState
+          return initialState;
         }
       }
-      return { id: "yearPublished", descending: true }
+      return { id: "yearPublished", descending: true };
     },
     clickUpdatedAt: (state) => {
       if (state.id === "updatedAt") {
         return { id: "updatedAt", descending: !state.descending };
       }
-      return initialState
+      return initialState;
     },
     resetSorting: () => {
       return initialState;
-    }
+    },
   },
 });
 

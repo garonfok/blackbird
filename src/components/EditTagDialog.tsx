@@ -1,7 +1,19 @@
 import { Tag } from "@/app/types";
 import { Button } from "@/components/ui/button";
-import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  DialogClose,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction } from "react";
@@ -38,9 +50,7 @@ export function EditTagDialog(props: {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>
-          {defaultTag ? "Edit Tag" : "Create Tag"}
-        </DialogTitle>
+        <DialogTitle>{defaultTag ? "Edit Tag" : "Create Tag"}</DialogTitle>
       </DialogHeader>
       <Form {...tagForm}>
         <form className="space-y-[14px]">
@@ -61,10 +71,12 @@ export function EditTagDialog(props: {
             <DialogClose asChild>
               <Button variant="link">Cancel</Button>
             </DialogClose>
-            <Button type="button" onClick={tagForm.handleSubmit(onSubmitForm)}>Save</Button>
+            <Button type="button" onClick={tagForm.handleSubmit(onSubmitForm)}>
+              Save
+            </Button>
           </DialogFooter>
         </form>
       </Form>
     </>
-  )
+  );
 }

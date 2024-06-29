@@ -3,14 +3,25 @@ import { setlistsDelete, setlistsGetAll, setlistsUpdate } from "@/app/invokers";
 import { Setlist } from "@/app/types";
 import { cn } from "@/app/utils";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  mdiBookOpenVariantOutline,
-  mdiDotsHorizontal
-} from "@mdi/js";
+import { mdiBookOpenVariantOutline, mdiDotsHorizontal } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -20,41 +31,40 @@ import { setSetlists } from "../reducers/setlistsSlice";
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  name: z.string().min(1)
-})
+  name: z.string().min(1),
+});
 
-export function SetlistItem(props: { setlist: Setlist, selected?: boolean }) {
-
+export function SetlistItem(props: { setlist: Setlist; selected?: boolean }) {
   const { setlist, selected } = props;
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: setlist.name
-    }
-  })
+      name: setlist.name,
+    },
+  });
 
-  const ref = useRef<HTMLFormElement>(null)
+  const ref = useRef<HTMLFormElement>(null);
 
-  const [isEditing, setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
-    document.addEventListener("mouseup", handleClickOutside)
+    document.addEventListener("mouseup", handleClickOutside);
     return () => {
-      document.removeEventListener("mouseup", handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("mouseup", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
-    document.getElementById("setlistInput")?.focus()
-  }, [isEditing])
+    document.getElementById("setlistInput")?.focus();
+  }, [isEditing]);
 
   function handleClickOutside(event: globalThis.MouseEvent) {
     if (ref.current && !ref.current.contains(event.target as Node)) {
       setIsEditing(false);
-      form.reset()
+      form.reset();
     }
   }
 
@@ -63,7 +73,7 @@ export function SetlistItem(props: { setlist: Setlist, selected?: boolean }) {
   }
 
   async function fetchSetlists() {
-    const setlists = await setlistsGetAll()
+    const setlists = await setlistsGetAll();
     dispatch(setSetlists({ setlists }));
   }
 
@@ -89,7 +99,11 @@ export function SetlistItem(props: { setlist: Setlist, selected?: boolean }) {
   if (isEditing) {
     return (
       <Form {...form}>
-        <form ref={ref} onSubmit={form.handleSubmit(onSubmitForm)} className="flex gap-[4px]">
+        <form
+          ref={ref}
+          onSubmit={form.handleSubmit(onSubmitForm)}
+          className="flex gap-[4px]"
+        >
           <FormField
             control={form.control}
             name="name"
@@ -101,50 +115,63 @@ export function SetlistItem(props: { setlist: Setlist, selected?: boolean }) {
               </FormItem>
             )}
           />
-          <Button type="submit" variant="secondary" className="leading-3">Save</Button>
+          <Button type="submit" variant="secondary" className="leading-3">
+            Save
+          </Button>
         </form>
       </Form>
-    )
+    );
   } else {
     return (
       <Button
         variant="sidebarCollapsibleItem"
-        className={cn("w-full group cursor-default", selected && "bg-sidebar-bg.focus")}
+        className={cn(
+          "w-full group cursor-default",
+          selected && "bg-sidebar-bg.focus",
+        )}
       >
-        <span className="flex gap-[4px] w-full items-center pl-[3px]"
+        <span
+          className="flex gap-[4px] w-full items-center pl-[3px]"
           onClick={handleClickSetSetlist}
         >
-          <Icon path={mdiBookOpenVariantOutline} size={2 / 3} className="mb-[2px]" />
+          <Icon
+            path={mdiBookOpenVariantOutline}
+            size={2 / 3}
+            className="mb-[2px]"
+          />
           <span>{setlist.name}</span>
         </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="link" className="invisible group-hover:visible p-0">
+            <Button
+              variant="link"
+              className="invisible group-hover:visible p-0"
+            >
               <Icon path={mdiDotsHorizontal} size={1} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuItem onSelect={handleClickEdit}>
-              Edit
-            </DropdownMenuItem>
+            <DropdownMenuItem onSelect={handleClickEdit}>Edit</DropdownMenuItem>
             <Dialog>
               <DialogTrigger asChild>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-error.default focus:text-error.focus">
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  className="text-error.default focus:text-error.focus"
+                >
                   Delete
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Are you sure you want to delete this setlist?</DialogTitle>
+                  <DialogTitle>
+                    Are you sure you want to delete this setlist?
+                  </DialogTitle>
                   <DialogDescription>
                     Pieces in this setlist will not be deleted.
                   </DialogDescription>
                   <DialogFooter>
                     <DialogClose asChild>
-                      <Button
-                        variant="link"
-                        type="reset"
-                      >
+                      <Button variant="link" type="reset">
                         Cancel
                       </Button>
                     </DialogClose>
@@ -162,6 +189,6 @@ export function SetlistItem(props: { setlist: Setlist, selected?: boolean }) {
           </DropdownMenuContent>
         </DropdownMenu>
       </Button>
-    )
+    );
   }
 }

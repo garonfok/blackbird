@@ -4,7 +4,7 @@ export function SettingsEntry(
   props: PropsWithChildren<{
     name: string;
     description: ReactNode;
-  }>
+  }>,
 ) {
   const { name, description, children } = props;
   return (

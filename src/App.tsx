@@ -23,28 +23,28 @@ const router = createBrowserRouter([
   {
     path: "/wizard",
     element: <Wizard />,
-    loader: () => ({})
+    loader: () => ({}),
   },
   {
     path: "/wizard/:pieceId",
     element: <Wizard />,
     loader: loadWizard,
-  }
+  },
 ]);
 
 async function loadWizard({ params }: { params: Params<string> }) {
   const { pieceId } = params;
-  if (!pieceId) return
+  if (!pieceId) return;
 
-  const dbPiece = await piecesGet({ id: parseInt(pieceId) })
+  const dbPiece = await piecesGet({ id: parseInt(pieceId) });
 
-  const { piece, files } = await getPieceFromDb(dbPiece)
+  const { piece, files } = await getPieceFromDb(dbPiece);
 
   return {
     piece,
     files,
-    pieceId: dbPiece.id
-  }
+    pieceId: dbPiece.id,
+  };
 }
 
 export function App() {
@@ -52,7 +52,7 @@ export function App() {
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.preventDefault();
     },
-    []
+    [],
   );
 
   return (

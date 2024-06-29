@@ -54,9 +54,9 @@ export const instrumentSchema = z.object({
   is_default: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
-})
+});
 
-export type Instrument = z.infer<typeof instrumentSchema>
+export type Instrument = z.infer<typeof instrumentSchema>;
 
 export const tagSchema = z.object({
   id: z.number(),

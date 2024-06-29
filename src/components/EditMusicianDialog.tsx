@@ -1,7 +1,19 @@
 import { Musician } from "@/app/types";
 import { Button } from "@/components/ui/button";
-import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  DialogClose,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dispatch, SetStateAction } from "react";
@@ -77,10 +89,15 @@ export function EditMusicianDialog(props: {
             <DialogClose asChild>
               <Button variant="link">Cancel</Button>
             </DialogClose>
-            <Button type="button" onClick={musicianForm.handleSubmit(onSubmitMusicianForm)}>Save</Button>
+            <Button
+              type="button"
+              onClick={musicianForm.handleSubmit(onSubmitMusicianForm)}
+            >
+              Save
+            </Button>
           </DialogFooter>
         </form>
       </Form>
     </>
-  )
+  );
 }

@@ -1,15 +1,36 @@
-import { partFormSchema, pieceFormSchema, scoreFormSchema } from "@/routes/Wizard/types";
-import { createDir, readBinaryFile, removeDir, writeBinaryFile } from "@tauri-apps/api/fs";
+import {
+  partFormSchema,
+  pieceFormSchema,
+  scoreFormSchema,
+} from "@/routes/Wizard/types";
+import {
+  createDir,
+  readBinaryFile,
+  removeDir,
+  writeBinaryFile,
+} from "@tauri-apps/api/fs";
 import { type } from "@tauri-apps/api/os";
 import clsx, { ClassValue } from "clsx";
 import { UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
-import { getWorkingDirectory, partsAdd, partsSetInstruments, piecesAdd, piecesDropParts, piecesDropScores, piecesGet, piecesSetMusicians, piecesSetTags, piecesUpdate, scoresAdd } from "./invokers";
+import {
+  getWorkingDirectory,
+  partsAdd,
+  partsSetInstruments,
+  piecesAdd,
+  piecesDropParts,
+  piecesDropScores,
+  piecesGet,
+  piecesSetMusicians,
+  piecesSetTags,
+  piecesUpdate,
+  scoresAdd,
+} from "./invokers";
 import { Musician, Piece } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export async function isWindows() {
@@ -26,7 +47,9 @@ export function debounce(fn: Function, timeout = 300) {
   };
 }
 
-export function formatPartNumbers(pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>) {
+export function formatPartNumbers(
+  pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>,
+) {
   const partMap = new Map<string, number>();
   pieceForm.getValues("parts").forEach((part) => {
     const lastSpaceIndex = part.name.lastIndexOf(" ");
@@ -51,9 +74,15 @@ export function formatPartNumbers(pieceForm: UseFormReturn<z.infer<typeof pieceF
 
   const newParts: z.infer<typeof partFormSchema>[] = [];
   for (let i = pieceForm.getValues("parts").length - 1; i >= 0; i--) {
-    const lastSpaceIndex = pieceForm.getValues("parts")[i].name.lastIndexOf(" ");
-    let partName = pieceForm.getValues("parts")[i].name.substring(0, lastSpaceIndex);
-    const partNumber = pieceForm.getValues("parts")[i].name.substring(lastSpaceIndex + 1);
+    const lastSpaceIndex = pieceForm
+      .getValues("parts")
+      [i].name.lastIndexOf(" ");
+    let partName = pieceForm
+      .getValues("parts")
+      [i].name.substring(0, lastSpaceIndex);
+    const partNumber = pieceForm
+      .getValues("parts")
+      [i].name.substring(lastSpaceIndex + 1);
     if (lastSpaceIndex === -1 || isNaN(parseInt(partNumber))) {
       partName = pieceForm.getValues("parts")[i].name;
     }
@@ -76,9 +105,14 @@ export function formatPartNumbers(pieceForm: UseFormReturn<z.infer<typeof pieceF
 export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
   const principalComposer = piece.composers[0];
 
-  const composerName = [principalComposer.last_name, principalComposer.first_name].filter(Boolean).join(", ")
+  const composerName = [
+    principalComposer.last_name,
+    principalComposer.first_name,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
-  const workingDir = await getWorkingDirectory()
+  const workingDir = await getWorkingDirectory();
 
   const pieceId = await piecesAdd({
     title: piece.title,
@@ -86,7 +120,7 @@ export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
     path: "",
     difficulty: piece.difficulty,
     notes: piece.notes || "",
-  })
+  });
 
   const pathSlash = window.navigator.userAgent.includes("Windows") ? "\\" : "/";
   const path = `${workingDir}${pathSlash}${principalComposer.id}_${composerName}${pathSlash}${pieceId}_${piece.title}`;
@@ -99,7 +133,7 @@ export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
     path,
     difficulty: piece.difficulty,
     notes: piece.notes || "",
-  })
+  });
 
   await piecesSetTags({
     pieceId,
@@ -111,7 +145,7 @@ export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
     pieceId,
     musicianIds: piece.composers.map((composer) => composer.id),
     role: "composer",
-  })
+  });
 
   // arrangers
   await piecesSetMusicians({
@@ -119,7 +153,6 @@ export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
     musicianIds: piece.arrangers.map((arranger) => arranger.id),
     role: "arranger",
   });
-
 
   // transcribers
   await piecesSetMusicians({
@@ -151,7 +184,7 @@ export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
       pieceId,
       name: score.name,
       path: scorePath,
-    })
+    });
 
     // create file
     if (score.file && scorePath) {
@@ -168,12 +201,12 @@ export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
       name: part.name,
       path: partPath,
       pieceId,
-    })
+    });
 
     await partsSetInstruments({
       partId,
       instrumentIds: part.instruments.map((instrument) => instrument.id),
-    })
+    });
 
     // create file
     if (part.file && partPath) {
@@ -182,16 +215,23 @@ export async function createPiece(piece: z.infer<typeof pieceFormSchema>) {
   }
 }
 
-export async function updatePiece(piece: z.infer<typeof pieceFormSchema>, id: number) {
-
+export async function updatePiece(
+  piece: z.infer<typeof pieceFormSchema>,
+  id: number,
+) {
   const originalPiece = await piecesGet({ id });
   const originalPath = originalPiece.path;
 
   const principalComposer = piece.composers[0];
 
-  const composerName = [principalComposer.last_name, principalComposer.first_name].filter(Boolean).join(", ")
+  const composerName = [
+    principalComposer.last_name,
+    principalComposer.first_name,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
-  const workingDir = await getWorkingDirectory()
+  const workingDir = await getWorkingDirectory();
   const pathSlash = window.navigator.userAgent.includes("Windows") ? "\\" : "/";
   const path = `${workingDir}${pathSlash}${principalComposer.id}_${composerName}${pathSlash}${id}_${piece.title}`;
 
@@ -306,49 +346,57 @@ export async function updatePiece(piece: z.infer<typeof pieceFormSchema>, id: nu
 }
 
 export async function getPieceFromDb(piece: Piece) {
-  let files = new Map<number, { name: string, file: Uint8Array }>()
-  let maxId = -1
+  let files = new Map<number, { name: string; file: Uint8Array }>();
+  let maxId = -1;
 
-  const parts: z.infer<typeof partFormSchema>[] = await Promise.all(piece.parts.map(async part => {
-    const filePath = part.path
-    if (filePath) {
-      const buffer = await readBinaryFile(filePath)
-      files.set(++maxId, {
-        name: filePath.split("/").pop() || "",
-        file: buffer
-      })
-    }
-    return {
-      id: part.id,
-      name: part.name,
-      instruments: part.instruments,
-      file: filePath ? {
-        id: maxId,
-        name: files.get(maxId)!.name,
-        bytearray: files.get(maxId)!.file,
-      } : undefined
-    }
-  }))
+  const parts: z.infer<typeof partFormSchema>[] = await Promise.all(
+    piece.parts.map(async (part) => {
+      const filePath = part.path;
+      if (filePath) {
+        const buffer = await readBinaryFile(filePath);
+        files.set(++maxId, {
+          name: filePath.split("/").pop() || "",
+          file: buffer,
+        });
+      }
+      return {
+        id: part.id,
+        name: part.name,
+        instruments: part.instruments,
+        file: filePath
+          ? {
+              id: maxId,
+              name: files.get(maxId)!.name,
+              bytearray: files.get(maxId)!.file,
+            }
+          : undefined,
+      };
+    }),
+  );
 
-  const scores: z.infer<typeof scoreFormSchema>[] = await Promise.all(piece.scores.map(async score => {
-    const filePath = score.path
-    if (filePath) {
-      const buffer = await readBinaryFile(filePath)
-      files.set(++maxId, {
-        name: filePath.split("/").pop() || "",
-        file: buffer
-      })
-    }
-    return {
-      id: score.id,
-      name: score.name,
-      file: filePath ? {
-        id: maxId,
-        name: files.get(maxId)!.name,
-        bytearray: files.get(maxId)!.file,
-      } : undefined
-    }
-  }))
+  const scores: z.infer<typeof scoreFormSchema>[] = await Promise.all(
+    piece.scores.map(async (score) => {
+      const filePath = score.path;
+      if (filePath) {
+        const buffer = await readBinaryFile(filePath);
+        files.set(++maxId, {
+          name: filePath.split("/").pop() || "",
+          file: buffer,
+        });
+      }
+      return {
+        id: score.id,
+        name: score.name,
+        file: filePath
+          ? {
+              id: maxId,
+              name: files.get(maxId)!.name,
+              bytearray: files.get(maxId)!.file,
+            }
+          : undefined,
+      };
+    }),
+  );
 
   const editPiece: z.infer<typeof pieceFormSchema> = {
     title: piece.title,
@@ -363,7 +411,7 @@ export async function getPieceFromDb(piece: Piece) {
     lyricists: piece.lyricists,
     parts,
     scores,
-  }
+  };
 
   return {
     piece: editPiece,
@@ -371,10 +419,9 @@ export async function getPieceFromDb(piece: Piece) {
       return {
         id: key,
         name: value.name,
-        bytearray: value.file
-      }
+        bytearray: value.file,
+      };
     }),
-    pieceId: parseInt(piece.id)
-  }
-
+    pieceId: parseInt(piece.id),
+  };
 }

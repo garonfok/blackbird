@@ -46,7 +46,11 @@ export function FilterMenu() {
                   Year Published
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" align="start" className="p-[4px] w-fit">
+              <PopoverContent
+                side="right"
+                align="start"
+                className="p-[4px] w-fit"
+              >
                 <Year />
               </PopoverContent>
             </Popover>
@@ -56,7 +60,11 @@ export function FilterMenu() {
                   Difficulty
                 </Button>
               </PopoverTrigger>
-              <PopoverContent side="right" align="start" className="p-[4px] w-fit">
+              <PopoverContent
+                side="right"
+                align="start"
+                className="p-[4px] w-fit"
+              >
                 <Difficulty />
               </PopoverContent>
             </Popover>
