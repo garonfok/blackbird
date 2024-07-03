@@ -256,7 +256,7 @@ export function SortableItem(props: {
             role="combobox"
             aria-expanded={open}
             className={cn(
-              "max-w-64 w-full self-center h-fit px-[4px] py-[2px] justify-between border-divider.default bg-bg.2",
+              "w-32 self-center h-fit px-[4px] py-[2px] justify-between border-divider.default bg-bg.2",
               isOver &&
                 active?.id.toString().startsWith("f") &&
                 "border-divider.focus",
