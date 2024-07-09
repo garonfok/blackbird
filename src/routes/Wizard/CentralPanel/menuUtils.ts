@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { partFormSchema, pieceFormSchema, scoreFormSchema } from "../types";
+import { formatPartNumbers } from "@/app/utils";
 
 type ItemType = "parts" | "scores";
 type PartScoreType =
@@ -86,6 +87,8 @@ export function moveAbove(
     ...selectedItems,
     ...unselectedItems.slice(Math.max(firstIndex - 1, 0)),
   ]);
+
+  formatPartNumbers(pieceForm);
 }
 
 export function moveBelow(
@@ -103,4 +106,6 @@ export function moveBelow(
     ...selectedItems,
     ...unselectedItems.slice(lastIndex + 1),
   ]);
+
+  formatPartNumbers(pieceForm);
 }

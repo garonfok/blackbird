@@ -38,14 +38,15 @@ import Icon from "@mdi/react";
 import { Dispatch, MouseEventHandler, SetStateAction, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
-import { partFormSchema, pieceFormSchema, scoreFormSchema } from "../types";
+import { partFormSchema, pieceFormSchema, scoreFormSchema } from "../../types";
 import {
   clearFile,
   duplicate,
   moveAbove,
   moveBelow,
   removeItem,
-} from "./menuUtils";
+} from "../menuUtils";
+import { Instruments } from "./Instruments";
 
 export function SortableItem(props: {
   id: UniqueIdentifier;
@@ -217,6 +218,12 @@ export function SortableItem(props: {
         <label htmlFor={item.id.toString()} className="w-full truncate">
           {item.name}
         </label>
+        {type === "parts" && (
+          <Instruments
+            part={item as z.infer<typeof partFormSchema>}
+            pieceForm={pieceForm}
+          />
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="link" className="p-0" type="button">
