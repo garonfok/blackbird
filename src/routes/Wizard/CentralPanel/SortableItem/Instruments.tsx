@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger,
+  PopoverTrigger
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Fuse from "fuse.js";
@@ -34,12 +34,8 @@ export function Instruments(props: {
     [key: string]: Instrument[];
   }>();
   const [instruments, setInstruments] = useState<Instrument[]>([]);
-  const [hasResults, setHasResults] = useState(true);
   const [query, setQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
-
-  const ref = useRef<HTMLDivElement>(null);
-  const instrumentRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     async function fetchInstruments() {
@@ -64,6 +60,7 @@ export function Instruments(props: {
 
       setCategorizedInstruments(groupedInstruments);
       setInstruments(fetchedInstruments);
+      setFilteredInstruments(groupedInstruments);
     }
     fetchInstruments();
   }, []);
@@ -71,10 +68,8 @@ export function Instruments(props: {
   useEffect(() => {
     if (query.length === 0) {
       setFilteredInstruments(categorizedInstruments);
-      setHasResults(true);
     } else {
       const results = fuse.search(query);
-      setHasResults(results.length > 0);
       const filtered = results.reduce(
         (acc, { item }) => {
           let category = item.category;
@@ -108,6 +103,7 @@ export function Instruments(props: {
       "parts",
       pieceForm.getValues("parts").map((p) => {
         if (part.id === p.id) {
+          console.log("Adding instrument", instrument, " to part", part)
           return {
             ...p,
             instruments: [...p.instruments, instrument],
@@ -167,7 +163,7 @@ export function Instruments(props: {
           Managing instruments for{" "}
           <span className="text-fg.0 text-base">{part.name}</span>
         </DialogHeader>
-        <div ref={ref} className="flex flex-col gap-[14px]">
+        <div className="flex flex-col gap-[14px]">
           <div>
             <Popover modal={true}>
               <PopoverTrigger className="w-full">
@@ -182,20 +178,15 @@ export function Instruments(props: {
               </PopoverTrigger>
               <PopoverContent
                 side="top"
-                className="p-0"
-                style={{
-                  width: ref.current?.clientWidth,
-                }}
+                className="p-0 w-[404px]"
               >
                 <ScrollArea>
                   <div className="max-h-36">
-                    {!hasResults &&
-                      Object.keys(filteredInstruments || {}).length === 0 && (
+                      {Object.keys(filteredInstruments || {}).length === 0 ? (
                         <div className="text-xs text-fg.1 p-[8px]">
                           No results
                         </div>
-                      )}
-                    {Object.keys(filteredInstruments || {}).map((category) => (
+                      ) : Object.keys(filteredInstruments || {}).map((category) => (
                       <div key={category} className="flex flex-col p-[4px]">
                         <div className="text-xs text-fg.2 px-[8px]">
                           {category}
@@ -208,7 +199,6 @@ export function Instruments(props: {
                               type="button"
                               className="hover:bg-float-bg.focus justify-start"
                               onClick={() => handleSelectInstrument(instrument)}
-                              ref={instrumentRef}
                             >
                               {instrument.name}
                             </Button>
