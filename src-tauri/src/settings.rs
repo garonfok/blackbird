@@ -2,7 +2,6 @@ use crate::utils;
 use std::{collections::BTreeMap, path::PathBuf};
 
 use serde_json::Value;
-#[cfg(target_os = "macos")]
 
 const LIBRARY_NAME: &str = "Sheet Music Library";
 const SETTINGS_FILE: &str = "settings.json";
