@@ -409,22 +409,20 @@ export function Wizard() {
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
           >
-            <Sidebar direction="left">
-              <FilePanel
-                uploadedFiles={uploadedFiles}
-                setUploadedFiles={setUploadedFiles}
-                pieceForm={pieceForm}
-              />
-            </Sidebar>
+            <FilePanel
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={setUploadedFiles}
+              pieceForm={pieceForm}
+            />
             <div className="flex grow">
               <CentralPanel
                 pieceForm={pieceForm}
                 uploadedFiles={uploadedFiles}
               />
-              <DragOverlay>
-                <DragOverlayItem />
-              </DragOverlay>
             </div>
+            <DragOverlay>
+              <DragOverlayItem />
+            </DragOverlay>
           </DndContext>
           <Sidebar direction="right">
             <div className="flex flex-col gap-[14px] p-4 h-full ">

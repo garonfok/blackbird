@@ -15,11 +15,13 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import Fuse from "fuse.js";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { partFormSchema, pieceFormSchema } from "../../types";
+import { SortableItem } from "./SortableItem";
 
 export function Instruments(props: {
   part: z.infer<typeof partFormSchema>;
@@ -103,7 +105,6 @@ export function Instruments(props: {
       "parts",
       pieceForm.getValues("parts").map((p) => {
         if (part.id === p.id) {
-          console.log("Adding instrument", instrument, " to part", part)
           return {
             ...p,
             instruments: [...p.instruments, instrument],
@@ -182,11 +183,11 @@ export function Instruments(props: {
               >
                 <ScrollArea>
                   <div className="max-h-36">
-                      {Object.keys(filteredInstruments || {}).length === 0 ? (
-                        <div className="text-xs text-fg.1 p-[8px]">
-                          No results
-                        </div>
-                      ) : Object.keys(filteredInstruments || {}).map((category) => (
+                    {Object.keys(filteredInstruments || {}).length === 0 ? (
+                      <div className="text-xs text-fg.1 p-[8px]">
+                        No results
+                      </div>
+                    ) : Object.keys(filteredInstruments || {}).map((category) => (
                       <div key={category} className="flex flex-col p-[4px]">
                         <div className="text-xs text-fg.2 px-[8px]">
                           {category}
@@ -211,30 +212,37 @@ export function Instruments(props: {
               </PopoverContent>
             </Popover>
           </div>
-          <div className="bg-bg.0 rounded-default select-none">
-            <ScrollArea>
-              <div className="h-72">
-                {part.instruments.map((instrument, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-[8px]"
-                  >
-                    <div className="text-fg.2 select-none cursor-default">
-                      {instrument.name}
-                    </div>
-                    <Button
-                      variant="link"
-                      type="button"
-                      className="text-xs text-fg.1"
-                      onClick={() => handleClickRemoveInstrument(index)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
+          <SortableContext
+            id="instrument-list"
+            items={part.instruments}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="bg-bg.0 rounded-default select-none">
+              <ScrollArea>
+                <div className="h-72 p-[4px] flex flex-col gap-[4px]">
+                  {part.instruments.map((instrument, index) => (
+                    <SortableItem key={instrument.id} id={instrument.id}>
+                      <div
+                        className="w-full flex items-center justify-between"
+                      >
+                        <div className="text-fg.2 select-none cursor-default">
+                          {instrument.name}
+                        </div>
+                        <Button
+                          variant="link"
+                          type="button"
+                          className="text-xs text-fg.1"
+                          onClick={() => handleClickRemoveInstrument(index)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    </SortableItem>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </SortableContext>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,0 +1,42 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { UniqueIdentifier } from '@dnd-kit/core';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import { mdiDragVertical } from '@mdi/js';
+import Icon from '@mdi/react';
+import { ReactNode } from 'react';
+
+export function SortableItem(props: {
+  id: UniqueIdentifier;
+
+  children: ReactNode;
+}) {
+  const { id, children } = props;
+
+  const {
+    attributes,
+    isDragging,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : undefined,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <Badge className="gap-2 px-[4px] py-[2px] w-full border-divider.default">
+        <Button type="button" variant="main" className="p-0 h-fit self-center"  {...attributes} {...listeners}>
+          <Icon path={mdiDragVertical} size={2 / 3} className="shrink-0 self-center" />
+        </Button>
+        {children}
+      </Badge>
+    </div>
+  );
+}
