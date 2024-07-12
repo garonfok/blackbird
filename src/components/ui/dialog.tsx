@@ -1,7 +1,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as React from "react";
 
-import { cn } from "@/app/utils";
+import { cn } from "@/utils/lib";
 import { mdiClose } from "@mdi/js";
 import Icon from "@mdi/react";
 

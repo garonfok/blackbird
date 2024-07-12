@@ -1,4 +1,4 @@
-import { cn } from "@/app/utils";
+import { cn } from "@/utils/lib";
 import { MouseEvent, ReactNode, useState } from "react";
 
 export function Sidebar({

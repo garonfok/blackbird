@@ -1,4 +1,4 @@
-import { Musician } from "@/app/types";
+import { Musician } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,

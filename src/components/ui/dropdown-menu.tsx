@@ -6,7 +6,7 @@ import {
 } from "@radix-ui/react-icons"
 import { mdiChevronRight } from "@mdi/js"
 
-import { cn } from "@/app/utils"
+import { cn } from "@/utils/lib"
 import Icon from "@mdi/react"
 
 const DropdownMenu = DropdownMenuPrimitive.Root

@@ -3,7 +3,7 @@ import { Command as CommandPrimitive } from "cmdk";
 import * as React from "react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { cn } from "@/app/utils";
+import { cn } from "@/utils/lib";
 import { mdiMagnify } from "@mdi/js";
 import Icon from "@mdi/react";
 
@@ -22,7 +22,7 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-interface CommandDialogProps extends DialogProps {}
+interface CommandDialogProps extends DialogProps { }
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (

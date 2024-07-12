@@ -1,4 +1,4 @@
-import { Tag } from "@/app/types";
+import { Tag } from "@/types";
 import { Button } from "@/components/ui/button";
 import {
   DialogClose,
