@@ -276,6 +276,7 @@ export function Instruments(props: {
                               type="button"
                               className="hover:bg-float-bg.focus justify-start"
                               onClick={() => handleSelectInstrument(instrument)}
+                              disabled={part.instruments.map((i) => i.id).includes(instrument.id)}
                             >
                               {instrument.name}
                             </Button>
