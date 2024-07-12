@@ -41,6 +41,7 @@ export function Instruments(props: {
   const [query, setQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -127,6 +128,9 @@ export function Instruments(props: {
         return p;
       }),
     );
+
+    setInputValue("");
+    setIsSearchOpen(false);
   }
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -239,7 +243,7 @@ export function Instruments(props: {
                 </ScrollArea>
               </div>
             </SortableContext>
-            <Popover modal={true}>
+            <Popover modal={true} open={isSearchOpen} onOpenChange={setIsSearchOpen}>
               <PopoverTrigger className="w-full">
                 <Input
                   placeholder="Add an instrument"
