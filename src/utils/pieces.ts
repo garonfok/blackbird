@@ -401,6 +401,6 @@ export async function getPieceFromDb(piece: Piece) {
         bytearray: value.file,
       };
     }),
-    pieceId: parseInt(piece.id),
+    pieceId: piece.id,
   };
 }
