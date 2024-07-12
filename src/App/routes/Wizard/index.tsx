@@ -323,8 +323,8 @@ export function Wizard() {
                     </FormLabel>
                     <FormControl>
                       <Input
-                        onBeforeInput={(e) => {
-                          if (e.data && !/[\d]/.test(e.data)) {
+                        onKeyDown={(e) => {
+                          if (!/[\d]/.test(e.key)) {
                             e.preventDefault();
                           }
                         }}

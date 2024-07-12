@@ -78,8 +78,8 @@ export function Year() {
                   <Input
                     className="w-32"
                     placeholder="Year"
-                    onBeforeInput={(e) => {
-                      if (e.data && !/[\d]/.test(e.data)) {
+                    onKeyDown={(e) => {
+                      if (!/[\d]/.test(e.key)) {
                         e.preventDefault();
                       }
                     }}
@@ -102,8 +102,8 @@ export function Year() {
                   <Input
                     className="w-32"
                     placeholder="Year"
-                    onBeforeInput={(e) => {
-                      if (e.data && !/[\d]/.test(e.data)) {
+                    onKeyDown={(e) => {
+                      if (!/[\d]/.test(e.key)) {
                         e.preventDefault();
                       }
                     }}
