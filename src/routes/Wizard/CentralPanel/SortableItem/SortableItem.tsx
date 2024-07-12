@@ -1,12 +1,15 @@
-import { Instrument } from '@/app/types';
-import { UniqueIdentifier } from '@dnd-kit/core';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { Item } from './Item';
+import { Instrument } from "@/app/types";
+import { UniqueIdentifier } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Item } from "./Item";
 
-export function SortableItem(props: { id: UniqueIdentifier, instrument: Instrument, onRemove?: () => void }) {
-
-  const { id, instrument, onRemove } = props
+export function SortableItem(props: {
+  id: UniqueIdentifier;
+  instrument: Instrument;
+  onRemove?: () => void;
+}) {
+  const { id, instrument, onRemove } = props;
 
   const {
     attributes,
@@ -24,6 +27,13 @@ export function SortableItem(props: { id: UniqueIdentifier, instrument: Instrume
   };
 
   return (
-    <Item ref={setNodeRef} style={style} {...attributes} {...listeners} instrument={instrument} onRemove={onRemove} />
+    <Item
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      instrument={instrument}
+      onRemove={onRemove}
+    />
   );
 }

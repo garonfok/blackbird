@@ -12,11 +12,27 @@ import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { closestCorners, DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  closestCorners,
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  KeyboardSensor,
+  PointerSensor,
+  UniqueIdentifier,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import Fuse from "fuse.js";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -47,11 +63,11 @@ export function Instruments(props: {
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 5,
-      }
+      },
     }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   useEffect(() => {
@@ -72,7 +88,7 @@ export function Instruments(props: {
           acc[category].push(instrument);
           return acc;
         },
-        {} as { [key: string]: Instrument[] },
+        {} as { [key: string]: Instrument[] }
       );
 
       setCategorizedInstruments(groupedInstruments);
@@ -101,7 +117,7 @@ export function Instruments(props: {
           acc[category].push(item);
           return acc;
         },
-        {} as { [key: string]: Instrument[] },
+        {} as { [key: string]: Instrument[] }
       );
 
       setFilteredInstruments(filtered);
@@ -126,7 +142,7 @@ export function Instruments(props: {
           };
         }
         return p;
-      }),
+      })
     );
 
     setInputValue("");
@@ -145,12 +161,12 @@ export function Instruments(props: {
           return {
             ...p,
             instruments: part.instruments.filter(
-              (_, instrumentIndex) => instrumentIndex !== index,
+              (_, instrumentIndex) => instrumentIndex !== index
             ),
           };
         }
         return part;
-      }),
+      })
     );
   }
 
@@ -169,22 +185,25 @@ export function Instruments(props: {
 
     if (active.id !== over.id) {
       const oldIndex = part.instruments.findIndex(
-        (instrument) => instrument.id === active.id,
+        (instrument) => instrument.id === active.id
       );
       const newIndex = part.instruments.findIndex(
-        (instrument) => instrument.id === over.id,
+        (instrument) => instrument.id === over.id
       );
 
       const newInstruments = arrayMove(part.instruments, oldIndex, newIndex);
-      pieceForm.setValue("parts", pieceForm.getValues("parts").map((p) => {
-        if (part.id === p.id) {
-          return {
-            ...p,
-            instruments: newInstruments,
-          };
-        }
-        return p;
-      }))
+      pieceForm.setValue(
+        "parts",
+        pieceForm.getValues("parts").map((p) => {
+          if (part.id === p.id) {
+            return {
+              ...p,
+              instruments: newInstruments,
+            };
+          }
+          return p;
+        })
+      );
     }
   }
 
@@ -218,7 +237,11 @@ export function Instruments(props: {
     >
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="secondary" type="button" className="text-xs text-fg.1">
+          <Button
+            variant="secondary"
+            type="button"
+            className="text-xs text-fg.1"
+          >
             {getButtonText()}
           </Button>
         </DialogTrigger>
@@ -237,13 +260,22 @@ export function Instruments(props: {
                 <ScrollArea>
                   <div className="h-72 p-[4px] flex flex-col gap-[4px]">
                     {part.instruments.map((instrument, index) => (
-                      <SortableItem key={instrument.id} id={instrument.id} instrument={instrument} onRemove={() => handleClickRemoveInstrument(index)} />
+                      <SortableItem
+                        key={instrument.id}
+                        id={instrument.id}
+                        instrument={instrument}
+                        onRemove={() => handleClickRemoveInstrument(index)}
+                      />
                     ))}
                   </div>
                 </ScrollArea>
               </div>
             </SortableContext>
-            <Popover modal={true} open={isSearchOpen} onOpenChange={setIsSearchOpen}>
+            <Popover
+              modal={true}
+              open={isSearchOpen}
+              onOpenChange={setIsSearchOpen}
+            >
               <PopoverTrigger className="w-full">
                 <Input
                   placeholder="Add an instrument"
@@ -254,36 +286,40 @@ export function Instruments(props: {
                   }}
                 />
               </PopoverTrigger>
-              <PopoverContent
-                className="p-0 w-[404px]"
-              >
+              <PopoverContent className="p-0 w-[404px]">
                 <ScrollArea>
                   <div className="max-h-72">
                     {Object.keys(filteredInstruments || {}).length === 0 ? (
                       <div className="text-xs text-fg.1 p-[8px]">
                         No results
                       </div>
-                    ) : Object.keys(filteredInstruments || {}).map((category) => (
-                      <div key={category} className="flex flex-col p-[4px]">
-                        <div className="text-xs text-fg.2 px-[8px]">
-                          {category}
+                    ) : (
+                      Object.keys(filteredInstruments || {}).map((category) => (
+                        <div key={category} className="flex flex-col p-[4px]">
+                          <div className="text-xs text-fg.2 px-[8px]">
+                            {category}
+                          </div>
+                          {filteredInstruments?.[category].map(
+                            (instrument, index) => (
+                              <Button
+                                key={index}
+                                variant="link"
+                                type="button"
+                                className="hover:bg-float-bg.focus justify-start"
+                                onClick={() =>
+                                  handleSelectInstrument(instrument)
+                                }
+                                disabled={part.instruments
+                                  .map((i) => i.id)
+                                  .includes(instrument.id)}
+                              >
+                                {instrument.name}
+                              </Button>
+                            )
+                          )}
                         </div>
-                        {filteredInstruments?.[category].map(
-                          (instrument, index) => (
-                            <Button
-                              key={index}
-                              variant="link"
-                              type="button"
-                              className="hover:bg-float-bg.focus justify-start"
-                              onClick={() => handleSelectInstrument(instrument)}
-                              disabled={part.instruments.map((i) => i.id).includes(instrument.id)}
-                            >
-                              {instrument.name}
-                            </Button>
-                          ),
-                        )}
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </ScrollArea>
               </PopoverContent>
@@ -293,7 +329,9 @@ export function Instruments(props: {
       </Dialog>
       <DragOverlay>
         {activeId ? (
-          <Item instrument={instruments.find(inst => inst.id === activeId)!} />
+          <Item
+            instrument={instruments.find((inst) => inst.id === activeId)!}
+          />
         ) : null}
       </DragOverlay>
     </DndContext>
