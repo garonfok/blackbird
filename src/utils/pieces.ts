@@ -15,7 +15,7 @@ import {
   partFormSchema,
   Piece,
   pieceFormSchema,
-  scoreFormSchema
+  scoreFormSchema,
 } from "@/types";
 import {
   createDir,
@@ -55,13 +55,13 @@ export function formatPartNumbers(
   for (let i = pieceForm.getValues("parts").length - 1; i >= 0; i--) {
     const lastSpaceIndex = pieceForm
       .getValues("parts")
-    [i].name.lastIndexOf(" ");
+      [i].name.lastIndexOf(" ");
     let partName = pieceForm
       .getValues("parts")
-    [i].name.substring(0, lastSpaceIndex);
+      [i].name.substring(0, lastSpaceIndex);
     const partNumber = pieceForm
       .getValues("parts")
-    [i].name.substring(lastSpaceIndex + 1);
+      [i].name.substring(lastSpaceIndex + 1);
     if (lastSpaceIndex === -1 || isNaN(parseInt(partNumber))) {
       partName = pieceForm.getValues("parts")[i].name;
     }
@@ -344,10 +344,10 @@ export async function getPieceFromDb(piece: Piece) {
         instruments: part.instruments,
         file: filePath
           ? {
-            id: maxId,
-            name: files.get(maxId)!.name,
-            bytearray: files.get(maxId)!.file,
-          }
+              id: maxId,
+              name: files.get(maxId)!.name,
+              bytearray: files.get(maxId)!.file,
+            }
           : undefined,
       };
     }),
@@ -368,10 +368,10 @@ export async function getPieceFromDb(piece: Piece) {
         name: score.name,
         file: filePath
           ? {
-            id: maxId,
-            name: files.get(maxId)!.name,
-            bytearray: files.get(maxId)!.file,
-          }
+              id: maxId,
+              name: files.get(maxId)!.name,
+              bytearray: files.get(maxId)!.file,
+            }
           : undefined,
       };
     }),

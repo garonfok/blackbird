@@ -14,7 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import {
-  musiciansAdd, musiciansDelete, musiciansGetAll, musiciansUpdate
+  musiciansAdd,
+  musiciansDelete,
+  musiciansGetAll,
+  musiciansUpdate,
 } from "@/invokers/db/musicians";
 import { piecesGetAll, piecesUpdate } from "@/invokers/db/pieces";
 import { getWorkingDirectory } from "@/invokers/lib";

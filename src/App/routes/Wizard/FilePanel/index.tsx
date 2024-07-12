@@ -4,9 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { mdiUpload } from "@mdi/js";
 import Icon from "@mdi/react";
 import { open } from "@tauri-apps/api/dialog";
@@ -20,7 +29,7 @@ import { SortableItem } from "./SortableItem";
 
 export function FilePanel(props: {
   uploadedFiles: ByteFile[];
-  setUploadedFiles: Dispatch<SetStateAction<ByteFile[]>>
+  setUploadedFiles: Dispatch<SetStateAction<ByteFile[]>>;
   pieceForm: UseFormReturn<z.infer<typeof pieceFormSchema>>;
 }) {
   const { uploadedFiles, setUploadedFiles, pieceForm } = props;
@@ -34,11 +43,11 @@ export function FilePanel(props: {
     const unlistenFileDrop = listen("tauri://file-drop", handleDrop);
     const unlistenDashboardFileDrop = listen("file-drop", handleDrop);
 
-    return (() => {
+    return () => {
       unlistenFileDrop.then(() => "");
       unlistenDashboardFileDrop.then(() => "");
-    })
-  }, [])
+    };
+  }, []);
 
   useCmdOrCtrlHotkey("o", handleClickUpload);
 
@@ -50,9 +59,7 @@ export function FilePanel(props: {
 
   async function handleClickUpload() {
     const files = await open({
-      filters: [
-        { name: "PDF", extensions: ["pdf"] },
-      ],
+      filters: [{ name: "PDF", extensions: ["pdf"] }],
       multiple: true,
     });
 
@@ -67,28 +74,33 @@ export function FilePanel(props: {
     setUploadedFilesCount(0);
     setIsFinishedUploading(false);
 
-    const completedUploads: ByteFile[] = []
+    const completedUploads: ByteFile[] = [];
 
     const uploadPromises = files.map(async (file) => {
       if (!file.endsWith(".pdf")) return;
 
       const buffer = await readBinaryFile(file);
       const data: ByteFile = {
-        id: Math.max(...completedUploads.map(file => file.id), ...uploadedFiles.map(file => file.id), 0) + 1,
+        id:
+          Math.max(
+            ...completedUploads.map((file) => file.id),
+            ...uploadedFiles.map((file) => file.id),
+            0,
+          ) + 1,
         name: file.split("/").pop() || "",
-        bytearray: buffer
+        bytearray: buffer,
       };
 
       setUploadedFilesCount((count) => count + 1);
 
       completedUploads.push(data);
-    })
+    });
 
     await Promise.all(uploadPromises);
     setUploadedFiles([...uploadedFiles, ...completedUploads]);
 
     toast({
-      title: "Finished uploading."
+      title: "Finished uploading.",
     });
     setIsFinishedUploading(true);
     setTimeout(() => {
@@ -142,18 +154,27 @@ export function FilePanel(props: {
     <div className="h-full w-full p-[14px] flex flex-col gap-[14px]">
       {isUploading ? (
         <div className="flex flex-col gap-[8px]">
-          <Progress
-            value={uploadedFilesCount / uploadingFilesCount * 100}
-          />
-          {isFinishedUploading ? <span>Finished uploading</span> : <span>Uploaded {uploadedFilesCount} of {uploadingFilesCount}</span>}
+          <Progress value={(uploadedFilesCount / uploadingFilesCount) * 100} />
+          {isFinishedUploading ? (
+            <span>Finished uploading</span>
+          ) : (
+            <span>
+              Uploaded {uploadedFilesCount} of {uploadingFilesCount}
+            </span>
+          )}
         </div>
       ) : (
         <span className="flex gap-[8px] justify-between items-center">
           <Label>Uploaded Files</Label>
-          <Button onClick={handleClickUpload} type="button" variant="main" className="p-1">
+          <Button
+            onClick={handleClickUpload}
+            type="button"
+            variant="main"
+            className="p-1"
+          >
             <Icon path={mdiUpload} size={1} />
           </Button>
-        </span >
+        </span>
       )}
       <SortableContext
         id="file-list"
@@ -173,14 +194,17 @@ export function FilePanel(props: {
             <Table>
               <TableBody>
                 {uploadedFiles.map((file, index) => (
-                  <SortableItem key={file.id} file={file} onRemoveFile={() => onRemoveFile(index)} />
+                  <SortableItem
+                    key={file.id}
+                    file={file}
+                    onRemoveFile={() => onRemoveFile(index)}
+                  />
                 ))}
               </TableBody>
             </Table>
           </ScrollArea>
-
         </div>
       </SortableContext>
-    </div >
-  )
+    </div>
+  );
 }

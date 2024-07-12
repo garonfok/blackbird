@@ -2,237 +2,312 @@ import { cn } from "@/utils/lib";
 import { EditMusicianDialog } from "@/components/EditMusicianDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { musiciansAdd, musiciansGet, musiciansGetAll } from "@/invokers/db/musicians";
+import {
+  musiciansAdd,
+  musiciansGet,
+  musiciansGetAll,
+} from "@/invokers/db/musicians";
 import { Musician } from "@/types";
-import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, closestCenter, defaultDropAnimationSideEffects, useSensor, useSensors } from "@dnd-kit/core";
-import { SortableContext, arrayMove, horizontalListSortingStrategy, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  KeyboardSensor,
+  PointerSensor,
+  UniqueIdentifier,
+  closestCenter,
+  defaultDropAnimationSideEffects,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  horizontalListSortingStrategy,
+  sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable";
 import { mdiCheck, mdiChevronDown, mdiClose, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { Ref, forwardRef, useEffect, useState } from "react";
 import { SortableItem } from "./SortableItem";
 
-export const SelectMusicians = forwardRef((props: {
-  role: "composers" | "arrangers" | "transcribers" | "orchestrators" | "lyricists";
-  required?: boolean;
-  onChange: (selectedMusicians: Musician[]) => void;
-  value: Musician[];
-}, ref: Ref<HTMLDivElement>) => {
-  const { role, required, onChange, value } = props;
+export const SelectMusicians = forwardRef(
+  (
+    props: {
+      role:
+        | "composers"
+        | "arrangers"
+        | "transcribers"
+        | "orchestrators"
+        | "lyricists";
+      required?: boolean;
+      onChange: (selectedMusicians: Musician[]) => void;
+      value: Musician[];
+    },
+    ref: Ref<HTMLDivElement>,
+  ) => {
+    const { role, required, onChange, value } = props;
 
-  const [popoverOpen, setPopoverOpen] = useState(false);
-  const [createOpen, setCreateOpen] = useState(false);
-  const [musicians, setMusicians] = useState<Musician[]>([]);
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
+    const [popoverOpen, setPopoverOpen] = useState(false);
+    const [createOpen, setCreateOpen] = useState(false);
+    const [musicians, setMusicians] = useState<Musician[]>([]);
+    const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
-  )
-
-  useEffect(() => {
-    fetchMusicians();
-  }, [])
-
-  async function fetchMusicians() {
-    const fetchedMusicians = await musiciansGetAll()
-
-    const sorted = fetchedMusicians.sort((a, b) => {
-      if (a.first_name < b.first_name) return -1;
-      if (a.first_name > b.first_name) return 1;
-      return 0;
-    });
-
-    setMusicians(sorted);
-  }
-
-  async function onCreateMusician(firstName: string, lastName?: string) {
-    const musicianId = await musiciansAdd({ firstName, lastName })
-    await fetchMusicians();
-    const musician = await musiciansGet({
-      id: musicianId,
-    })
-    onChange([...value, musician]);
-  }
-
-  function handleDragStart(event: DragStartEvent) {
-    const { active } = event;
-    setActiveId(active.id)
-  }
-
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-
-    if (!over || !active) return;
-
-    if (active.id !== over.id) {
-      const oldIndex = value.findIndex((musician) => musician.id === active.id);
-      const newIndex = value.findIndex((musician) => musician.id === over.id);
-      onChange(arrayMove(value, oldIndex, newIndex))
-    }
-
-    setActiveId(null)
-  }
-
-  function handleClickRemoveMusician(musicianId: number) {
-    const filtered = value.filter(
-      (musician) => musician.id !== musicianId
+    const sensors = useSensors(
+      useSensor(PointerSensor),
+      useSensor(KeyboardSensor, {
+        coordinateGetter: sortableKeyboardCoordinates,
+      }),
     );
 
-    onChange(filtered);
-  }
+    useEffect(() => {
+      fetchMusicians();
+    }, []);
 
-  function handleClickSelectMusician(musician: Musician) {
-    if (
-      value
-        .map((m) => m.id)
-        .includes(musician.id)
-    ) {
-      const filtered = value.filter(
-        (a) => a.id !== musician.id
-      ) as Musician[];
-      onChange(filtered);
-    } else {
+    async function fetchMusicians() {
+      const fetchedMusicians = await musiciansGetAll();
+
+      const sorted = fetchedMusicians.sort((a, b) => {
+        if (a.first_name < b.first_name) return -1;
+        if (a.first_name > b.first_name) return 1;
+        return 0;
+      });
+
+      setMusicians(sorted);
+    }
+
+    async function onCreateMusician(firstName: string, lastName?: string) {
+      const musicianId = await musiciansAdd({ firstName, lastName });
+      await fetchMusicians();
+      const musician = await musiciansGet({
+        id: musicianId,
+      });
       onChange([...value, musician]);
     }
-  }
 
-  const dropAnimationConfig = {
-    sideEffects: defaultDropAnimationSideEffects({
-      styles: {
-        active: {
-          opacity: "0.5",
-        }
+    function handleDragStart(event: DragStartEvent) {
+      const { active } = event;
+      setActiveId(active.id);
+    }
+
+    function handleDragEnd(event: DragEndEvent) {
+      const { active, over } = event;
+
+      if (!over || !active) return;
+
+      if (active.id !== over.id) {
+        const oldIndex = value.findIndex(
+          (musician) => musician.id === active.id,
+        );
+        const newIndex = value.findIndex((musician) => musician.id === over.id);
+        onChange(arrayMove(value, oldIndex, newIndex));
       }
-    })
-  }
 
-  return (
-    <FormItem className="flex flex-col space-y-1" ref={ref}>
-      <span className="flex gap-[4px] items-center">
-        <FormLabel htmlFor={role}>
-          {role.charAt(0).toUpperCase() + role.slice(1)}
-        </FormLabel>
-        <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-          <DialogTrigger asChild>
-            <Button type="button" className="flex items-center p-0" variant='main'>
-              <Icon path={mdiPlus} size={2 / 3} />
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <EditMusicianDialog onConfirm={onCreateMusician} onClose={setCreateOpen} />
-          </DialogContent>
-        </Dialog>
-      </span>
-      <FormControl>
-        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              role="combobox"
-              aria-expanded={popoverOpen}
-              onClick={() => setPopoverOpen(!open)}
-              className={cn("w-full justify-between border-divider.default bg-bg.2 px-[4px] py-[2px] text-sm")}
-            >
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-                onDragStart={handleDragStart}
+      setActiveId(null);
+    }
+
+    function handleClickRemoveMusician(musicianId: number) {
+      const filtered = value.filter((musician) => musician.id !== musicianId);
+
+      onChange(filtered);
+    }
+
+    function handleClickSelectMusician(musician: Musician) {
+      if (value.map((m) => m.id).includes(musician.id)) {
+        const filtered = value.filter(
+          (a) => a.id !== musician.id,
+        ) as Musician[];
+        onChange(filtered);
+      } else {
+        onChange([...value, musician]);
+      }
+    }
+
+    const dropAnimationConfig = {
+      sideEffects: defaultDropAnimationSideEffects({
+        styles: {
+          active: {
+            opacity: "0.5",
+          },
+        },
+      }),
+    };
+
+    return (
+      <FormItem className="flex flex-col space-y-1" ref={ref}>
+        <span className="flex gap-[4px] items-center">
+          <FormLabel htmlFor={role}>
+            {role.charAt(0).toUpperCase() + role.slice(1)}
+          </FormLabel>
+          <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <DialogTrigger asChild>
+              <Button
+                type="button"
+                className="flex items-center p-0"
+                variant="main"
               >
-                <SortableContext
-                  id="select-musicians"
-                  items={value}
-                  strategy={horizontalListSortingStrategy}
+                <Icon path={mdiPlus} size={2 / 3} />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <EditMusicianDialog
+                onConfirm={onCreateMusician}
+                onClose={setCreateOpen}
+              />
+            </DialogContent>
+          </Dialog>
+        </span>
+        <FormControl>
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                role="combobox"
+                aria-expanded={popoverOpen}
+                onClick={() => setPopoverOpen(!open)}
+                className={cn(
+                  "w-full justify-between border-divider.default bg-bg.2 px-[4px] py-[2px] text-sm",
+                )}
+              >
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                  onDragStart={handleDragStart}
                 >
-                  <div className="flex gap-1 flex-wrap">
-                    {value.length > 0 ? value.map((musician) => (
-                      <SortableItem key={musician.id} id={musician.id}>
-                        <>
-                          {musician.first_name} {musician.last_name}
-                          <Button
-                            type="button"
-                            variant="link"
-                            className="p-0"
-                            onKeyDown={e => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleClickRemoveMusician(musician.id);
-                              }
-                            }}
-                            onMouseDown={e => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleClickRemoveMusician(musician.id)
-                            }}
-                          >
-                            <Icon path={mdiClose} size={2 / 3} className="text-fg.2 hover:text-fg.0" />
-                          </Button>
-                        </>
-                      </SortableItem>
-                    )) : <span className="text-fg.2">{required && "Required"}</span>}
-                  </div>
-                </SortableContext>
-                <DragOverlay dropAnimation={dropAnimationConfig}>
-                  {activeId ? (
-                    <Badge>
-                      {value.find((musician) => musician.id === activeId)?.first_name} {value.find((musician) => musician.id === activeId)?.last_name}
-                    </Badge>
-                  ) : null}
-                </DragOverlay>
-              </DndContext>
-              <Icon path={mdiChevronDown} size={2 / 3} className={cn("shrink-0 opacity-50 rotate-0 transition-transform", popoverOpen && "rotate-180")} />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0" align="start">
-            <Command>
-              <CommandInput placeholder="Search for a musician" />
-              <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-                <CommandGroup>
-                  <ScrollArea>
-                    <div className="max-h-60">
-                      {musicians.map((musician) => (
-                        <CommandItem
-                          key={musician.id}
-                          onSelect={() => {
-                            handleClickSelectMusician(musician);
-                            setPopoverOpen(true);
-                          }}
-                          className="text-fg.1"
-                        >
-                          <Icon
-                            path={mdiCheck}
-                            size={2 / 3}
-                            className={cn(
-                              "mr-2",
-                              value.map(m => m.id).includes(musician.id) ?
-                                "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          <span>{musician.first_name} {musician.last_name}</span>
-                          {/* Workaround to ensure hover function works for duplicate */}
-                          <span className="invisible">{musician.id}</span>
-                        </CommandItem>
-                      ))}
+                  <SortableContext
+                    id="select-musicians"
+                    items={value}
+                    strategy={horizontalListSortingStrategy}
+                  >
+                    <div className="flex gap-1 flex-wrap">
+                      {value.length > 0 ? (
+                        value.map((musician) => (
+                          <SortableItem key={musician.id} id={musician.id}>
+                            <>
+                              {musician.first_name} {musician.last_name}
+                              <Button
+                                type="button"
+                                variant="link"
+                                className="p-0"
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    handleClickRemoveMusician(musician.id);
+                                  }
+                                }}
+                                onMouseDown={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleClickRemoveMusician(musician.id);
+                                }}
+                              >
+                                <Icon
+                                  path={mdiClose}
+                                  size={2 / 3}
+                                  className="text-fg.2 hover:text-fg.0"
+                                />
+                              </Button>
+                            </>
+                          </SortableItem>
+                        ))
+                      ) : (
+                        <span className="text-fg.2">
+                          {required && "Required"}
+                        </span>
+                      )}
                     </div>
-                  </ScrollArea>
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </FormControl>
-      <FormMessage />
-    </FormItem >
-  );
-})
+                  </SortableContext>
+                  <DragOverlay dropAnimation={dropAnimationConfig}>
+                    {activeId ? (
+                      <Badge>
+                        {
+                          value.find((musician) => musician.id === activeId)
+                            ?.first_name
+                        }{" "}
+                        {
+                          value.find((musician) => musician.id === activeId)
+                            ?.last_name
+                        }
+                      </Badge>
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
+                <Icon
+                  path={mdiChevronDown}
+                  size={2 / 3}
+                  className={cn(
+                    "shrink-0 opacity-50 rotate-0 transition-transform",
+                    popoverOpen && "rotate-180",
+                  )}
+                />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command>
+                <CommandInput placeholder="Search for a musician" />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandGroup>
+                    <ScrollArea>
+                      <div className="max-h-60">
+                        {musicians.map((musician) => (
+                          <CommandItem
+                            key={musician.id}
+                            onSelect={() => {
+                              handleClickSelectMusician(musician);
+                              setPopoverOpen(true);
+                            }}
+                            className="text-fg.1"
+                          >
+                            <Icon
+                              path={mdiCheck}
+                              size={2 / 3}
+                              className={cn(
+                                "mr-2",
+                                value.map((m) => m.id).includes(musician.id)
+                                  ? "opacity-100"
+                                  : "opacity-0",
+                              )}
+                            />
+                            <span>
+                              {musician.first_name} {musician.last_name}
+                            </span>
+                            {/* Workaround to ensure hover function works for duplicate */}
+                            <span className="invisible">{musician.id}</span>
+                          </CommandItem>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+    );
+  },
+);

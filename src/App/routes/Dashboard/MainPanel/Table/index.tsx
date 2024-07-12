@@ -21,7 +21,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAppDispatch, useAppSelector } from "@/hooks/store";
-import { piecesDelete, piecesGetAll, piecesGetBySetlist } from "@/invokers/db/pieces";
+import {
+  piecesDelete,
+  piecesGetAll,
+  piecesGetBySetlist,
+} from "@/invokers/db/pieces";
 import { setlistsAddPiece, setlistsRemovePiece } from "@/invokers/db/setlists";
 import { openFolder } from "@/invokers/lib";
 import { openWizard } from "@/invokers/window";
@@ -596,9 +600,9 @@ export function Table() {
                   >
                     {header.id !== "main" || sortingStore.id !== "composers"
                       ? flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )
                       : "Composers"}
 
                     {
@@ -618,12 +622,12 @@ export function Table() {
                           />
                         ),
                       }[
-                      header.id !== "main" ||
+                        header.id !== "main" ||
                         ["title", "composers"].includes(sortingStore.id)
-                        ? (header.column.getIsSorted() as string)
-                        : (table
-                          .getColumn("composers")
-                          ?.getIsSorted() as string)
+                          ? (header.column.getIsSorted() as string)
+                          : (table
+                              .getColumn("composers")
+                              ?.getIsSorted() as string)
                       ]
                     }
                   </button>

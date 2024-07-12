@@ -21,7 +21,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ByteFile, partFormSchema, pieceFormSchema, scoreFormSchema } from "@/types";
+import {
+  ByteFile,
+  partFormSchema,
+  pieceFormSchema,
+  scoreFormSchema,
+} from "@/types";
 import { cn } from "@/utils/lib";
 import { formatPartNumbers } from "@/utils/pieces";
 import { UniqueIdentifier } from "@dnd-kit/core";
@@ -136,7 +141,7 @@ export function SortableItem(props: {
     setOpen(false);
   }
 
-  function handleClickRename() { }
+  function handleClickRename() {}
 
   function handleClearFile() {
     if (type === "parts") {
@@ -265,8 +270,8 @@ export function SortableItem(props: {
             className={cn(
               "w-32 self-center h-fit px-[4px] py-[2px] justify-between border-divider.default bg-bg.2",
               isOver &&
-              active?.id.toString().startsWith("f") &&
-              "border-divider.focus",
+                active?.id.toString().startsWith("f") &&
+                "border-divider.focus",
             )}
           >
             <div className="flex gap-1 flex-wrap w-full">
