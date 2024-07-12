@@ -15,12 +15,14 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { closestCorners, DndContext, DragEndEvent, DragOverlay, DragStartEvent, KeyboardSensor, PointerSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import Fuse from "fuse.js";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { partFormSchema, pieceFormSchema } from "../../types";
+import { Item } from "./Item";
 import { SortableItem } from "./SortableItem";
 
 export function Instruments(props: {
@@ -38,6 +40,18 @@ export function Instruments(props: {
   const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [query, setQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      }
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   useEffect(() => {
     async function fetchInstruments() {
@@ -136,6 +150,44 @@ export function Instruments(props: {
     );
   }
 
+  function handleDragStart(event: DragStartEvent) {
+    const { active } = event;
+    setActiveId(active.id);
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!over) {
+      setActiveId(null);
+      return;
+    }
+
+    if (active.id !== over.id) {
+      const oldIndex = part.instruments.findIndex(
+        (instrument) => instrument.id === active.id,
+      );
+      const newIndex = part.instruments.findIndex(
+        (instrument) => instrument.id === over.id,
+      );
+
+      const newInstruments = arrayMove(part.instruments, oldIndex, newIndex);
+      pieceForm.setValue("parts", pieceForm.getValues("parts").map((p) => {
+        if (part.id === p.id) {
+          return {
+            ...p,
+            instruments: newInstruments,
+          };
+        }
+        return p;
+      }))
+    }
+  }
+
+  function handleDragCancel() {
+    setActiveId(null);
+  }
+
   const handleChangeDebounced = useCallback(debounce(handleChange), []);
 
   const fuse = new Fuse(instruments, {
@@ -153,98 +205,95 @@ export function Instruments(props: {
   });
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="secondary" type="button" className="text-xs text-fg.1">
-          {getButtonText()}
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader className="text-fg.2 text-sm select-none cursor-default">
-          Managing instruments for{" "}
-          <span className="text-fg.0 text-base">{part.name}</span>
-        </DialogHeader>
-        <div className="flex flex-col gap-[14px]">
-          <div>
-            <Popover modal={true}>
-              <PopoverTrigger className="w-full">
-                <Input
-                  placeholder="Add an instrument"
-                  value={inputValue}
-                  onChange={(event) => {
-                    handleChangeDebounced(event);
-                    setInputValue(event.target.value);
-                  }}
-                />
-              </PopoverTrigger>
-              <PopoverContent
-                side="top"
-                className="p-0 w-[404px]"
-              >
-                <ScrollArea>
-                  <div className="max-h-36">
-                    {Object.keys(filteredInstruments || {}).length === 0 ? (
-                      <div className="text-xs text-fg.1 p-[8px]">
-                        No results
-                      </div>
-                    ) : Object.keys(filteredInstruments || {}).map((category) => (
-                      <div key={category} className="flex flex-col p-[4px]">
-                        <div className="text-xs text-fg.2 px-[8px]">
-                          {category}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+    >
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="secondary" type="button" className="text-xs text-fg.1">
+            {getButtonText()}
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader className="text-fg.2 text-sm select-none cursor-default">
+            Managing instruments for{" "}
+            <span className="text-fg.0 text-base">{part.name}</span>
+          </DialogHeader>
+          <div className="flex flex-col gap-[14px]">
+            <div>
+              <Popover modal={true}>
+                <PopoverTrigger className="w-full">
+                  <Input
+                    placeholder="Add an instrument"
+                    value={inputValue}
+                    onChange={(event) => {
+                      handleChangeDebounced(event);
+                      setInputValue(event.target.value);
+                    }}
+                  />
+                </PopoverTrigger>
+                <PopoverContent
+                  side="top"
+                  className="p-0 w-[404px]"
+                >
+                  <ScrollArea>
+                    <div className="max-h-36">
+                      {Object.keys(filteredInstruments || {}).length === 0 ? (
+                        <div className="text-xs text-fg.1 p-[8px]">
+                          No results
                         </div>
-                        {filteredInstruments?.[category].map(
-                          (instrument, index) => (
-                            <Button
-                              key={index}
-                              variant="link"
-                              type="button"
-                              className="hover:bg-float-bg.focus justify-start"
-                              onClick={() => handleSelectInstrument(instrument)}
-                            >
-                              {instrument.name}
-                            </Button>
-                          ),
-                        )}
-                      </div>
+                      ) : Object.keys(filteredInstruments || {}).map((category) => (
+                        <div key={category} className="flex flex-col p-[4px]">
+                          <div className="text-xs text-fg.2 px-[8px]">
+                            {category}
+                          </div>
+                          {filteredInstruments?.[category].map(
+                            (instrument, index) => (
+                              <Button
+                                key={index}
+                                variant="link"
+                                type="button"
+                                className="hover:bg-float-bg.focus justify-start"
+                                onClick={() => handleSelectInstrument(instrument)}
+                              >
+                                {instrument.name}
+                              </Button>
+                            ),
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <SortableContext
+              id="instrument-list"
+              items={part.instruments}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="bg-bg.0 rounded-default select-none">
+                <ScrollArea>
+                  <div className="h-72 p-[4px] flex flex-col gap-[4px]">
+                    {part.instruments.map((instrument, index) => (
+                      <SortableItem key={instrument.id} id={instrument.id} instrument={instrument} onRemove={() => handleClickRemoveInstrument(index)} />
                     ))}
                   </div>
                 </ScrollArea>
-              </PopoverContent>
-            </Popover>
+              </div>
+            </SortableContext>
           </div>
-          <SortableContext
-            id="instrument-list"
-            items={part.instruments}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className="bg-bg.0 rounded-default select-none">
-              <ScrollArea>
-                <div className="h-72 p-[4px] flex flex-col gap-[4px]">
-                  {part.instruments.map((instrument, index) => (
-                    <SortableItem key={instrument.id} id={instrument.id}>
-                      <div
-                        className="w-full flex items-center justify-between"
-                      >
-                        <div className="text-fg.2 select-none cursor-default">
-                          {instrument.name}
-                        </div>
-                        <Button
-                          variant="link"
-                          type="button"
-                          className="text-xs text-fg.1"
-                          onClick={() => handleClickRemoveInstrument(index)}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    </SortableItem>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          </SortableContext>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+      <DragOverlay>
+        {activeId ? (
+          <Item instrument={instruments.find(inst => inst.id === activeId)!} />
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 }
