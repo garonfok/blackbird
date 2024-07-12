@@ -21,9 +21,16 @@ import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectSeparator, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { closeWindow } from "@/invokers/window";
@@ -44,10 +51,7 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  mdiChevronDown,
-  mdiFile
-} from "@mdi/js";
+import { mdiChevronDown, mdiFile } from "@mdi/js";
 import Icon from "@mdi/react";
 import { emit } from "@tauri-apps/api/event";
 import { useState } from "react";
@@ -268,10 +272,7 @@ export function Wizard() {
                   <FormItem className="flex flex-col w-full space-y-1">
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Required"
-                        {...field}
-                      />
+                      <Input placeholder="Required" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -284,9 +285,17 @@ export function Wizard() {
                   <FormItem className="flex flex-col space-y-1">
                     <FormLabel>Difficulty</FormLabel>
                     <FormControl>
-                      <Select value={field.value ? field.value.toString() : "none"} onValueChange={(val) => field.onChange(val === "none" ? undefined : parseInt(val))}>
+                      <Select
+                        value={field.value ? field.value.toString() : "none"}
+                        onValueChange={(val) =>
+                          field.onChange(
+                            val === "none" ? undefined : parseInt(val),
+                          )
+                        }
+                      >
                         <SelectTrigger
-                          className={cn(!field.value && "text-fg.2", "w-32")}>
+                          className={cn(!field.value && "text-fg.2", "w-32")}
+                        >
                           <SelectValue placeholder="Select a difficulty" />
                         </SelectTrigger>
                         <SelectContent>
@@ -349,7 +358,11 @@ export function Wizard() {
                 type="button"
                 className="w-full flex items-center justify-center p-1"
               >
-                <Icon path={mdiChevronDown} size={1} className="group-data-[state=open]/popover-trigger:rotate-180 transition-transform" />
+                <Icon
+                  path={mdiChevronDown}
+                  size={1}
+                  className="group-data-[state=open]/popover-trigger:rotate-180 transition-transform"
+                />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="flex flex-col gap-[4px] pt-[0px] border-none w-screen bg-sidebar-bg.default">
@@ -478,6 +491,6 @@ export function Wizard() {
           </AlertDialog>
         </div>
       </form>
-    </Form >
+    </Form>
   );
 }
