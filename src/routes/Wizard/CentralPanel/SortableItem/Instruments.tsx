@@ -224,53 +224,6 @@ export function Instruments(props: {
             <span className="text-fg.0 text-base">{part.name}</span>
           </DialogHeader>
           <div className="flex flex-col gap-[14px]">
-            <div>
-              <Popover modal={true}>
-                <PopoverTrigger className="w-full">
-                  <Input
-                    placeholder="Add an instrument"
-                    value={inputValue}
-                    onChange={(event) => {
-                      handleChangeDebounced(event);
-                      setInputValue(event.target.value);
-                    }}
-                  />
-                </PopoverTrigger>
-                <PopoverContent
-                  side="top"
-                  className="p-0 w-[404px]"
-                >
-                  <ScrollArea>
-                    <div className="max-h-36">
-                      {Object.keys(filteredInstruments || {}).length === 0 ? (
-                        <div className="text-xs text-fg.1 p-[8px]">
-                          No results
-                        </div>
-                      ) : Object.keys(filteredInstruments || {}).map((category) => (
-                        <div key={category} className="flex flex-col p-[4px]">
-                          <div className="text-xs text-fg.2 px-[8px]">
-                            {category}
-                          </div>
-                          {filteredInstruments?.[category].map(
-                            (instrument, index) => (
-                              <Button
-                                key={index}
-                                variant="link"
-                                type="button"
-                                className="hover:bg-float-bg.focus justify-start"
-                                onClick={() => handleSelectInstrument(instrument)}
-                              >
-                                {instrument.name}
-                              </Button>
-                            ),
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </PopoverContent>
-              </Popover>
-            </div>
             <SortableContext
               id="instrument-list"
               items={part.instruments}
@@ -286,6 +239,50 @@ export function Instruments(props: {
                 </ScrollArea>
               </div>
             </SortableContext>
+            <Popover modal={true}>
+              <PopoverTrigger className="w-full">
+                <Input
+                  placeholder="Add an instrument"
+                  value={inputValue}
+                  onChange={(event) => {
+                    handleChangeDebounced(event);
+                    setInputValue(event.target.value);
+                  }}
+                />
+              </PopoverTrigger>
+              <PopoverContent
+                className="p-0 w-[404px]"
+              >
+                <ScrollArea>
+                  <div className="max-h-72">
+                    {Object.keys(filteredInstruments || {}).length === 0 ? (
+                      <div className="text-xs text-fg.1 p-[8px]">
+                        No results
+                      </div>
+                    ) : Object.keys(filteredInstruments || {}).map((category) => (
+                      <div key={category} className="flex flex-col p-[4px]">
+                        <div className="text-xs text-fg.2 px-[8px]">
+                          {category}
+                        </div>
+                        {filteredInstruments?.[category].map(
+                          (instrument, index) => (
+                            <Button
+                              key={index}
+                              variant="link"
+                              type="button"
+                              className="hover:bg-float-bg.focus justify-start"
+                              onClick={() => handleSelectInstrument(instrument)}
+                            >
+                              {instrument.name}
+                            </Button>
+                          ),
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </PopoverContent>
+            </Popover>
           </div>
         </DialogContent>
       </Dialog>
