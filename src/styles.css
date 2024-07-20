@@ -3,36 +3,8 @@
 @tailwind utilities;
 
 @layer components {
-  .edit-wizard-panel {
-    @apply flex flex-col gap-[14px] h-full overflow-y-auto scrollbar-default flex-grow;
-  }
-
-  .text-heading-default {
-    @apply text-fg.0 font-semibold text-[16px];
-  }
-
-  .text-body-default {
-    @apply text-fg.1 font-normal text-[14px];
-  }
-
-  .text-body-bold {
-    @apply text-fg.1 font-semibold text-[14px];
-  }
-
-  .text-body-small-default {
-    @apply text-fg.1 font-normal text-xs;
-  }
-
-  .text-body-small-bold {
-    @apply text-fg.1 font-semibold text-[12px];
-  }
-
-  .input-text {
-    @apply px-[4px] w-full py-[2px] bg-bg.2 rounded-default placeholder-fg.2 outline-none focus:ring-inset focus:ring-1 ring-fg.0;
-  }
-
   .rounded-default {
-    @apply rounded-[3px];
+    @apply rounded-[2px];
   }
 
   .scrollbar-default {

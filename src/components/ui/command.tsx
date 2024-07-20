@@ -14,7 +14,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      "flex h-full w-full flex-col overflow-hidden rounded-default bg-float-bg.default text-fg.1",
+      "flex h-full w-full flex-col overflow-hidden rounded-default bg-dropdown-bg.default text-fg.1",
       className,
     )}
     {...props}
@@ -22,7 +22,7 @@ const Command = React.forwardRef<
 ));
 Command.displayName = CommandPrimitive.displayName;
 
-interface CommandDialogProps extends DialogProps { }
+interface CommandDialogProps extends DialogProps {}
 
 const CommandDialog = ({ children, ...props }: CommandDialogProps) => {
   return (
@@ -120,7 +120,7 @@ const CommandItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-default select-none items-center rounded-default px-2 py-1.5 text-sm outline-none",
-      "aria-selected:bg-float-bg.focus/50 aria-selected:text-fg.0",
+      "aria-selected:bg-dropdown-bg.focus aria-selected:text-fg.0",
       className,
     )}
     {...props}

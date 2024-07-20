@@ -214,7 +214,7 @@ export function LeftPanel() {
               <CollapsibleTrigger asChild className="w-full">
                 <Button
                   ref={newSetlistPlusRef}
-                  variant="sidebarCollapisble"
+                  variant="sidebarCollapsible"
                   className="w-full flex gap-[4px]"
                 >
                   <Icon
@@ -281,7 +281,7 @@ export function LeftPanel() {
             <span className="flex items-center gap-[4px]">
               <CollapsibleTrigger asChild>
                 <Button
-                  variant="sidebarCollapisble"
+                  variant="sidebarCollapsible"
                   className="w-full flex gap-[4px]"
                 >
                   <Icon

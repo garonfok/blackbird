@@ -18,12 +18,6 @@ export default {
       "fg.1": "#BFBFC3",
       "fg.2": "#8D8A93",
 
-      "divider.default": "#2E2E30",
-      "divider.focus": "#3C3C3E",
-
-      "sidebar-bg.default": "#0A0A0B",
-      "sidebar-bg.focus": "#1D1D20",
-
       "main-bg.default": "#131315",
       "main-bg.hover": "#1D1D20",
       "main-bg.focus": "#27272B",
@@ -33,6 +27,18 @@ export default {
 
       "button-secondary-bg.default": "#1D1D20",
       "button-secondary-bg.focus": "#27272B",
+
+      /** new ui colors */
+
+      "dropdown-bg.default": "#1B1C1F",
+      "dropdown-bg.focus": "#2C3039",
+
+      "divider.default": "#2E2E30",
+      "divider.focus": "#3C3C3E",
+
+      "sidebar-bg.default": "#0A0A0B",
+      "sidebar-bg.focus": "#141518",
+      "sidebar-bg.selected": "#1C1F25",
     },
   },
   plugins: [require("tailwind-scrollbar")({ nocompatible: true })],

@@ -31,6 +31,7 @@ export function Dashboard() {
 
   return (
     <div className="flex h-screen w-screen">
+      <button onClick={() => navigate("/.new")}>New</button>
       <Sidebar direction="left">
         <LeftPanel />
       </Sidebar>

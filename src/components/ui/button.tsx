@@ -9,32 +9,30 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
         outline: "border border-divider.default bg-bg.0 hover:text-fg.0",
-        primary: "bg-primary.default text-bg.0 hover:bg-primary.default/90",
-
-        default:
-          "bg-fg.0 text-bg.0 hover:bg-fg.0/90 py-1 border border-divider.default",
         secondary:
           "bg-button-secondary-bg.default hover:bg-button-secondary-bg.focus border border-divider.default",
         sidebar: cn(
           "justify-start gap-[8px] text-fg.1 py-1 text-md",
           "hover:bg-sidebar-bg.focus hover:text-fg.0",
         ),
-        sidebarCollapisble: cn(
-          "text-sm justify-start gap-[4px] text-fg.0",
-          "hover:bg-sidebar-bg.focus",
-        ),
-        sidebarCollapsibleItem: cn(
-          "text-sm justify-start gap-[4px] text-fg.2",
-          "hover:bg-sidebar-bg.focus",
-        ),
         link: cn("text-fg.1", "hover:text-fg.0"),
         main: cn(
           "justify-start gap-[8px] text-fg.1 text-sm",
           "hover:bg-main-bg.focus hover:text-fg.0",
         ),
+
+        // standard button ui moving forward
+
+        default:
+          "flex gap-[4px] text-xs bg-button-secondary-bg.default hover:bg-button-secondary-bg.focus border border-divider.default",
+        menubar: "hover:bg-button-secondary-bg.focus text-fg.0",
+        sidebarCollapsible: cn(
+          "text-sm justify-start gap-[4px] text-fg.0 p-[2px]",
+        ),
+        sidebarCollapsibleItem: cn("text-sm justify-start gap-[4px] text-fg.2"),
+        sidebarButton: "text-fg.1 hover:text-fg.0",
+        filterDropdownItem: "bg-transparent hover:bg-dropdown-bg.focus",
       },
     },
     defaultVariants: {
@@ -45,7 +43,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-  VariantProps<typeof buttonVariants> {
+    VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

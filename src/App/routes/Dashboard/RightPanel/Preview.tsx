@@ -152,7 +152,7 @@ export function Preview(props: { piece: Piece }) {
                   <Collapsible>
                     <CollapsibleTrigger asChild>
                       <Button
-                        variant="sidebarCollapisble"
+                        variant="sidebarCollapsible"
                         className="w-full justify-between gap-[4px] group cursor-pointer"
                         asChild
                       >

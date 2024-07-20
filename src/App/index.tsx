@@ -10,11 +10,16 @@ import "@/styles.css";
 import React, { useCallback } from "react";
 import { Provider } from "react-redux";
 import { createBrowserRouter, Params, RouterProvider } from "react-router-dom";
+import { DashboardNew } from "./routes/DashboardNew";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Dashboard />,
+  },
+  {
+    path: "/.new",
+    element: <DashboardNew />,
   },
   {
     path: "/settings",
@@ -60,7 +65,7 @@ export function App() {
       <TooltipProvider>
         <div
           onContextMenu={handleContextMenu}
-          className="bg-bg.0 text-body-default w-screen h-screen select-none cursor-default"
+          className="bg-bg.0 text-fg.0 w-screen h-screen select-none cursor-default"
         >
           <RouterProvider router={router} />
         </div>
